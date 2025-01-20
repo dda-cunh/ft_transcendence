@@ -16,16 +16,11 @@ services:
     volumes:
       - db_data:/var/lib/mysql
 
-  django:
-    container_name: django
-    build: ./microsvcs/django
-    depends_on: mariadb
-    # ENV GO HERE
-    restart: always
-    networks:
-      - network-transcendance
-      volumes:
-    # BIND TO web-data
+
+##
+# BACKEND GOES HERE
+##
+
 
   nginx:
     container_name: nginx
