@@ -1,13 +1,36 @@
+x-common-conf: &common
+  networks:
+    - network-transcendance
+  env_file: ".env"
+  restart: on-failure
+
+networks:
+  network-transcendance:
+    driver: bridge
+
+volumes:
+  web-data:
+    driver: local
+    driver_opts:
+      type: none
+      device:  ${HOME}/data/web
+      o: bind
+
+  db_data:
+    driver: local
+    driver_opts:
+      type: none
+      device:  ${HOME}/data/db
+      o: bind
+
 
 services:
   postgreSQL:
     container_name: postgreSQL
     build: ./core/postgreSQL
-    restart: always
-    networks:
-      - network-transcendance
     volumes:
       - db_data:/var/lib/mysql # TODO: Change this to postgresql data path
+    <<: *common
 
 
 ##
@@ -19,34 +42,21 @@ services:
     build: ./core/guinicorn-app-base
     depends_on:
       - postgreSQL
-    restart: always
+    <<: *common
+
+  auth:
+    container_name: auth
+    build: ./core/auth
+    depends_on:
+      - guinicorn-app-base
+    <<: *common
 
   nginx:
     container_name: nginx
     build: ./core/nginx
     ports:
       - "443:443"
-    restart: always
-    networks:
-      - network-transcendance
     volumes:
       - web_data:/var/www/html
+    <<: *common
 
-networks:
-  network-transcendance:
-    driver: bridge
-
-volumes:
-  web-data:
-    driver: local
-    driver_opts:
-      type: none
-      device: # path/goes/here
-      o: bind
-
-  db_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: # path/goes/here
-      o: bind
