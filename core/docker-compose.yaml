@@ -1,45 +1,40 @@
 
 services:
-  mariadb:
-    container_name: mariadb
-    build: ./microsvcs/mariadb
-    environment:
-      MYSQL_HOSTNAME      : $MYSQL_HOSTNAME
-      MYSQL_USER          : $MYSQL_USER
-      MYSQL_PASSWORD      : $MYSQL_PASSWORD
-      MYSQL_ROOT_USER     : $MYSQL_ROOT_USER
-      MYSQL_ROOT_PASSWORD : $MYSQL_ROOT_PASSWORD
-      # ADD ENV FOR DATABASES
+  postgreSQL:
+    container_name: postgreSQL
+    build: ./core/postgreSQL
     restart: always
     networks:
       - network-transcendance
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data:/var/lib/mysql # TODO: Change this to postgresql data path
 
 
 ##
 # BACKEND GOES HERE
 ##
 
+  guinicorn-app-base:
+    container_name: guinicorn-app-base
+    build: ./core/guinicorn-app-base
+    depends_on:
+      - postgreSQL
+    restart: always
 
   nginx:
     container_name: nginx
-    build: ./microsvcs/nginx
+    build: ./core/nginx
     ports:
       - "443:443"
-    depends_on:
-      - django
     restart: always
     networks:
       - network-transcendance
     volumes:
       - web_data:/var/www/html
 
-
 networks:
   network-transcendance:
     driver: bridge
-
 
 volumes:
   web-data:
