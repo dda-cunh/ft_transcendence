@@ -21,6 +21,16 @@ services:
       - postgreSQL
     restart: always
 
+  nodejs:
+    container_name: nodejs
+    build: ./core/nodejs
+#   depends_on:
+#     BACKEND
+    restart: always
+    networks:
+      -network-transcendence
+    volumes: web-data:/data
+
   nginx:
     container_name: nginx
     build: ./core/nginx
@@ -28,12 +38,11 @@ services:
       - "443:443"
     restart: always
     networks:
-      - network-transcendance
-    volumes:
-      - web_data:/var/www/html
+      - network-transcendence
+
 
 networks:
-  network-transcendance:
+  network-transcendence:
     driver: bridge
 
 volumes:

@@ -1,0 +1,113 @@
+/* MainMenu.module.css */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: black;
+  color: white;
+  text-align: center;
+}
+
+.title {
+  position: relative;
+  top: -14rem;
+  font-size: 3rem;
+  font-weight: bold;
+/*  margin-top: 5rem;*/
+}
+
+.menubox {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  color: white;
+  text-align: center;
+
+}
+
+.buttons {
+  position: relative;
+  left: -24rem;
+  bottom: -2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  float: center;
+}
+
+
+.switches {
+/*  position: relative;*/
+  /*display: flex;*/
+  flex-direction: column;
+  width: 20rem;
+  height: 30rem;
+  border: solid;
+}
+
+.settingsbox
+{
+  display: flex;
+  flex-direction: column;
+  margin-top: 2rem;
+}
+
+
+.settinglabel {
+  position: relative;
+  display: flex;
+/*  margin-left: 1rem;*/
+  margin-top: 2.5rem;
+  text-align: center;
+}
+
+.settingbtn {
+  background: #fff;
+  border: 1px solid #999;
+  font-size: 24px;  /*  FIX THIS  */
+  font-weight: bold;
+  line-height: 2.15rem;
+  position: relative;
+  margin-right: 0rem;
+  text-align: center;
+  height: 2.15rem;
+  width: 7.5rem;
+}
+
+.btn {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  color: white;
+}
+
+.btn.singlematch {
+  background-color: #007bff;
+}
+
+.btn.singlematch:hover {
+  background-color: #0056b3;
+}
+
+.btn.tournament {
+  background-color: #dc3545;
+}
+
+.btn.tournament:hover {
+  background-color: #c82333;
+}
+
+.btn.settings {
+  background-color: #6c757d;
+}
+
+.btn.settings:hover {
+  background-color: #5a6268;
+}
