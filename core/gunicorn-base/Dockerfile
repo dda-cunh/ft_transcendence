@@ -10,4 +10,4 @@ RUN apt-get update \
 
 RUN pip install --no-cache-dir gunicorn
 
-ENTRYPOINT ["gunicorn"]
+ENTRYPOINT ["bash"]
