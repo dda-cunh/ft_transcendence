@@ -1,62 +1,63 @@
 x-common-conf: &common
   networks:
-    - network-transcendance
+    - transcendence
   env_file: ".env"
   restart: on-failure
 
 networks:
-  network-transcendance:
-    driver: bridge
+  transcendence:
+    name: transcendence
 
-volumes:
-  web-data:
-    driver: local
-    driver_opts:
-      type: none
-      device:  ${HOME}/data/web
-      o: bind
+# volumes:
+  # web-data:
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     device:  ${HOME}/data/web
+  #     o: bind
 
-  db_data:
-    driver: local
-    driver_opts:
-      type: none
-      device:  ${HOME}/data/db
-      o: bind
-
+  # db_data:
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     device:  ${HOME}/data/db
+  #     o: bind
 
 services:
-  postgreSQL:
-    container_name: postgreSQL
-    build: ./core/postgreSQL
-    volumes:
-      - db_data:/var/lib/mysql # TODO: Change this to postgresql data path
-    <<: *common
 
-
-##
-# BACKEND GOES HERE
-##
-
-  guinicorn-app-base:
-    container_name: guinicorn-app-base
-    build: ./core/guinicorn-app-base
-    depends_on:
-      - postgreSQL
+  gunicorn-base:
+    container_name: gunicorn-base
+    build: ./gunicorn-base
+    image: gunicorn-base
+    # depends_on:
+    #   - postgreSQL
     <<: *common
 
   auth:
     container_name: auth
-    build: ./core/auth
+    build: ./auth
     depends_on:
-      - guinicorn-app-base
+      - gunicorn-base
+    volumes:
+      - ./auth/:/service
+    expose:    #TODO: REMOVE THIS
+      - "8000" #TODO: ^^^^^^^^^^^
     <<: *common
 
-  nginx:
-    container_name: nginx
-    build: ./core/nginx
-    ports:
-      - "443:443"
-    volumes:
-      - web_data:/var/www/html
-    <<: *common
+  # nginx:
+  #   container_name: nginx
+  #   build: ./core/nginx
+  #   ports:
+  #     - "443:443"
+  #   volumes:
+  #     - web_data:/var/www/html
+  #   <<: *common
+
+  # postgreSQL:
+  #   container_name: postgreSQL
+  #   build: ./core/postgreSQL
+  #   volumes:
+  #     - db_data:/var/lib/mysql # TODO: Change this to postgresql data path
+  #   <<: *common
+
 

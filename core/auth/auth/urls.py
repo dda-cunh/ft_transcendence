@@ -15,12 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from django.urls import path
+from django.urls import re_path
 from .views import RegisterView, DeleteUserView
 
 urlpatterns = [
-    path('delete/', DeleteUserView.as_view(), name='delete'),
-    path('register/', RegisterView.as_view(), name='register'),
-    path('', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),    
+    re_path(r'^refresh/?$', TokenRefreshView.as_view(), name='token_refresh'),
+    re_path(r'^/?$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    re_path(r'^register/?$', RegisterView.as_view(), name='register'),
+    re_path(r'^delete/?$', DeleteUserView.as_view(), name='delete')
 ]
