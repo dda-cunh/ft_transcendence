@@ -8,7 +8,14 @@ networks:
   transcendence:
     name: transcendence
 
-# volumes:
+volumes:
+  db_data:
+    driver: local
+    driver_opts:
+      type: none
+      device:  ${HOME}/data/db
+      o: bind
+
   # web-data:
   #   driver: local
   #   driver_opts:
@@ -16,12 +23,6 @@ networks:
   #     device:  ${HOME}/data/web
   #     o: bind
 
-  # db_data:
-  #   driver: local
-  #   driver_opts:
-  #     type: none
-  #     device:  ${HOME}/data/db
-  #     o: bind
 
 services:
 
@@ -29,8 +30,8 @@ services:
     container_name: gunicorn-base
     build: ./gunicorn-base
     image: gunicorn-base
-    # depends_on:
-    #   - postgreSQL
+    depends_on:
+      - postgresql
     <<: *common
 
   auth:
@@ -44,20 +45,21 @@ services:
       - "8000" #TODO: ^^^^^^^^^^^
     <<: *common
 
+  postgresql:
+    container_name: postgresql
+    build: ./postgresql
+    # volumes:
+    #   - db_data:/var/lib/postgresql/data
+    <<: *common
+
   # nginx:
   #   container_name: nginx
-  #   build: ./core/nginx
+  #   build: ./nginx
   #   ports:
   #     - "443:443"
   #   volumes:
   #     - web_data:/var/www/html
   #   <<: *common
 
-  # postgreSQL:
-  #   container_name: postgreSQL
-  #   build: ./core/postgreSQL
-  #   volumes:
-  #     - db_data:/var/lib/mysql # TODO: Change this to postgresql data path
-  #   <<: *common
 
 

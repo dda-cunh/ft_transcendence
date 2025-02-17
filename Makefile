@@ -5,7 +5,7 @@ COMPOSE_FILE_PATH	=	./core/docker-compose.yaml
 
 COMPOSE				=	${DOCKER_COMPOSE} -f ${COMPOSE_FILE_PATH}
 
-PERSIST_DIR			=	${HOME}/ft_transcendence
+PERSIST_DIR			=	${HOME}/data
 
 up:			set_perist
 			${COMPOSE} up -d --build
@@ -18,6 +18,9 @@ force_re:	set_perist
 set_perist:
 			if [ ! -d ${PERSIST_DIR} ]; then \
 				mkdir -p ${PERSIST_DIR}; \
+			fi
+			if [ ! -d ${PERSIST_DIR}/db ]; then \
+				mkdir -p ${PERSIST_DIR}/db; \
 			fi
 
 bash_into:
@@ -38,7 +41,7 @@ bash_into:
 			fi
 
 logs:
-			${COMPOSE} logs
+			${COMPOSE} logs -t
 
 down:
 			${COMPOSE} down
