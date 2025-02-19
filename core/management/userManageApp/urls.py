@@ -1,7 +1,7 @@
-from django.urls import path
 
-from . import views
+from django.urls import path
+from .views import UpdateDisplayNameView
 
 urlpatterns = [
-    path("", views.index, name="index_user"),
+    path('display-name/', UpdateDisplayNameView.as_view(), name='update_display_name'),
 ]
