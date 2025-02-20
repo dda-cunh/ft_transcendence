@@ -7,6 +7,5 @@ class UpdateDisplayNameView(generics.UpdateAPIView):
     serializer_class = UserDisplayNameSerializer
 
     def get_object(self):
-        user_id = self.request.user.id  # This comes from the token payload
-        # Perform a lookup to get the full CustomUser instance
+        user_id = self.request.user.id
         return CustomUser.objects.get(pk=user_id)
