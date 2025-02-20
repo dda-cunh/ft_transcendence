@@ -30,3 +30,8 @@ class UserLoginSerializer(serializers.ModelSerializer):
         if qs.exists():
             raise serializers.ValidationError("This username is already taken.")
         return value
+
+class UserAvatarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['avatar']

@@ -1,6 +1,6 @@
 from rest_framework import generics, permissions
 from userManageApp.models import CustomUser
-from .serializers import UserDisplayNameSerializer, UserLoginSerializer
+from .serializers import UserDisplayNameSerializer, UserLoginSerializer, UserAvatarSerializer
 
 class UpdateDisplayNameView(generics.UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -13,6 +13,13 @@ class UpdateDisplayNameView(generics.UpdateAPIView):
 class UpdateLoginView(generics.UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = UserLoginSerializer
+
+    def get_object(self):
+        return CustomUser.objects.get(pk=self.request.user.id)
+
+class UpdateAvatarView(generics.UpdateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserAvatarSerializer
 
     def get_object(self):
         return CustomUser.objects.get(pk=self.request.user.id)

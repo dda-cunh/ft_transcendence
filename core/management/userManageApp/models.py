@@ -9,3 +9,10 @@ class CustomUser(AbstractUser):
         blank=True,
         help_text="Unique display name for tournaments"
     )
+    avatar = models.ImageField(
+        upload_to='avatars/',
+        default='avatars/default-avatar.png',
+        blank=True,
+        null=True,
+        help_text="User avatar"
+    )
