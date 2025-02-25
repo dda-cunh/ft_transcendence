@@ -16,15 +16,13 @@ volumes:
       device:  ${HOME}/data/db
       o: bind
 
-  # web-data:
-  #   driver: local
-  #   driver_opts:
-  #     type: none
-  #     device:  ${HOME}/data/web
-  #     o: bind
-
-
 services:
+  postgresql:
+    container_name: postgresql
+    build: ./postgresql
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    <<: *common
 
   gunicorn-base:
     container_name: gunicorn-base
@@ -41,15 +39,6 @@ services:
       - gunicorn-base
     volumes:
       - ./auth/:/service
-    expose:    #TODO: REMOVE THIS
-      - "8000" #TODO: ^^^^^^^^^^^
-    <<: *common
-
-  postgresql:
-    container_name: postgresql
-    build: ./postgresql
-    # volumes:
-    #   - db_data:/var/lib/postgresql/data
     <<: *common
 
   # nginx:

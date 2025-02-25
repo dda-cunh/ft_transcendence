@@ -11,8 +11,9 @@ RUN		set -eux; \
 		apt-get install -y \
 			postgresql-$PG_MAJOR;
 
-USER	postgres
 RUN		install --verbose --directory --owner=postgres --group=postgres --mode=0700 $PGDATA
+
+USER	postgres
 
 COPY	db_conf.sh .
 
