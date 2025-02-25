@@ -7,14 +7,15 @@ x-common-conf: &common
 networks:
   transcendence:
     name: transcendence
+    driver: bridge
 
-# volumes:
-  # web-data:
-  #   driver: local
-  #   driver_opts:
-  #     type: none
-  #     device:  ${HOME}/data/web
-  #     o: bind
+volumes:
+  web-data:
+   driver: local
+   driver_opts:
+     type: none
+     device: /home/pietro/Desktop/ft_transcendence/web  #  THIS NEEDS TO BE STANDARDIZED
+     o: bind
 
   # db_data:
   #   driver: local
@@ -44,14 +45,14 @@ services:
       - "8000" #TODO: ^^^^^^^^^^^
     <<: *common
 
-  # nginx:
-  #   container_name: nginx
-  #   build: ./core/nginx
-  #   ports:
-  #     - "443:443"
-  #   volumes:
-  #     - web_data:/var/www/html
-  #   <<: *common
+  nginx:
+    container_name: nginx
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - web-data:/var/www/html
+    <<: *common
 
   # postgreSQL:
   #   container_name: postgreSQL
