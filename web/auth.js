@@ -3,7 +3,7 @@ import {renderMainMenu} from './main_menu.js'
 "use strict";
 
 
-async function	registerUser()
+function	registerUser()
 {
 	let	user = document.getElementById("registerUserField").value;
 	let passwd = document.getElementById("registerPasswordField").value;
@@ -21,11 +21,10 @@ async function	registerUser()
 			password: passwd,
 		};
 
-		let	response = await fetch("./auth", {
+		let	response = fetch("auth/register/", {
 			method: "POST",
-			host: "auth",
 			headers: {
-				"Content-Type": "application/json; charset=UTF-8",
+				"Content-Type": "application/json",
 			},
 			body: JSON.stringify(creds),
 		} );
@@ -39,6 +38,38 @@ async function	registerUser()
 	}
 }
 
+async function	loginUser()
+{
+	let	user = document.getElementById("loginUserField").value;
+	let passwd = document.getElementById("loginPasswordField").value;
+
+	try
+	{
+		if (user === "" || passwd === "")
+			throw new Error("No empty creds allowed.");
+
+		let creds = {
+			username: user,
+			password: passwd,
+		};
+
+		let response = await fetch("auth/", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(creds),
+			} );
+		let rsp = await response.json();
+		console.log(rsp);
+
+		renderMainMenu();
+	}
+	catch(error)
+	{
+		alert(error.message);	//	PRETTIFY THIS
+	}
+}
 
 function	renderPage()
 {
@@ -66,18 +97,18 @@ function	renderPage()
 							<div class="tab-content">
 								<div class="tab-pane fade show active" id="login">
 									<div class="col-7 col-lg-3 mx-auto">
-										<form>
+										<form id="loginForm">
 											<div class="input-group">
 												<span class="input-group-text">
 													<span class="bi-person"></span>
 												</span>
-												<input type="text" class="form-control" id="user" placeholder="Username">
+												<input id="loginUserField" type="text" class="form-control" id="user" placeholder="Username">
 											</div>
 											<div class="input-group mt-1">
 												<span class="input-group-text">
 													<span class="bi-asterisk"></span>
 												</span>
-												<input type="password" class="form-control" id="password" placeholder="Password">
+												<input id="loginPasswordField" type="password" class="form-control" id="password" placeholder="Password">
 											</div>
 											<button type="submit" class="btn btn-primary mt-2">Login</button>
 										</form>
@@ -85,7 +116,7 @@ function	renderPage()
 								</div>
 								<div class="tab-pane fade" id="signup">
 									<div class="col-7 col-lg-3 mx-auto">
-										<form>
+										<form id="registerForm">
 											<div class="input-group">
 												<span class="input-group-text">
 													<span class="bi-person"></span>
@@ -104,7 +135,7 @@ function	renderPage()
 												</span>
 												<input id="confirmPasswordField" type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password">
 											</div>
-											<button id="signupBtn" type="submit" class="btn btn-success mt-2">Register</button>
+											<button type="submit" class="btn btn-success mt-2">Register</button>
 										</form>
 									</div>
 								</div>
@@ -119,5 +150,6 @@ function	renderPage()
 export function	renderAuth()
 {
 	renderPage();
-	document.getElementById("signupBtn").onclick = registerUser;
+	document.getElementById("loginForm").onsubmit = loginUser;
+	document.getElementById("registerForm").onsubmit = registerUser;
 }

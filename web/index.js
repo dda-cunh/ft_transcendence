@@ -3,9 +3,9 @@ import {renderMainMenu} from './main_menu.js'
 
 "use strict";
 
-//	DECLARE A GLOBAL OBJECT FOR loggedIn STATUS, GAME SETTINGS, ETC
+//	DECLARE A GLOBAL OBJECT FOR loggedIn STATUS (TRACK IT WITH TOKEN), GAME SETTINGS, ETC
 let	app = {
-	loggedIn: false,
+//	LOGIN TOKEN
 //	APP STATUS ("mainMenu"/"inGame"/"tournamentBoard")
 //	GAME SETTINGS
 //		GAMEPLAY
