@@ -15,8 +15,8 @@ let	app = {
 function	main()
 {
 //	CHECK USER/APP STATUS & RENDER ACCORDINGLY
-//	renderAuth();
-	renderMainMenu();
+	renderAuth();
+//	renderMainMenu();
 }
 
 

@@ -30,7 +30,7 @@ function	renderPage()
 						</div>
 					</div>
 					<div class="col-12 col-lg-5 mx-lg-1 mt-4 px-5 border">
-						<h1 class="mt-4">SETTINGS</h1> <!--MAKE INPUT TEXT RESPONSIVE-->
+						<h1 class="mt-4">SETTINGS</h1>
 						<div class="row my-1 justify-content-center">
 							<div class="col col-lg-10 mt-4">
 								<h3>GAMEPLAY</h3>
