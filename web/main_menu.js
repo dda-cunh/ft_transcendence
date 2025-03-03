@@ -1,4 +1,13 @@
+import {renderAuth} from './auth.js'
+import {renderPongGame} from './pong_game.js'
+
 "use strict";
+
+function	logoutUser()
+{
+	//	CLEAR LOGIN COOKIES
+	renderAuth()
+}
 
 function	renderPage()
 {
@@ -10,7 +19,7 @@ function	renderPage()
 				<div class="navbar-nav ms-auto">
 					<div class="col">
 						<small class="me-2">$username</small>
-						<a href="#" class="nav-item nav-link pe-4 text-end">Logout</a>
+						<a id="logoutBtn" href="#" class="nav-item nav-link pe-4 text-end">Logout</a>
 					</div>
 				</div>
 			</nav>
@@ -24,7 +33,7 @@ function	renderPage()
 						</div>
 						<div class="row py-3 my-5 justify-content-center">
 							<div class="col-8 col-lg-6 d-grid gap-3 my-5">
-								<button type="button" class="btn btn-lg btn-primary fw-bolder">FRIENDLY MATCH</button>
+								<button id="btnFriendlyMatch" type="button" class="btn btn-lg btn-primary fw-bolder">FRIENDLY MATCH</button>
 								<button type="button" class="btn btn-lg btn-danger fw-bolder">TOURNAMENT</button>
 							</div>
 						</div>
@@ -86,7 +95,10 @@ function	renderPage()
 	`;
 }
 
+
 export function	renderMainMenu()
 {
 	renderPage();
+	document.getElementById("logoutBtn").addEventListener("click", logoutUser);
+	document.getElementById("btnFriendlyMatch").addEventListener("click", renderPongGame);
 }

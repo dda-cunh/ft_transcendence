@@ -14,13 +14,15 @@ async function	doAuth(creds, dir)
 	} );
 
 	let data = await response.json();
-
 	data.ok = response.ok;
+
 	return (data);
 }
 
-function	registerUser(event)
+async function	registerUser(event)
 {
+	event.preventDefault();
+
 	let	errField;
 
 	let creds = {
@@ -28,7 +30,6 @@ function	registerUser(event)
 		password: document.getElementById("registerPasswordField").value,
 	};
 	let confirmPasswd = document.getElementById("confirmPasswordField").value;
-
 
 	try
 	{
@@ -38,15 +39,19 @@ function	registerUser(event)
 			throw new Error("Password mismatch.");	//	WRITE A BETTER MESSAGE
 		}
 
-		let responseData = doAuth(creds, "auth/register/");
-/*
+		let responseData = await doAuth(creds, "auth/register/");
+
 		if (!responseData.ok)
 		{
 			errField = responseData.errField[0];
 			throw new Error(responseData.errMsg[0]);
 		}
-*/
-		renderMainMenu();
+		else
+		{
+			document.cookie = "refresh="+encodeURIComponent(responseData.tokens.refresh)+"; samesite=strict";	//	; secure";
+			document.cookie = "access="+encodeURIComponent(responseData.tokens.access)+"; samesite=strict";	//	; secure";
+			renderMainMenu();
+		}
 	}
 	catch (error)
 	{
@@ -55,7 +60,6 @@ function	registerUser(event)
 			let	errElem = document.getElementById(errField);
 			errElem.classList.add("is-invalid");
 			errElem.insertAdjacentHTML("afterend", "<div class=\"invalid-feedback\">"+error+"</div>")
-			event.preventDefault();
 			event.stopPropagation();
 		}
 		else
@@ -63,8 +67,10 @@ function	registerUser(event)
 	}
 }
 
-function	loginUser(event)
+async function	loginUser(event)
 {
+	event.preventDefault();
+
 	let	errField;
 
 	let creds = {
@@ -72,18 +78,21 @@ function	loginUser(event)
 		password: document.getElementById("loginPasswordField").value,
 	};
 
-
 	try
 	{
-		let responseData = doAuth(creds, "auth/");
-/*
+		let responseData = await doAuth(creds, "auth/");
+
 		if (!responseData.ok)
 		{
 			errField = responseData.errField[0];
 			throw new Error(responseData.errMsg[0]);
 		}
-*/
-		renderMainMenu();
+		else
+		{
+			document.cookie = "refresh="+encodeURIComponent(responseData.tokens.refresh)+"; samesite=strict";	//	; secure";
+			document.cookie = "access="+encodeURIComponent(responseData.tokens.access)+"; samesite=strict";	//	; secure";
+			renderMainMenu();
+		}
 	}
 	catch(error)
 	{
@@ -92,7 +101,6 @@ function	loginUser(event)
 			let	errElem = document.getElementById(errField);
 			errElem.classList.add("is-invalid");
 			errElem.insertAdjacentHTML("afterend", "<div class=\"invalid-feedback\">"+error+"</div>")
-			event.preventDefault();
 			event.stopPropagation();
 		}
 		else
@@ -179,8 +187,6 @@ function	renderPage()
 export function	renderAuth()
 {
 	renderPage();
-//	document.getElementById("loginForm").onsubmit = loginUser;
-//	document.getElementById("registerForm").onsubmit = registerUser;
-	document.getElementById("loginForm").addEventListener("submit", () => loginUser(event) );
-	document.getElementById("registerForm").addEventListener("submit", () => registerUser(event) );
+	document.getElementById("loginForm").addEventListener("submit", (event) => loginUser(event) );
+	document.getElementById("registerForm").addEventListener("submit", (event) => registerUser(event) );
 }

@@ -1,5 +1,6 @@
 import {renderAuth} from './auth.js'
 import {renderMainMenu} from './main_menu.js'
+import {renderPongGame} from './pong_game.js'
 
 "use strict";
 
@@ -17,6 +18,7 @@ function	main()
 //	CHECK USER/APP STATUS & RENDER ACCORDINGLY
 	renderAuth();
 //	renderMainMenu();
+//	renderPongGame();
 }
 
 
