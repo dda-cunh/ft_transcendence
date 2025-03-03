@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'rest_framework',
-    'rest_framework_simplejwt'
+    'rest_framework_simplejwt', 
+    'userManageApp' 
 ]
 
 REST_FRAMEWORK = {
@@ -93,6 +94,8 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+
+AUTH_USER_MODEL = "userManageApp.User"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
