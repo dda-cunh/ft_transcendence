@@ -16,7 +16,7 @@ Including another URLconf
 """
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.urls import re_path
-from .views import RegisterView, DeleteUserView
+from user.views import RegisterView, DeleteUserView
 
 urlpatterns = [
     re_path(r'^refresh/?$', TokenRefreshView.as_view(), name='token_refresh'),
