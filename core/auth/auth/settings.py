@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
+from dotenv import load_dotenv
+load_dotenv() # Load environment variables from .env file
 
 from pathlib import Path
 
@@ -36,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'rest_framework',
     'rest_framework_simplejwt', 
-    'userManageApp' 
 ]
 
 REST_FRAMEWORK = {
@@ -96,7 +97,7 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
-AUTH_USER_MODEL = "userManageApp.User"
+AUTH_USER_MODEL = 'user.User'
 
 AUTH_PASSWORD_VALIDATORS = [
     {

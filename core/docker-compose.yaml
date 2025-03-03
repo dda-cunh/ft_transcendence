@@ -39,7 +39,7 @@ services:
       - gunicorn-base
     volumes:
       - ./auth/:/service
-      - ./management/userManageApp:/service/userManageApp
+      # - ./management/userManageApp:/service/userManageApp
     <<: *common
 
   management:
@@ -49,6 +49,7 @@ services:
       - gunicorn-base
     volumes:
       - ./management/:/service
+      - ./auth/user:/service/user
     <<: *common
 
   # nginx:

@@ -2,6 +2,8 @@ from rest_framework import generics, permissions
 from django.contrib.auth import get_user_model
 from .serializers import UserLoginSerializer, UserAvatarSerializer
 
+User = get_user_model()
+
 class UpdateLoginView(generics.UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = UserLoginSerializer
