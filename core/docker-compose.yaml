@@ -56,14 +56,13 @@ services:
       - ./auth/:/service
     <<: *common
 
-  # nginx:
-  #   container_name: nginx
-  #   build: ./nginx
-  #   ports:
-  #     - "443:443"
-  #   volumes:
-  #     - web_data:/var/www/html
-  #   <<: *common
-
-
-
+  nginx:
+    build: ./nginx
+    ports:     
+      - "80:80"
+    volumes:
+      - ./nginx/conf/nginx.conf:/etc/nginx/conf.d/default.conf  # Mount config
+    depends_on:
+      - auth
+    networks:
+      - transcendence
