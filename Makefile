@@ -7,6 +7,7 @@ COMPOSE				=	${DOCKER_COMPOSE} -f ${COMPOSE_FILE_PATH}
 
 PERSIST_DIR			=	${HOME}/data
 
+
 up:			set_perist
 			${COMPOSE} up -d --build
 			make logs
@@ -16,12 +17,11 @@ force_re:	set_perist
 			make logs
 
 set_perist:
-			if [ ! -d ${PERSIST_DIR} ]; then \
-				mkdir -p ${PERSIST_DIR}; \
-			fi
-			if [ ! -d ${PERSIST_DIR}/db ]; then \
-				mkdir -p ${PERSIST_DIR}/db; \
-			fi
+			for dir in "" "/redis" "/db"; do \
+				if [ ! -d "${PERSIST_DIR}$$dir" ]; then \
+					mkdir -p "${PERSIST_DIR}$$dir"; \
+				fi \
+			done
 
 bash_into:
 			CONTAINERS=$$(docker ps --format '{{.Names}}'); \
