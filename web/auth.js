@@ -2,112 +2,10 @@ import {renderMainMenu} from './main_menu.js'
 
 "use strict";
 
+let	app;
 
-async function	doAuth(creds, dir)
-{
-	let	response = await fetch(dir, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(creds),
-	} );
 
-	let data = await response.json();
-	data.ok = response.ok;
-
-	return (data);
-}
-
-async function	registerUser(event)
-{
-	event.preventDefault();
-
-	let	errField;
-
-	let creds = {
-		username: document.getElementById("registerUserField").value,
-		password: document.getElementById("registerPasswordField").value,
-	};
-	let confirmPasswd = document.getElementById("confirmPasswordField").value;
-
-	try
-	{
-		if (creds.password !== confirmPasswd)
-		{
-			errField = "confirmPasswordField";
-			throw new Error("Password mismatch.");	//	WRITE A BETTER MESSAGE
-		}
-
-		let responseData = await doAuth(creds, "auth/register/");
-
-		if (!responseData.ok)
-		{
-			errField = responseData.errField[0];
-			throw new Error(responseData.errMsg[0]);
-		}
-		else
-		{
-			document.cookie = "refresh="+encodeURIComponent(responseData.tokens.refresh)+"; samesite=strict";	//	; secure";
-			document.cookie = "access="+encodeURIComponent(responseData.tokens.access)+"; samesite=strict";	//	; secure";
-			renderMainMenu();
-		}
-	}
-	catch (error)
-	{
-		if (errField !== undefined)
-		{
-			let	errElem = document.getElementById(errField);
-			errElem.classList.add("is-invalid");
-			errElem.insertAdjacentHTML("afterend", "<div class=\"invalid-feedback\">"+error+"</div>")
-			event.stopPropagation();
-		}
-		else
-			alert(error);
-	}
-}
-
-async function	loginUser(event)
-{
-	event.preventDefault();
-
-	let	errField;
-
-	let creds = {
-		username: document.getElementById("loginUserField").value,
-		password: document.getElementById("loginPasswordField").value,
-	};
-
-	try
-	{
-		let responseData = await doAuth(creds, "auth/");
-
-		if (!responseData.ok)
-		{
-			errField = responseData.errField[0];
-			throw new Error(responseData.errMsg[0]);
-		}
-		else
-		{
-			document.cookie = "refresh="+encodeURIComponent(responseData.tokens.refresh)+"; samesite=strict";	//	; secure";
-			document.cookie = "access="+encodeURIComponent(responseData.tokens.access)+"; samesite=strict";	//	; secure";
-			renderMainMenu();
-		}
-	}
-	catch(error)
-	{
-		if (errField !== undefined)
-		{
-			let	errElem = document.getElementById(errField);
-			errElem.classList.add("is-invalid");
-			errElem.insertAdjacentHTML("afterend", "<div class=\"invalid-feedback\">"+error+"</div>")
-			event.stopPropagation();
-		}
-		else
-			alert(error);
-	}
-}
-
+	/*	PAGE RENDERING	*/
 function	renderPage()
 {
 	let transcendenceApp = document.getElementById("mainContainer");
@@ -137,13 +35,13 @@ function	renderPage()
 										<form id="loginForm">
 											<div class="input-group">
 												<span class="input-group-text">
-													<span class="bi-person"></span>
+													<span class="bi-person-fill"></span>
 												</span>
 												<input id="loginUserField" type="text" class="form-control" id="user" placeholder="Username">
 											</div>
 											<div class="input-group mt-1">
 												<span class="input-group-text">
-													<span class="bi-asterisk"></span>
+													<span class="bi-lock-fill"></span>
 												</span>
 												<input id="loginPasswordField" type="password" class="form-control" id="password" placeholder="Password">
 											</div>
@@ -156,13 +54,13 @@ function	renderPage()
 										<form id="registerForm">
 											<div class="input-group">
 												<span class="input-group-text">
-													<span class="bi-person"></span>
+													<span class="bi-person-fill"></span>
 												</span>
 												<input id="registerUserField" type="text" class="form-control" id="registerUser" placeholder="Username">
 											</div>
 											<div class="input-group mt-1">
 												<span class="input-group-text">
-													<span class="bi-asterisk"></span>
+													<span class="bi-lock-fill"></span>
 												</span>
 												<input id="registerPasswordField" type="password" class="form-control" id="registerPassword" placeholder="Password">
 											</div>
@@ -184,8 +82,161 @@ function	renderPage()
 	`;
 }
 
-export function	renderAuth()
+	/*	EVENT HANDLERS	*/
+async function	doAuth(creds, dir)
 {
+	let	response = await fetch(dir, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(creds),
+	} );
+
+	let data = await response.json();
+	data.ok = response.ok;
+
+	console.log(data);
+
+	return (data);
+}
+
+async function	registerUser(event)
+{
+	event.preventDefault();
+
+	let	errField;
+
+	let creds = {
+		username: document.getElementById("registerUserField").value,
+		password: document.getElementById("registerPasswordField").value,
+	};
+	let confirmPasswd = document.getElementById("confirmPasswordField").value;
+
+	try
+	{
+		if (creds.password !== confirmPasswd)
+		{
+			errField = "confirmPasswordField";
+			throw new Error("Password mismatch.");	//	WRITE A BETTER MESSAGE?
+		}
+
+		let responseData = await doAuth(creds, "auth/register/");
+
+		if (!responseData.ok)
+		{
+			let errKey = Object.keys(responseData)[0];
+			switch (errKey)
+			{
+				case "username":
+					errField = "registerUserField";
+					break ;
+				case "password":
+					errField = "registerPasswordField";
+					break ;
+				default:
+					throw new Error("Unhandled exception");
+			}
+			throw new Error(responseData[Object.keys(responseData)[0]]);
+		}
+		else
+		{
+			localStorage.setItem("access", responseData.tokens.access);
+			localStorage.setItem("refresh", responseData.tokens.refresh);
+			renderMainMenu(app);
+		}
+	}
+	catch (error)
+	{
+		if (errField !== undefined)
+		{
+			let errMsg = document.getElementById("errMsg");
+			if (errMsg !== null)
+				errMsg.remove();
+
+			let	errElem = document.getElementById(errField);
+			errElem.classList.add("is-invalid");
+			errElem.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>")
+			event.stopPropagation();
+		}
+		else
+			alert(error);
+	}
+}
+
+async function	loginUser(event)
+{
+	event.preventDefault();
+
+	let	errField;
+
+	let creds = {
+		username: document.getElementById("loginUserField").value,
+		password: document.getElementById("loginPasswordField").value,
+	};
+
+	try
+	{
+		let responseData = await doAuth(creds, "auth/");
+
+//		throw new Error(Object.keys(responseData)[0] + ": " + responseData[Object.keys(responseData)[0]]);
+//		GET FIRST OBJECT KEY + VALUE
+//		SWITCH/CASE OBJ KEY, SET errField ACCORDINGLY
+//		THROW EXCEPTION 
+
+		if (!responseData.ok)
+		{
+			let errKey = Object.keys(responseData)[0];
+			switch (errKey)
+			{
+				case "username":
+					errField = "loginUserField";
+					break ;
+				case "password":
+				case "detail":
+					errField = "loginPasswordField";
+					break ;
+				default:
+					throw new Error("Unhandled exception");
+			}
+			throw new Error(responseData[Object.keys(responseData)[0]]);
+		}
+		else
+		{
+			/*
+				localStorage.setItem("key", "value");
+				localStorage.getItem("key");	-> RETURNS null IF ITEM DOES NOT EXIST
+				localStorage.removeItem("key");
+			*/
+			localStorage.setItem("access", responseData.access);
+			localStorage.setItem("refresh", responseData.refresh);
+			renderMainMenu(app);
+		}
+	}
+	catch(error)
+	{
+		if (errField !== undefined)
+		{
+			let errMsg = document.getElementById("errMsg");
+			if (errMsg !== null)
+				errMsg.remove();
+
+			let	errElem = document.getElementById(errField);
+			errElem.classList.add("is-invalid");
+			errElem.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>")
+			event.stopPropagation();
+		}
+		else
+			alert(error);
+	}
+}
+
+
+	/*	MAIN FUNCTION	*/
+export function	renderAuth(appData)
+{
+	app = appData;
+
 	renderPage();
 	document.getElementById("loginForm").addEventListener("submit", (event) => loginUser(event) );
 	document.getElementById("registerForm").addEventListener("submit", (event) => registerUser(event) );

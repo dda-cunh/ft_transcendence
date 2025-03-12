@@ -4,21 +4,53 @@ import {renderPongGame} from './pong_game.js'
 
 "use strict";
 
-//	DECLARE A GLOBAL OBJECT FOR loggedIn STATUS (TRACK IT WITH TOKEN), GAME SETTINGS, ETC
+//	THIS MAY BE UNNECESSARY...
 let	app = {
-//	LOGIN TOKEN
+	settings: {},
 //	APP STATUS ("mainMenu"/"inGame"/"tournamentBoard")
 //	GAME SETTINGS
 //		GAMEPLAY
 //		VISUALS
 };
 
+function	initApp()
+{
+	app.settings.gameplay = {
+		matchType: "Single Player",
+		gameType: "Original",
+	};
+	app.settings.visuals = {
+		paddleColor: "White",
+		ballColor: "White",
+		backgroundColor: "Black",
+	};
+}
+
+function	userIsLoggedIn()
+{
+	let	accessToken = localStorage.getItem("access");
+	if (accessToken !== null)
+	{
+		//	QUERY BACKEND, IF access TOKEN IS INVALID, CHECK REFRESH TOKEN
+		return (true);
+	}
+
+	return (false);
+}
+
+
 function	main()
 {
-//	CHECK USER/APP STATUS & RENDER ACCORDINGLY
-	renderAuth();
-//	renderMainMenu();
-//	renderPongGame();
+	initApp();	//	BACKEND OR PERSISTENT STORAGE?
+
+	if (!userIsLoggedIn() )
+		renderAuth(app);
+	else
+	{
+//	CHECK APP STATUS & RENDER ACCORDINGLY
+		renderMainMenu(app);
+//		renderPongGame(app);
+	}
 }
 
 
