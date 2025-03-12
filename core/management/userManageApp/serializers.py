@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from django.utils import timezone
+from .models import FriendRequest
 
 User = get_user_model()
 
@@ -22,3 +24,16 @@ class UserAvatarSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['avatar']
+
+class FriendRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FriendRequest
+        fields = ['id', 'sender', 'receiver', 'sent_at', 'accepted_at']
+        read_only_fields = ['sent_at', 'accepted_at']
+
+    def validate(self, attrs):
+        sender = self.context['request'].user
+        receiver = attrs.get('receiver')
+        if sender == receiver:
+            raise serializers.ValidationError("You cannot send a friend request to yourself.")
+        return attrs

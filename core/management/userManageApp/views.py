@@ -4,7 +4,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response 
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
-from .serializers import UserLoginSerializer, UserAvatarSerializer
+from .serializers import UserLoginSerializer, UserAvatarSerializer, FriendRequestSerializer
+from .models import FriendRequest
+from rest_framework import status
+from django.utils import timezone
+from django.db import models
 
 User = get_user_model()
 
@@ -49,3 +53,65 @@ class PrivateUserInfoView(APIView):
             "last_activity": user.last_activity,
         }
         return Response(data)
+
+class FriendRequestCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        data = request.data.copy()
+        data['sender'] = str(request.user.id) 
+
+        serializer = FriendRequestSerializer(data=data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FriendRequestAcceptView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            friend_request = FriendRequest.objects.get(pk=pk, receiver=request.user, accepted_at__isnull=True)
+        except FriendRequest.DoesNotExist:
+            return Response({"detail": "No pending friend request with that ID."}, status=status.HTTP_404_NOT_FOUND)
+
+        friend_request.accepted_at = timezone.now()
+        friend_request.save()
+        return Response({"detail": "Friend request accepted."}, status=status.HTTP_200_OK)
+
+
+class FriendListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        accepted_reqs = FriendRequest.objects.filter(
+            accepted_at__isnull=False
+        ).filter(
+            models.Q(sender=user) | models.Q(receiver=user)
+        )
+
+        friend_ids = []
+        for fr in accepted_reqs:
+            if fr.sender == user:
+                friend_ids.append(fr.receiver.id)
+            else:
+                friend_ids.append(fr.sender.id)
+
+        friends = User.objects.filter(id__in=friend_ids)
+
+        response_data = []
+        for f in friends:
+            last_active_delta = timezone.now().date() - f.last_activity
+
+            is_online = (last_active_delta.days == 0) 
+            response_data.append({
+                "id": str(f.id),
+                "username": f.username,
+                "online": is_online
+            })
+
+        return Response(response_data, status=status.HTTP_200_OK)
