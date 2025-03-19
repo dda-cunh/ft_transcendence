@@ -46,6 +46,9 @@ logs:
 down:
 			${COMPOSE} down
 
+restart:
+			${COMPOSE} restart
+
 re:			fclean up
 
 clean:

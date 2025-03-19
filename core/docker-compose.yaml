@@ -56,6 +56,17 @@ services:
       - ./auth/:/service
     <<: *common
 
+  game:
+    container_name: game
+    build: ./game
+    depends_on:
+      - auth
+    volumes:
+      - ./game/:/service
+    ports:          #TODO: remove this
+      - "8000:8000" #^^^^^^^^^^^^^^^^^
+    <<: *common
+
   # nginx:
   #   container_name: nginx
   #   build: ./nginx
