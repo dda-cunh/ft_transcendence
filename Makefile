@@ -5,7 +5,8 @@ COMPOSE_FILE_PATH	=	./core/docker-compose.yaml
 
 COMPOSE				=	${DOCKER_COMPOSE} -f ${COMPOSE_FILE_PATH}
 
-PERSIST_DIR			=	${HOME}/ft_transcendence
+PERSIST_DIR			=	${HOME}/data
+
 
 up:			set_perist
 			${COMPOSE} up -d --build
@@ -16,9 +17,11 @@ force_re:	set_perist
 			make logs
 
 set_perist:
-			if [ ! -d ${PERSIST_DIR} ]; then \
-				mkdir -p ${PERSIST_DIR}; \
-			fi
+			for dir in "" "/redis" "/db"; do \
+				if [ ! -d "${PERSIST_DIR}$$dir" ]; then \
+					mkdir -p "${PERSIST_DIR}$$dir"; \
+				fi \
+			done
 
 bash_into:
 			CONTAINERS=$$(docker ps --format '{{.Names}}'); \
@@ -38,7 +41,7 @@ bash_into:
 			fi
 
 logs:
-			${COMPOSE} logs
+			${COMPOSE} logs -t
 
 down:
 			${COMPOSE} down

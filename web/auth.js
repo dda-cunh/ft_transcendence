@@ -66,7 +66,7 @@ function	renderPage()
 											</div>
 											<div class="input-group mt-1">
 												<span class="input-group-text">
-													<span class="bi-asterisk"></span>
+													<span class="bi-lock-fill"></span>
 												</span>
 												<input id="confirmPasswordField" type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password">
 											</div>
@@ -92,6 +92,8 @@ async function	doAuth(creds, dir)
 		},
 		body: JSON.stringify(creds),
 	} );
+
+	console.log(response);
 
 	let data = await response.json();
 	data.ok = response.ok;

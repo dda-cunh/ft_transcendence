@@ -13,11 +13,16 @@ function	renderPage()
 
 	transcendenceApp.innerHTML = `
 			<nav class="navbar navbar-dark shadow">
-				<h3 class="ps-4">TRANSCENDENCE</h3>
-				<div class="navbar-nav ms-auto">
-					<div class="col">
-						<small class="me-2">$username</small>
-						<a id="logoutBtn" href="#" class="nav-item nav-link pe-4 text-end">Logout</a>
+				<button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+					<span class="navbar-toggler-icon"></span> <!--REPLACE THIS WITH USER PROFILE PICTURE-->
+				</button>
+				<h1 class="mx-auto">TRANSCENDENCE</h1>
+				<div id="navbarCollapse" class="collapse navbar-collapse">
+					<div class="navbar-nav ps-4">
+						<b class="nav-item">$username</b>
+						<a id="profileBtn" href="#" class="nav-item nav-link">Profile</a>
+						<a id="friendsBtn" href="#" class="nav-item nav-link">Friends</a>
+						<a id="logoutBtn" href="#" class="nav-item nav-link">Logout</a>
 					</div>
 				</div>
 			</nav>
@@ -106,8 +111,19 @@ function	selectSettings()
 }
 
 	/*	EVENT HANDLERS	*/
-function	logoutUser()
+async function	logoutUser()
 {
+
+	let	response = await fetch("auth/delete", {	//	THIS IS DELETING THE USER, NOT JUST THE TOKENS...
+		method: "DELETE",
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": "Bearer " + localStorage.getItem("access"),
+		},
+	} );
+
+	console.log(response);
+
 	localStorage.removeItem("access");
 	localStorage.removeItem("refresh");
 	renderAuth(app)
@@ -115,10 +131,11 @@ function	logoutUser()
 
 function	setupEventHandlers()
 {
+	document.getElementById("profileBtn").addEventListener("click", ()=> alert("This feature has not been implemented yet.") );
+	document.getElementById("friendsBtn").addEventListener("click", ()=> alert("This feature has not been implemented yet.") );
 	document.getElementById("logoutBtn").addEventListener("click", logoutUser);
 	document.getElementById("btnFriendlyMatch").addEventListener("click", ()=> renderPongGame(app) );
 	document.getElementById("btnTournament").addEventListener("click", ()=> alert("This feature has not been implemented yet.") ) ;
-	//	ADD EVENT LISTENER FOR TOURNAMENT BTN
 }
 
 

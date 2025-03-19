@@ -4,7 +4,7 @@ import {renderPongGame} from './pong_game.js'
 
 "use strict";
 
-//	THIS MAY BE UNNECESSARY...
+//	THIS IS UNNECESSARY, KEEP THIS STUFF IN LOCAL STORAGE
 let	app = {
 	settings: {},
 //	APP STATUS ("mainMenu"/"inGame"/"tournamentBoard")
@@ -29,9 +29,20 @@ function	initApp()
 function	userIsLoggedIn()
 {
 	let	accessToken = localStorage.getItem("access");
+	console.log(accessToken);
 	if (accessToken !== null)
 	{
-		//	QUERY BACKEND, IF access TOKEN IS INVALID, CHECK REFRESH TOKEN
+/*
+		let	response = await fetch("auth/validate", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": "Bearer " + localStorage.getItem("access"),
+			},
+		} );
+
+		console.log(response);
+*/
 		return (true);
 	}
 
@@ -41,7 +52,7 @@ function	userIsLoggedIn()
 
 function	main()
 {
-	initApp();	//	BACKEND OR PERSISTENT STORAGE?
+	initApp();
 
 	if (!userIsLoggedIn() )
 		renderAuth(app);
