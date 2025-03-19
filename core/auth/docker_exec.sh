@@ -1,7 +1,5 @@
 #!/bin/bash
 
-apt-get update && apt-get install -y zlib1g-dev libjpeg-dev
-
 pip install --no-cache-dir -r requirements.txt
 
 python manage.py makemigrations user
