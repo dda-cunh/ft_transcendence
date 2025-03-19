@@ -48,6 +48,10 @@ down:
 
 re:			fclean up
 
+relaunch:
+			make down
+			make up
+
 clean:
 			${COMPOSE} down --rmi all
 
