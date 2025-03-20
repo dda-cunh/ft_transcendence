@@ -8,6 +8,7 @@ from .serializers import UserLoginSerializer, UserAvatarSerializer, FriendReques
 from .models import FriendRequest
 from rest_framework import status
 from django.utils import timezone
+from datetime import timedelta
 from django.db import models
 
 User = get_user_model()
@@ -38,6 +39,8 @@ class PublicUserDetailView(APIView):
         data = {
             "id": str(user.id),
             "username": user.username,
+            "avatar": user.avatar.name if user.avatar else None,
+            "last_activity": user.last_activity,
         }
         return Response(data)
 
@@ -103,15 +106,18 @@ class FriendListView(APIView):
 
         friends = User.objects.filter(id__in=friend_ids)
 
+        ONLINE_THRESHOLD = timedelta(minutes=5)
         response_data = []
+        now = timezone.now() 
         for f in friends:
-            last_active_delta = timezone.now().date() - f.last_activity
+            last_active_delta = now - f.last_activity
 
-            is_online = (last_active_delta.days == 0) 
+            is_online = (last_active_delta <= ONLINE_THRESHOLD)
             response_data.append({
                 "id": str(f.id),
                 "username": f.username,
-                "online": is_online
+                "online": is_online,
+                "last_activity": f.last_activity.isoformat(),
             })
 
         return Response(response_data, status=status.HTTP_200_OK)

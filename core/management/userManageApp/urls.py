@@ -1,13 +1,13 @@
 
-from django.urls import path
+from django.urls import re_path
 from .views import UpdateLoginView, UpdateAvatarView, PublicUserDetailView, PrivateUserInfoView, FriendRequestCreateView, FriendRequestAcceptView, FriendListView
 
 urlpatterns = [
-    path('login/', UpdateLoginView.as_view(), name='update_login'),
-    path('avatar/', UpdateAvatarView.as_view(), name='update_avatar'),
-    path('user/<uuid:user_id>/', PublicUserDetailView.as_view(), name='public_user_detail'),
-    path('user/', PrivateUserInfoView.as_view(), name='private_user_info'),
-    path('friends/request/', FriendRequestCreateView.as_view(), name='friend_request_create'),
-    path('friends/request/<int:pk>/accept/', FriendRequestAcceptView.as_view(), name='friend_request_accept'),
-    path('friends/', FriendListView.as_view(), name='friend_list'),
+    re_path(r'^username/?$', UpdateLoginView.as_view(), name='update_username'),
+    re_path(r'^avatar/?$', UpdateAvatarView.as_view(), name='update_avatar'),
+    re_path(r'^user/(?P<user_id>[0-9a-f-]+)/?$', PublicUserDetailView.as_view(), name='public_user_detail'),
+    re_path(r'^user/?$', PrivateUserInfoView.as_view(), name='private_user_info'),
+    re_path(r'^friends/request/?$', FriendRequestCreateView.as_view(), name='friend_request_create'),
+    re_path(r'^friends/request/(?P<pk>\d+)/accept/?$', FriendRequestAcceptView.as_view(), name='friend_request_accept'),
+    re_path(r'^friends/?$', FriendListView.as_view(), name='friend_list'),
 ]

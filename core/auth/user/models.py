@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 import uuid
 from django.core.validators import FileExtensionValidator
+from django.utils import timezone
 
 class UserManager(BaseUserManager):
     def create_user(self, username, password, **extra_fields):
@@ -25,7 +26,7 @@ class User(AbstractBaseUser):
         null=True,
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])]
     )
-    last_activity = models.DateField(auto_now=True)
+    last_activity = models.DateTimeField(auto_now=True)
 
     last_login = None
 
