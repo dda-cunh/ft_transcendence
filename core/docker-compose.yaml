@@ -56,6 +56,19 @@ services:
       - ./auth/:/service
     <<: *common
 
+
+
+
+
+
+
+
+
+
+
+
+
+
   management:
     container_name: management
     build: ./management
@@ -65,15 +78,3 @@ services:
       - ./management/:/service
       - ./auth/user/:/service/user
     <<: *common
-
-  # nginx:
-  #   container_name: nginx
-  #   build: ./nginx
-  #   ports:
-  #     - "443:443"
-  #   volumes:
-  #     - web_data:/var/www/html
-  #   <<: *common
-
-
-
