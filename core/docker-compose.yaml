@@ -56,19 +56,6 @@ services:
       - ./auth/:/service
     <<: *common
 
-
-
-
-
-
-
-
-
-
-
-
-
-
   management:
     container_name: management
     build: ./management
