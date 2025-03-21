@@ -26,35 +26,52 @@ function	initApp()
 	};
 }
 
-function	userIsLoggedIn()
+async function	checkToken(tkn)
 {
-	let	accessToken = localStorage.getItem("access");
-	console.log(accessToken);
-	if (accessToken !== null)
-	{
-/*
-		let	response = await fetch("auth/validate", {
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-				"Authorization": "Bearer " + localStorage.getItem("access"),
-			},
-		} );
+	console.log(tkn);
+
+	let	response = await fetch("auth/validate", {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": "Bearer " + tkn,
+		},
+	} );
 
 		console.log(response);
-*/
-		return (true);
+
+	return (response.ok);
+}
+
+async function	userIsLoggedIn()
+{
+	let	accessToken = localStorage.getItem("access");
+
+	if (accessToken !== null)
+	{
+		accessToken = "invalid";	//	FOR TESTING; REMOVE THIS LINE BEFORE PUSHING
+
+		let accessCheck = await checkToken(accessToken);
+		let refreshCheck = await checkToken(localStorage.getItem("refresh") );
+
+//		if (!accessCheck && refreshCheck)
+//			REFRESH ACCESS TOKEN
+
+		return (accessCheck	? true
+							: refreshCheck
+				);
 	}
 
 	return (false);
 }
 
 
-function	main()
+async function	main()
 {
 	initApp();
 
-	if (!userIsLoggedIn() )
+
+	if (!(await userIsLoggedIn() ) )
 		renderAuth(app);
 	else
 	{

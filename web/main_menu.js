@@ -111,19 +111,8 @@ function	selectSettings()
 }
 
 	/*	EVENT HANDLERS	*/
-async function	logoutUser()
+function	logoutUser()
 {
-
-	let	response = await fetch("auth/delete", {	//	THIS IS DELETING THE USER, NOT JUST THE TOKENS...
-		method: "DELETE",
-		headers: {
-			"Content-Type": "application/json",
-			"Authorization": "Bearer " + localStorage.getItem("access"),
-		},
-	} );
-
-	console.log(response);
-
 	localStorage.removeItem("access");
 	localStorage.removeItem("refresh");
 	renderAuth(app)
