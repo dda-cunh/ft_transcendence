@@ -61,6 +61,7 @@ services:
     build: ./management
     depends_on:
       - gunicorn-base
+      - auth
     volumes:
       - ./management/:/service
       - ./auth/user/:/service/user

@@ -47,7 +47,11 @@ INSTALLED_APPS = [
 ]
 
 MIGRATION_MODULES = {
-    'user': None,
+  'auth': None,
+  'contenttypes': None,
+  'sessions': None,
+  'admin': None,
+  'user': None,
 }
 
 REST_FRAMEWORK = {
@@ -67,6 +71,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'managementProject.middleware.UpdateLastActivityMiddleware',
 ]
 
 ROOT_URLCONF = 'managementProject.urls'
