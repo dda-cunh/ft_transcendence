@@ -1,4 +1,4 @@
-import {renderHome} from './home.js'
+import {renderApp} from './app.js'
 
 "use strict";
 
@@ -143,7 +143,7 @@ async function	registerUser(event)
 		{
 			localStorage.setItem("access", responseData.tokens.access);
 			localStorage.setItem("refresh", responseData.tokens.refresh);
-			renderHome();
+			renderApp();
 		}
 	}
 	catch (error)
@@ -205,7 +205,7 @@ async function	loginUser(event)
 		{
 			localStorage.setItem("access", responseData.access);
 			localStorage.setItem("refresh", responseData.refresh);
-			renderHome();
+			renderApp();
 		}
 	}
 	catch(error)
@@ -218,7 +218,7 @@ async function	loginUser(event)
 
 			let	errElem = document.getElementById(errField);
 			errElem.classList.add("is-invalid");
-			errElem.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>")
+			errElem.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">" + error + "</div>");
 			event.stopPropagation();
 		}
 		else

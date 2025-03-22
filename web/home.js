@@ -90,30 +90,22 @@ function	selectSettings()
 	document.querySelector("#backgroundColor").value = localStorage.getItem("backgroundColor");
 }
 
-	/*	EVENT HANDLERS	*/
-function	logoutUser()
-{
-	localStorage.removeItem("access");
-	localStorage.removeItem("refresh");
-	renderAuth()
-}
+
 
 function	setupEventHandlers()
 {
-	document.getElementById("profileBtn").addEventListener("click", ()=> renderProfile() );
-	document.getElementById("friendsBtn").addEventListener("click", ()=> alert("This feature has not been implemented yet.") );
-	document.getElementById("logoutBtn").addEventListener("click", logoutUser);
+
 
 	document.getElementById("btnFriendlyMatch").addEventListener("click", ()=> renderPongGame() );
 	document.getElementById("btnTournament").addEventListener("click", ()=> alert("This feature has not been implemented yet.") ) ;
 
-/*
-	document.getElementById("matchType").addEventListener("click", () => );
-	document.getElementById("gameType").addEventListener("click", () => );
-	document.getElementById("ballColor").addEventListener("click", () => );
-	document.getElementById("paddleColor").addEventListener("click", () => );
-	document.getElementById("backgroundColor").addEventListener("click", () => );
-*/
+
+	document.getElementById("matchType").addEventListener("click", function(event) { localStorage.setItem("matchType", document.getElementById("matchType").value) });
+	document.getElementById("gameType").addEventListener("click", function(event){ localStorage.setItem("gameType", document.getElementById("gameType").value) });
+	document.getElementById("ballColor").addEventListener("click", function(event){ localStorage.setItem("ballColor", document.getElementById("ballColor").value) });
+
+	document.getElementById("paddleColor").addEventListener("click", function(event){ localStorage.setItem("paddleColor", document.getElementById("paddleColor").value) });
+	document.getElementById("backgroundColor").addEventListener("click", function(event){ localStorage.setItem("backgroundColor", document.getElementById("backgroundColor").value) });
 }
 
 

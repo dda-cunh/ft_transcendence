@@ -80,7 +80,7 @@ async function	userIsLoggedIn()
 		if (refreshCheck.ok)
 		{
 			let body = await refreshCheck.json();
-			localStorage.setItem("access", body.access)
+			localStorage.setItem("access", body.access);
 			return (true);
 		}
 	}

@@ -1,15 +1,18 @@
 import {renderHome} from './home.js'
+import {renderAuth} from './auth.js'
+import {renderProfile} from './profile.js'
+import {renderFriends} from './friends.js'
 
 
-"use strict"
+"use strict";
 
-
+	/*	PAGE RENDERING	*/
 function renderNavbar()
 {
 	let	transcendenceApp = document.getElementById("mainContainer");
 
 	transcendenceApp.innerHTML = `
-		<nav class="navbar navbar-dark shadow">
+				<nav class="navbar navbar-dark shadow">
 			<button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
 				<span class="navbar-toggler-icon"></span>
 			</button>
@@ -25,6 +28,24 @@ function renderNavbar()
 		<div id="appContainer" class="container mt-4">
 		</div>
 	`;
+	//alert("error here");
+}
+
+
+	/*	EVENT HANDLERS	*/
+function	logoutUser()
+{
+	localStorage.removeItem("access");
+	localStorage.removeItem("refresh");
+	renderAuth()
+}
+
+function	setupEventHandlers()
+{
+	document.getElementById("titleHeader").addEventListener("click", () => renderHome());
+	document.getElementById("profileBtn").addEventListener("click", () => renderProfile() );
+	document.getElementById("friendsBtn").addEventListener("click", () => renderFriends() );
+	document.getElementById("logoutBtn").addEventListener("click", () => logoutUser());
 }
 
 
@@ -32,7 +53,7 @@ export function	renderApp()
 {
 	renderNavbar();
 
-	document.getElementById("titleHeader").addEventListener("click", () => renderHome());
+	setupEventHandlers();
 
 	//	CHECK STATUS
 	renderHome();

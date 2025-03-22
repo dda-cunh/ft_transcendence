@@ -1,7 +1,6 @@
-import {renderHome} from './home.js'
+import {renderFriends} from './friends.js'
 
-
-"use strict"
+"use strict";
 
 
 function	renderPage()
@@ -41,7 +40,7 @@ function	renderPage()
 				</div>
 				<div class="row mt-5 border rounded">
 					<div class="col-12 col-lg-3 border-end">
-						<h1 class="text-center">FRIENDS LIST</h1>
+						<h1 id="friendsHeader" class="text-center"><a href="#" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">FRIENDS LIST</a></h1> <!--MAKE THIS RENDER FRIENDS PAGE-->
 						<div class="position-relative" style="height: 250px; overflow-x: auto;">
 							<table class="table table-responsive table-borderless table-hover table-striped table-dark fw-bolder align-middle">
 								<tbody>
@@ -121,9 +120,9 @@ function	renderPage()
 													<table class="table table-responsive table-dark">
 														<thead>
 															<tr>
+																<th>Date</th>
 																<th>Opponent</th>
 																<th>Game type</th>
-																<th>Date</th>
 																<th>Score</th>
 																<th>Result</th>
 															</tr>
@@ -139,8 +138,8 @@ function	renderPage()
 													<table class="table table-responsive table-dark">
 														<thead>
 															<tr>
-																<th>Game type</th>
 																<th>Date</th>
+																<th>Game type</th>
 																<th>Placement</th>
 															</tr>
 														</thead>
@@ -161,10 +160,15 @@ function	renderPage()
 }
 
 
+function	setupEventHandlers()
+{
+	document.getElementById("friendsHeader").addEventListener("click", () => renderFriends());
+}
+
+
 	/*	MAIN FUNCTION	*/
 export function	renderProfile()	//	ADD A PARAMETER FOR THE USER TO DISPLAY
 {
-
 	renderPage();
-
+	setupEventHandlers();
 }
