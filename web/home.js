@@ -3,8 +3,6 @@ import {renderPongGame} from './pong_game.js'
 
 "use strict";
 
-let	app;
-
 
 	/*	PAGE RENDERING	*/
 function	renderPage()
@@ -14,15 +12,16 @@ function	renderPage()
 	transcendenceApp.innerHTML = `
 			<nav class="navbar navbar-dark shadow">
 				<button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-					<span class="navbar-toggler-icon"></span> <!--REPLACE THIS WITH USER PROFILE PICTURE-->
+					<span class="navbar-toggler-icon"></span>
 				</button>
-				<h1 class="mx-auto">TRANSCENDENCE</h1>
+				<h1 class="mx-auto"><a href="#" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">TRANSCENDENCE</a></h1>
 				<div id="navbarCollapse" class="collapse navbar-collapse">
 					<div class="navbar-nav ps-4">
-						<b class="nav-item">$username</b>
+						<!--USERNAME-->
+						<b class="nav-item"></b>
 						<a id="profileBtn" href="#" class="nav-item nav-link">Profile</a>
 						<a id="friendsBtn" href="#" class="nav-item nav-link">Friends</a>
-						<a id="logoutBtn" href="#" class="nav-item nav-link">Logout</a>
+						<a id="logoutBtn" href="#" class="nav-item nav-link text-light">Logout</a>
 					</div>
 				</div>
 			</nav>
@@ -100,14 +99,11 @@ function	renderPage()
 
 function	selectSettings()
 {
-	let	settings = app.settings;
-
-	document.querySelector("#matchType").value = settings.gameplay.matchType;
-	document.querySelector("#gameType").value = settings.gameplay.gameType;
-
-	document.querySelector("#ballColor").value = settings.visuals.ballColor;
-	document.querySelector("#paddleColor").value = settings.visuals.paddleColor;
-	document.querySelector("#backgroundColor").value = settings.visuals.backgroundColor;
+	document.querySelector("#matchType").value = localStorage.getItem("matchType");
+	document.querySelector("#gameType").value = localStorage.getItem("gameType");
+	document.querySelector("#ballColor").value = localStorage.getItem("ballColor");
+	document.querySelector("#paddleColor").value = localStorage.getItem("paddleColor");
+	document.querySelector("#backgroundColor").value = localStorage.getItem("backgroundColor");
 }
 
 	/*	EVENT HANDLERS	*/
@@ -115,7 +111,7 @@ function	logoutUser()
 {
 	localStorage.removeItem("access");
 	localStorage.removeItem("refresh");
-	renderAuth(app)
+	renderAuth()
 }
 
 function	setupEventHandlers()
@@ -123,16 +119,23 @@ function	setupEventHandlers()
 	document.getElementById("profileBtn").addEventListener("click", ()=> alert("This feature has not been implemented yet.") );
 	document.getElementById("friendsBtn").addEventListener("click", ()=> alert("This feature has not been implemented yet.") );
 	document.getElementById("logoutBtn").addEventListener("click", logoutUser);
-	document.getElementById("btnFriendlyMatch").addEventListener("click", ()=> renderPongGame(app) );
+
+	document.getElementById("btnFriendlyMatch").addEventListener("click", ()=> renderPongGame() );
 	document.getElementById("btnTournament").addEventListener("click", ()=> alert("This feature has not been implemented yet.") ) ;
+
+/*
+	document.getElementById("matchType").addEventListener("click", () => );
+	document.getElementById("gameType").addEventListener("click", () => );
+	document.getElementById("ballColor").addEventListener("click", () => );
+	document.getElementById("paddleColor").addEventListener("click", () => );
+	document.getElementById("backgroundColor").addEventListener("click", () => );
+*/
 }
 
 
 	/*	MAIN FUNCTION	*/
-export function	renderMainMenu(appData)
+export function	renderHome()
 {
-	app = appData;
-
 	renderPage();
 	selectSettings();
 

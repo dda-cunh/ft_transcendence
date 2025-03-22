@@ -1,8 +1,6 @@
-import {renderMainMenu} from './main_menu.js'
+import {renderHome} from './home.js'
 
 "use strict";
-
-let	app;
 
 
 	/*	PAGE RENDERING	*/
@@ -145,7 +143,7 @@ async function	registerUser(event)
 		{
 			localStorage.setItem("access", responseData.tokens.access);
 			localStorage.setItem("refresh", responseData.tokens.refresh);
-			renderMainMenu(app);
+			renderHome();
 		}
 	}
 	catch (error)
@@ -205,14 +203,9 @@ async function	loginUser(event)
 		}
 		else
 		{
-			/*
-				localStorage.setItem("key", "value");
-				localStorage.getItem("key");	-> RETURNS null IF ITEM DOES NOT EXIST
-				localStorage.removeItem("key");
-			*/
 			localStorage.setItem("access", responseData.access);
 			localStorage.setItem("refresh", responseData.refresh);
-			renderMainMenu(app);
+			renderHome();
 		}
 	}
 	catch(error)
@@ -235,11 +228,10 @@ async function	loginUser(event)
 
 
 	/*	MAIN FUNCTION	*/
-export function	renderAuth(appData)
+export function	renderAuth()
 {
-	app = appData;
-
 	renderPage();
+
 	document.getElementById("loginForm").addEventListener("submit", (event) => loginUser(event) );
 	document.getElementById("registerForm").addEventListener("submit", (event) => registerUser(event) );
 }

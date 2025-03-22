@@ -1,46 +1,57 @@
 import {renderAuth} from './auth.js'
-import {renderMainMenu} from './main_menu.js'
+import {renderApp} from './app.js'
+
+import {renderHome} from './home.js'
 import {renderPongGame} from './pong_game.js'
 
 "use strict";
 
-//	THIS IS UNNECESSARY, KEEP THIS STUFF IN LOCAL STORAGE
-let	app = {
-	settings: {},
-//	APP STATUS ("mainMenu"/"inGame"/"tournamentBoard")
-//	GAME SETTINGS
-//		GAMEPLAY
-//		VISUALS
-};
 
 function	initApp()
 {
-	app.settings.gameplay = {
-		matchType: "Single Player",
-		gameType: "Original",
-	};
-	app.settings.visuals = {
-		paddleColor: "White",
-		ballColor: "White",
-		backgroundColor: "Black",
-	};
+	let matchType = localStorage.getItem("matchType");			// "Single Player"
+	let gameType = localStorage.getItem("gameType");			// "Original"
+	let paddleColor = localStorage.getItem("paddleColor");			// "White"
+	let ballColor = localStorage.getItem("ballColor");			// "White"
+	let backgroundColor = localStorage.getItem("backgroundColor");		// "Black"
+
+	if (matchType === null)
+	{
+		localStorage.setItem("matchType", "Single Player");
+	}
+
+	if (gameType === null)
+	{
+		localStorage.setItem("gameType", "Original");
+	}
+
+	if (paddleColor === null)
+	{
+		localStorage.setItem("paddleColor", "White");
+	}
+
+	if (ballColor === null)
+	{
+		localStorage.setItem("ballColor", "White");
+	}
+
+	if (backgroundColor === null)
+	{
+		localStorage.setItem("backgroundColor", "Black");
+	}				
 }
 
-async function	checkToken(tkn)
+async function	checkToken(path, method, tkn)
 {
-	console.log(tkn);
-
-	let	response = await fetch("auth/validate", {
-		method: "GET",
+	let	response = await fetch("auth/" + path, {
+		method: method,
 		headers: {
 			"Content-Type": "application/json",
 			"Authorization": "Bearer " + tkn,
 		},
 	} );
 
-		console.log(response);
-
-	return (response.ok);
+	return (response);
 }
 
 async function	userIsLoggedIn()
@@ -49,16 +60,38 @@ async function	userIsLoggedIn()
 
 	if (accessToken !== null)
 	{
-		accessToken = "invalid";	//	FOR TESTING; REMOVE THIS LINE BEFORE PUSHING
+		localStorage.setItem("access", "invalid");	//	FOR TESTING; REMOVE THIS LINE BEFORE PUSHING
 
-		let accessCheck = await checkToken(accessToken);
-		let refreshCheck = await checkToken(localStorage.getItem("refresh") );
+
+		let accessCheck = await await fetch("auth/validate", {
+											method: "GET",
+											headers: {
+												"Content-Type": "application/json",
+												"Authorization": "Bearer " + accessToken,
+												},
+											} );
+		if (accessCheck.ok)
+			return (true);
+
+		let refreshCheck = await fetch("auth/refresh", {
+										method: "POST",
+										headers: {
+											"Content-Type": "application/json",
+											},
+										body: JSON.stringify({ refresh: localStorage.getItem("refresh") })
+
+         											} );
+		if (refreshCheck.ok)
+		{
+			console.log(refreshCheck.headers);
+			return (true);
+		}
 
 //		if (!accessCheck && refreshCheck)
 //			REFRESH ACCESS TOKEN
 
-		return (accessCheck	? true
-							: refreshCheck
+		return (accessCheck.ok	? true
+							: refreshCheck.ok
 				);
 	}
 
@@ -72,12 +105,12 @@ async function	main()
 
 
 	if (!(await userIsLoggedIn() ) )
-		renderAuth(app);
+		renderAuth();
 	else
 	{
 //	CHECK APP STATUS & RENDER ACCORDINGLY
-		renderMainMenu(app);
-//		renderPongGame(app);
+		renderHome();
+//		renderPongGame();
 	}
 }
 
