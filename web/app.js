@@ -1,7 +1,39 @@
+import {renderHome} from './home.js'
+
+
 "use strict"
+
+
+function renderNavbar()
+{
+	let	transcendenceApp = document.getElementById("mainContainer");
+
+	transcendenceApp.innerHTML = `
+		<nav class="navbar navbar-dark shadow">
+			<button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<h1 id="titleHeader" class="mx-auto"><a href="#" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">TRANSCENDENCE</a></h1>
+			<div id="navbarCollapse" class="collapse navbar-collapse">
+				<div class="navbar-nav ps-4">
+					<a id="profileBtn" href="#" class="nav-item nav-link">Profile</a>
+					<a id="friendsBtn" href="#" class="nav-item nav-link">Friends</a>
+					<a id="logoutBtn" href="#" class="nav-item nav-link text-light">Logout</a>
+				</div>
+			</div>
+		</nav>
+		<div id="appContainer" class="container mt-4">
+		</div>
+	`;
+}
 
 
 export function	renderApp()
 {
-	
+	renderNavbar();
+
+	document.getElementById("titleHeader").addEventListener("click", () => renderHome());
+
+	//	CHECK STATUS
+	renderHome();
 }

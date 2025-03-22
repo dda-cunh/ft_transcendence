@@ -60,9 +60,6 @@ async function	userIsLoggedIn()
 
 	if (accessToken !== null)
 	{
-		localStorage.setItem("access", "invalid");	//	FOR TESTING; REMOVE THIS LINE BEFORE PUSHING
-
-
 		let accessCheck = await await fetch("auth/validate", {
 											method: "GET",
 											headers: {
@@ -78,21 +75,14 @@ async function	userIsLoggedIn()
 										headers: {
 											"Content-Type": "application/json",
 											},
-										body: JSON.stringify({ refresh: localStorage.getItem("refresh") })
-
-         											} );
+										body: JSON.stringify({ refresh: localStorage.getItem("refresh") }),
+										} );
 		if (refreshCheck.ok)
 		{
-			console.log(refreshCheck.headers);
+			let body = await refreshCheck.json();
+			localStorage.setItem("access", body.access)
 			return (true);
 		}
-
-//		if (!accessCheck && refreshCheck)
-//			REFRESH ACCESS TOKEN
-
-		return (accessCheck.ok	? true
-							: refreshCheck.ok
-				);
 	}
 
 	return (false);
@@ -107,11 +97,7 @@ async function	main()
 	if (!(await userIsLoggedIn() ) )
 		renderAuth();
 	else
-	{
-//	CHECK APP STATUS & RENDER ACCORDINGLY
-		renderHome();
-//		renderPongGame();
-	}
+		renderApp();
 }
 
 
