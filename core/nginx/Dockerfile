@@ -1,19 +1,34 @@
-FROM debian:11
+# nginx/Dockerfile
+FROM    debian:bullseye
 
-RUN apt-get update && apt-get install -y nginx openssl \
-	&& rm -rf /var/lib/apt/lists/* \
-	&& mkdir /etc/nginx/ssl \
-	&& chown www-data:www-data /var/www/html \
-	&& openssl genrsa -out /etc/nginx/ssl/fmouronh.42.fr.key \
-	&& openssl req -new -key /etc/nginx/ssl/fmouronh.42.fr.key -out /etc/nginx/ssl/fmouronh.42.fr.csr \
-	-subj "/C=PT/ST=Lisbon/L=Lisbon/CN=fmouronh.42.fr" \
-	&& openssl x509 -req -days 365 -in /etc/nginx/ssl/fmouronh.42.fr.csr \
-	-signkey /etc/nginx/ssl/fmouronh.42.fr.key -out /etc/nginx/ssl/fmouronh.42.fr.crt \
-	&& rm /var/www/html/index.nginx-debian.html
+# # Update the package list and install openssl and nginx
+RUN apt-get update && \
+    apt-get install -yq nginx openssl && \
+    rm -rf /var/lib/apt/lists/*
 
-COPY conf/default /etc/nginx/sites-available/default
-COPY conf/nginx.conf /etc/nginx/nginx.conf
+# # Copy the Nginx configuration file
+RUN rm -f /etc/nginx/sites-enabled/default
+COPY ./conf/nginx.conf /etc/nginx/conf.d/default.conf
+
+RUN mkdir -p /etc/nginx/ssl
+# Generate a self-signed certificate
+
+RUN openssl req -x509 -nodes -days 365 \
+    -newkey rsa:2048 \
+    -keyout /etc/nginx/ssl/nginx-selfsigned.key \
+    -out /etc/nginx/ssl/nginx-selfsigned.crt \
+    -subj "/C=PT/ST=Lisbon/L=Lisbon/O=42/OU=42/CN=transcendance"
 
 
-EXPOSE 80/tcp
-CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
+RUN chmod 600 /etc/nginx/ssl/*
+
+# Create log directories
+RUN mkdir -p /var/log/nginx/transcendance/
+
+
+# # Expose the port
+EXPOSE 443
+EXPOSE 80
+
+# # Start the Nginx server
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
