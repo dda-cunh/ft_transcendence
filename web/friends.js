@@ -22,10 +22,10 @@ function renderPage()
 						<div class="card-header mx-auto">
 							<ul class="nav nav-tabs card-header-tabs">
 								<li class="nav-item">
-									<a href="#manageFriends" class="nav-link bg-dark text-light active" data-bs-toggle="tab">Manage Friends</a>
+									<a href="#manageFriends" class="nav-link bg-dark text-light active" data-bs-toggle="tab"><small>Manage Friends</small></a>
 								</li>
 								<li class="nav-item">
-									<a href="#friendRequests" class="nav-link bg-dark text-light" data-bs-toggle="tab">Friend Requests</a>
+									<a href="#friendRequests" class="nav-link bg-dark text-light" data-bs-toggle="tab"><small>Friend Requests</small></a>
 								</li>
 							</ul>
 						</div>
@@ -58,7 +58,7 @@ function renderPage()
 										<div class="row position-relative bottom-0">
 											<div class="col">
 												<!--PAGINATION-->
-												<ul class="pagination d-flex flex-row align-items-end h-100" >
+												<ul class="pagination d-flex flex-row align-items-end justify-content-center h-100" >
 												<!--SAMPLE-->
 													<li class="page-item">
 														<button type="submit" class="btn btn-outline-light">
@@ -91,7 +91,7 @@ function renderPage()
 										</div>
 									</div>
 								</div>
-								<!--ADD FRIENDS-->
+								<!--FRIEND REQUESTS-->
 								<div class="tab-pane fade" id="friendRequests">
 									<div class="position-relative" style="height: 200px;">
 											<table class="table table-dark table-responsive table-striped table-hover table-borderless">
@@ -116,7 +116,7 @@ function renderPage()
 											<div class="row position-relative bottom-0">
 												<div class="col">
 													<!--PAGINATION-->
-													<ul class="pagination d-flex flex-row align-items-end h-100" >
+													<ul class="pagination d-flex flex-row align-items-end justify-content-center h-100" >
 													<!--SAMPLE-->
 														<li class="page-item">
 															<button type="submit" class="btn btn-outline-light">

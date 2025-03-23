@@ -11,6 +11,36 @@ function	renderPage()
 	let	transcendenceApp = document.getElementById("appContainer");
 
 	transcendenceApp.innerHTML = `
+			<div class="row text-center d-flex justify-content-center">
+				<div class="col-12 col-lg-2 mt-lg-4 border rounded-circle">
+					<!--PROFILE PIC-->
+<!--
+					<img src="" class="img-fluid rounded-circle" alt="User Profile Picture">
+-->
+				</div>
+				<div class="col-12 col-lg-8 mx-lg-2 mt-4 border rounded">
+					<div class="row h-auto">
+						<div class="col d-flex justify-content-end align-items-start">
+							<!--EDIT PROFILE BTN (CHG DISPLAY NAME, CHG MOTTO, CHG PFP)-->
+							<button type="button" class="btn btn-sm btn-outline-light mx-2 my-2"><i class="bi-pencil-fill"></i></button>
+							<!--SETTINGS BTN (CHG PASSWD, DELETE ACCOUNT)-->
+							<button type="button" class="btn btn-sm btn-outline-light my-2"><i class="bi-gear-fill"></i></button>
+						</div>
+					</div>
+					<div class="flex-row flex-fill align-middle">
+						<div class="col py-auto d-flex justify-content-center">
+							<!--USERNAME-->
+							<h1 id="userNameDisplay" class="display-1"><a href="#" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">$USER</a></h1>
+						</div>
+					</div>
+					<div class="row d-flex align-items-end">
+						<div class="col">
+							<!--MOTTO-->
+							<p class="fst-italic">"Some days you are the pidgeon, some days you are the statue. Today it's clearly statue day."</p>
+						</div>
+					</div>
+				</div>
+			</div>
 			<div class="row text-center justify-content-center">
 				<div class="col-12 col-lg-5 mx-lg-1 mt-4 border">
 					<div class="row">
@@ -94,6 +124,9 @@ function	selectSettings()
 
 function	setupEventHandlers()
 {
+
+	document.getElementById("userNameDisplay").addEventListener("click", ()=> renderProfile() );
+
 	document.getElementById("btnFriendlyMatch").addEventListener("click", ()=> renderPongGame() );
 	document.getElementById("btnTournament").addEventListener("click", ()=> alert("This feature has not been implemented yet.") ) ;
 

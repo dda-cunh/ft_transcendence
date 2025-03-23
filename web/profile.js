@@ -24,7 +24,7 @@ function	renderPage()
 
 	transcendenceApp.innerHTML = `
 				<div class="row">
-					<div class="col-12 col-lg-3 my-3 mt-lg-0">
+					<div class="col-12 col-lg-3 my-3 mt-lg-0 border rounded-circle">
 						<!--PROFILE PIC-->
 <!--
 						<img src="" class="img-fluid rounded-circle" alt="User Profile Picture">
