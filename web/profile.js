@@ -169,6 +169,7 @@ function	setupEventHandlers()
 	/*	MAIN FUNCTION	*/
 export function	renderProfile()	//	ADD A PARAMETER FOR THE USER TO DISPLAY
 {
+	localStorage.setItem("currentView", "profile");
 	renderPage();
 	setupEventHandlers();
 }

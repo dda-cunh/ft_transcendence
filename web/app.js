@@ -52,9 +52,18 @@ function	setupEventHandlers()
 export function	renderApp()
 {
 	renderNavbar();
-
 	setupEventHandlers();
 
-	//	CHECK STATUS
-	renderHome();
+	switch (localStorage.getItem("currentView") )
+	{
+		case ("home"):
+			renderHome();
+			break ;
+		case("profile"):
+			renderProfile();
+			break ;
+		case ("friends"):
+			renderFriends();
+			break ;
+	}
 }

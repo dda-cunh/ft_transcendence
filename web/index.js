@@ -9,36 +9,31 @@ import {renderPongGame} from './pong_game.js'
 
 function	initApp()
 {
-	let matchType = localStorage.getItem("matchType");			// "Single Player"
-	let gameType = localStorage.getItem("gameType");			// "Original"
-	let paddleColor = localStorage.getItem("paddleColor");			// "White"
-	let ballColor = localStorage.getItem("ballColor");			// "White"
-	let backgroundColor = localStorage.getItem("backgroundColor");		// "Black"
+	let	currentView = localStorage.getItem("currentView");
+
+	let matchType = localStorage.getItem("matchType");
+	let gameType = localStorage.getItem("gameType");
+	let paddleColor = localStorage.getItem("paddleColor");
+	let ballColor = localStorage.getItem("ballColor");
+	let backgroundColor = localStorage.getItem("backgroundColor");
+
+	if (currentView === null)
+		localStorage.setItem("currentView", "home");
 
 	if (matchType === null)
-	{
 		localStorage.setItem("matchType", "Single Player");
-	}
 
 	if (gameType === null)
-	{
 		localStorage.setItem("gameType", "Original");
-	}
 
 	if (paddleColor === null)
-	{
 		localStorage.setItem("paddleColor", "White");
-	}
 
 	if (ballColor === null)
-	{
 		localStorage.setItem("ballColor", "White");
-	}
 
 	if (backgroundColor === null)
-	{
 		localStorage.setItem("backgroundColor", "Black");
-	}				
 }
 
 async function	checkToken(path, method, tkn)

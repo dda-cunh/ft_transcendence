@@ -112,6 +112,7 @@ function	setupEventHandlers()
 	/*	MAIN FUNCTION	*/
 export function	renderHome()
 {
+	localStorage.setItem("currentView", "home");
 	renderPage();
 	selectSettings();
 

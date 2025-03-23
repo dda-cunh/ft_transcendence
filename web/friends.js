@@ -138,5 +138,6 @@ function renderPage()
 
 export function	renderFriends()
 {
+	localStorage.setItem("currentView", "friends");
 	renderPage();
 }
