@@ -25,7 +25,7 @@ function renderPage()
 									<a href="#manageFriends" class="nav-link bg-dark text-light active" data-bs-toggle="tab">Manage Friends</a>
 								</li>
 								<li class="nav-item">
-									<a href="#addFriends" class="nav-link bg-dark text-light" data-bs-toggle="tab">Add Friends</a>
+									<a href="#friendRequests" class="nav-link bg-dark text-light" data-bs-toggle="tab">Friend Requests</a>
 								</li>
 							</ul>
 						</div>
@@ -34,7 +34,7 @@ function renderPage()
 								<!--MANAGE FRIENDS-->
 								<div class="tab-pane fade show active" id="manageFriends">
 									<div class="position-relative d-grid">
-										<table class="table table-responsive table-striped table-dark">
+										<table class="table table-responsive table-striped table-dark table-hover table-borderless">
 											<tbody style="height: 320px;">
 												<!--FRIENDS LIST-->
 												<!--SHOW 5 PER PAGE? FILL WITH BLANKS IF N < MAX-->
@@ -92,27 +92,10 @@ function renderPage()
 									</div>
 								</div>
 								<!--ADD FRIENDS-->
-								<div class="tab-pane fade" id="addFriends">
+								<div class="tab-pane fade" id="friendRequests">
 									<div class="position-relative" style="height: 200px;">
-											<table class="table table-dark table-responsive table-striped">
-												<thead>
-													<!--SEARCH BAR-->
-													<div class="row justify-content-center">
-														<div class="col-md-7">
-															<!--MAKE THIS SMALLER-->
-															<div class="input-group">
-																<span class="input-group-text">
-																	<button type="submit" class="btn">
-																		<span class="bi-search"></span>
-																	</button>
-																</span>
-																<input type="text" class="form-control" placeholder="Search...">
-															</div>
-															<!---->
-														</div>
-													</div>
-												</thead>
-												<tbody style="height: 260px;">
+											<table class="table table-dark table-responsive table-striped table-hover table-borderless">
+												<tbody style="height: 320px;">
 													<tr>
 														<td></td>
 													</tr>
