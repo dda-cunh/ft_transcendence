@@ -19,8 +19,9 @@ function renderNavbar()
 			<h1 id="titleHeader" class="mx-auto"><a href="#" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">TRANSCENDENCE</a></h1>
 			<div id="navbarCollapse" class="collapse navbar-collapse">
 				<div class="navbar-nav ps-4">
+					<!--ADD HOME BTN-->
+					<a id="homeBtn" href="#" class="nav-item nav-link">Home</a>
 					<a id="profileBtn" href="#" class="nav-item nav-link">Profile</a>
-					<a id="friendsBtn" href="#" class="nav-item nav-link">Friends</a>
 					<a id="logoutBtn" href="#" class="nav-item nav-link text-light">Logout</a>
 				</div>
 			</div>
@@ -43,8 +44,8 @@ function	logoutUser()
 function	setupEventHandlers()
 {
 	document.getElementById("titleHeader").addEventListener("click", () => renderHome());
+	document.getElementById("homeBtn").addEventListener("click", () => renderHome() );
 	document.getElementById("profileBtn").addEventListener("click", () => renderProfile() );
-	document.getElementById("friendsBtn").addEventListener("click", () => renderFriends() );
 	document.getElementById("logoutBtn").addEventListener("click", () => logoutUser());
 }
 

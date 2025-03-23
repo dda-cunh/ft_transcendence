@@ -4,6 +4,13 @@ import {renderProfile} from './profile.js'
 "use strict";
 
 
+/*
+	DATA NEEDED:
+		FRIENDS LIST
+
+*/
+
+
 function renderPage()
 {
 	let	transcendenceApp = document.getElementById("appContainer");
@@ -48,10 +55,10 @@ function renderPage()
 												</tr>
 											</tbody>
 										</table>
-										<div class="row">
-											<div class="col border">
+										<div class="row position-relative bottom-0">
+											<div class="col">
 												<!--PAGINATION-->
-												<ul class="pagination border" >
+												<ul class="pagination d-flex flex-row align-items-end h-100" >
 												<!--SAMPLE-->
 													<li class="page-item">
 														<button type="submit" class="btn btn-outline-light">
@@ -87,7 +94,7 @@ function renderPage()
 								<!--ADD FRIENDS-->
 								<div class="tab-pane fade" id="addFriends">
 									<div class="position-relative" style="height: 200px;">
-											<table class="table table-responsive table-striped">
+											<table class="table table-dark table-responsive table-striped">
 												<thead>
 													<!--SEARCH BAR-->
 													<div class="row justify-content-center">
@@ -105,26 +112,59 @@ function renderPage()
 														</div>
 													</div>
 												</thead>
-												<tbody>
-													<!--SEARCH RESULTS-->
+												<tbody style="height: 260px;">
+													<tr>
+														<td></td>
+													</tr>
+													<tr>
+														<td></td>
+													</tr>
+													<tr>
+														<td></td>
+													</tr>
+													<tr>
+														<td></td>
+													</tr>
+													<tr>
+														<td></td>
+													</tr>
 												</tbody>
-												<tfoot>
+											</table>
+											<div class="row position-relative bottom-0">
+												<div class="col">
 													<!--PAGINATION-->
-													<ul class="pagination border" >
+													<ul class="pagination d-flex flex-row align-items-end h-100" >
+													<!--SAMPLE-->
 														<li class="page-item">
 															<button type="submit" class="btn btn-outline-light">
 																<small>Previous</small>
 															</button>
 														</li>
-														<!--ADD NUM ITEMS WITH JS-->
+														<li class="page-item">
+															<button type="submit" class="btn btn-outline-light active">
+																<small>1</small>
+															</button>
+														</li>
+														<li class="page-item">
+															<button type="submit" class="btn btn-outline-light">
+																<small>2</small>
+															</button>
+														</li>
+														<li class="page-item">
+															<button type="submit" class="btn btn-outline-light">
+																<small>3</small>
+															</button>
+														</li>
 														<li class="page-item">
 															<button type="submit" class="btn btn-outline-light">
 																<small>Next</small>
 															</button>
 														</li>
+													<!---->
 													</ul>
-												</tfoot>
-											</table>
+												</div>
+											</div>
+										</div>
 									</div>
 								</div>							
 							</div>

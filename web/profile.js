@@ -3,12 +3,27 @@ import {renderFriends} from './friends.js'
 "use strict";
 
 
+/*
+	DATA NEEDED:
+		USER NAME
+		PLAYER MOTTO
+		FRIENDS LIST
+
+		MATCH HISTORY
+			GAMES PLAYED/WON/LOSS + TOURNAMENTS
+			MATCHES + TOURNAMENTS LIST
+
+
+	ALL MATCHES + TOURNAMENTS NEED ID
+	TOURNAMENT ID 0 IS RESERVED FOR FRIENDLY MATCHES
+*/
+
 function	renderPage()
 {
 	let	transcendenceApp = document.getElementById("appContainer");
 
 	transcendenceApp.innerHTML = `
-						<div class="row">
+				<div class="row">
 					<div class="col-12 col-lg-3 my-3 mt-lg-0">
 						<!--PROFILE PIC-->
 <!--
@@ -19,9 +34,9 @@ function	renderPage()
 						<div class="row h-auto">
 							<div class="col d-flex justify-content-end align-items-start">
 								<!--EDIT PROFILE BTN (CHG DISPLAY NAME, CHG MOTTO, CHG PFP)-->
-								<button type="button" class="btn btn-sm btn-light mx-2 my-2"><i class="bi-pencil-fill"></i></button>
+								<button type="button" class="btn btn-sm btn-outline-light mx-2 my-2"><i class="bi-pencil-fill"></i></button>
 								<!--SETTINGS BTN (CHG PASSWD, DELETE ACCOUNT)-->
-								<button type="button" class="btn btn-sm btn-light my-2"><i class="bi-gear-fill"></i></button>
+								<button type="button" class="btn btn-sm btn-outline-light my-2"><i class="bi-gear-fill"></i></button>
 							</div>
 						</div>
 						<div class="flex-row flex-fill align-middle">
@@ -40,7 +55,12 @@ function	renderPage()
 				</div>
 				<div class="row mt-5 border rounded">
 					<div class="col-12 col-lg-3 border-end">
-						<h1 id="friendsHeader" class="text-center"><a href="#" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">FRIENDS LIST</a></h1> <!--MAKE THIS RENDER FRIENDS PAGE-->
+						<h1 class="text-center">
+							<span>
+								<button id="manageFriendsBtn" class="btn btn-sm btn-outline-light"><i class="bi-pencil-fill"></i></button>
+							</span>
+							FRIENDS LIST
+						</h1>
 						<div class="position-relative" style="height: 250px; overflow-x: auto;">
 							<table class="table table-responsive table-borderless table-hover table-striped table-dark fw-bolder align-middle">
 								<tbody>
@@ -55,49 +75,49 @@ function	renderPage()
 							<div class="col-12 col-lg-3 d-grid border-top">
 								<!--MATCH HISTORY (TOTAL GAMES PLAYED/WINS/LOSSES)-->
 								<div class="row d-flex my-2 py-2 align-content-center">
-									<div class="col-5 col-lg-10 text-wrap align-self-center">
+									<div class="col-3 col-lg-9 text-wrap align-self-center text-end">
 										<small>MATCHES PLAYED</small>
 									</div>
-									<div class="col-1 col-lg-2 align-self-center">
-<!--
-										<p>7</p>
--->
+									<div class="col-1 col-lg-3 align-self-center text-start">
+
+										<small>7</small>
+
 									</div>
-									<div class="col-2 col-lg-10 text-wrap align-self-center">
+									<div class="col-3 col-lg-9 text-wrap align-self-center text-end">
 										<small>WINS</small>
 									</div>
-									<div class="col-1 col-lg-2 align-self-center">
-<!--
-										<p>5</p>
--->
+									<div class="col-1 col-lg-3 align-self-center text-start">
+
+										<small>5</small>
+
 									</div>
-									<div class="col-2 col-lg-10 text-wrap align-self-center">
+									<div class="col-3 col-lg-9 text-wrap align-self-center text-end">
 										<small>LOSSES</small>
 									</div>
-									<div class="col-1 col-lg-2 align-self-center">
-<!--
-										<p>2</p>
--->
+									<div class="col-1 col-lg-3 align-self-center text-start">
+
+										<small>2</small>
+
 									</div>
 
 								</div>
 								<div class="row d-flex my-2 py-2 align-content-center border-top">
 									<!--TOURNAMENT HISTORY-->
-									<div class="col-5 col-lg-10 text-wrap align-self-center">
+									<div class="col-5 col-lg-9 text-wrap align-self-center text-end">
 										<small>TOURNAMENTS JOINED</small>
 									</div>
-									<div class="col-1 col-lg-2 align-self-center">
-<!--
-										<p>1</p>
--->
+									<div class="col-1 col-lg-3 align-self-center text-start">
+
+										<small>1</small>
+
 									</div>
-									<div class="col-5 col-lg-10 text-wrap align-self-center">
+									<div class="col-5 col-lg-9 text-wrap align-self-center text-end">
 										<small>TOURNAMENTS WON</small>
 									</div>
-									<div class="col-1 col-lg-2 align-self-center">
-<!--
-										<p>0</p>
--->
+									<div class="col-1 col-lg-3 align-self-center text-start">
+
+										<small>2</small>
+
 									</div>
 								</div>
 							</div>
@@ -162,7 +182,7 @@ function	renderPage()
 
 function	setupEventHandlers()
 {
-	document.getElementById("friendsHeader").addEventListener("click", () => renderFriends());
+	document.getElementById("manageFriendsBtn").addEventListener("click", () => renderFriends());
 }
 
 
