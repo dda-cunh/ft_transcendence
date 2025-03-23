@@ -94,18 +94,14 @@ function	selectSettings()
 
 function	setupEventHandlers()
 {
-
-
 	document.getElementById("btnFriendlyMatch").addEventListener("click", ()=> renderPongGame() );
 	document.getElementById("btnTournament").addEventListener("click", ()=> alert("This feature has not been implemented yet.") ) ;
 
-
-	document.getElementById("matchType").addEventListener("click", function(event) { localStorage.setItem("matchType", document.getElementById("matchType").value) });
-	document.getElementById("gameType").addEventListener("click", function(event){ localStorage.setItem("gameType", document.getElementById("gameType").value) });
-	document.getElementById("ballColor").addEventListener("click", function(event){ localStorage.setItem("ballColor", document.getElementById("ballColor").value) });
-
-	document.getElementById("paddleColor").addEventListener("click", function(event){ localStorage.setItem("paddleColor", document.getElementById("paddleColor").value) });
-	document.getElementById("backgroundColor").addEventListener("click", function(event){ localStorage.setItem("backgroundColor", document.getElementById("backgroundColor").value) });
+	document.getElementById("matchType").addEventListener("click", function() { localStorage.setItem("matchType", document.getElementById("matchType").value) });
+	document.getElementById("gameType").addEventListener("click", function() { localStorage.setItem("gameType", document.getElementById("gameType").value) });
+	document.getElementById("ballColor").addEventListener("click", function() { localStorage.setItem("ballColor", document.getElementById("ballColor").value) });
+	document.getElementById("paddleColor").addEventListener("click", function() { localStorage.setItem("paddleColor", document.getElementById("paddleColor").value) });
+	document.getElementById("backgroundColor").addEventListener("click", function() { localStorage.setItem("backgroundColor", document.getElementById("backgroundColor").value) });
 }
 
 

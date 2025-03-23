@@ -1,8 +1,6 @@
 import {renderAuth} from './auth.js'
 import {renderApp} from './app.js'
 
-import {renderHome} from './home.js'
-import {renderPongGame} from './pong_game.js'
 
 "use strict";
 

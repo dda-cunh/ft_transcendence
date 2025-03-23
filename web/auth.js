@@ -91,12 +91,8 @@ async function	doAuth(creds, dir)
 		body: JSON.stringify(creds),
 	} );
 
-	console.log(response);
-
 	let data = await response.json();
 	data.ok = response.ok;
-
-	console.log(data);
 
 	return (data);
 }
@@ -178,11 +174,6 @@ async function	loginUser(event)
 	try
 	{
 		let responseData = await doAuth(creds, "auth/");
-
-//		throw new Error(Object.keys(responseData)[0] + ": " + responseData[Object.keys(responseData)[0]]);
-//		GET FIRST OBJECT KEY + VALUE
-//		SWITCH/CASE OBJ KEY, SET errField ACCORDINGLY
-//		THROW EXCEPTION 
 
 		if (!responseData.ok)
 		{

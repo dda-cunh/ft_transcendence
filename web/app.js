@@ -28,7 +28,6 @@ function renderNavbar()
 		<div id="appContainer" class="container mt-4">
 		</div>
 	`;
-	//alert("error here");
 }
 
 
@@ -37,6 +36,7 @@ function	logoutUser()
 {
 	localStorage.removeItem("access");
 	localStorage.removeItem("refresh");
+	localStorage.setItem("currentView", "home");
 	renderAuth()
 }
 

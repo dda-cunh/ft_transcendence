@@ -55,15 +55,15 @@ function	renderPage()
 							<div class="col-12 col-lg-3 d-grid border-top">
 								<!--MATCH HISTORY (TOTAL GAMES PLAYED/WINS/LOSSES)-->
 								<div class="row d-flex my-2 py-2 align-content-center">
-									<div class="col-3 col-lg-10 text-wrap align-self-center">
+									<div class="col-5 col-lg-10 text-wrap align-self-center">
 										<small>MATCHES PLAYED</small>
 									</div>
 									<div class="col-1 col-lg-2 align-self-center">
-<!--										
+<!--
 										<p>7</p>
 -->
 									</div>
-									<div class="col-3 col-lg-10 text-wrap align-self-center">
+									<div class="col-2 col-lg-10 text-wrap align-self-center">
 										<small>WINS</small>
 									</div>
 									<div class="col-1 col-lg-2 align-self-center">
@@ -71,7 +71,7 @@ function	renderPage()
 										<p>5</p>
 -->
 									</div>
-									<div class="col-3 col-lg-10 text-wrap align-self-center">
+									<div class="col-2 col-lg-10 text-wrap align-self-center">
 										<small>LOSSES</small>
 									</div>
 									<div class="col-1 col-lg-2 align-self-center">
@@ -167,7 +167,7 @@ function	setupEventHandlers()
 
 
 	/*	MAIN FUNCTION	*/
-export function	renderProfile()	//	ADD A PARAMETER FOR THE USER TO DISPLAY
+export function	renderProfile()
 {
 	localStorage.setItem("currentView", "profile");
 	renderPage();
