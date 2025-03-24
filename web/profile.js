@@ -23,14 +23,14 @@ function	renderPage()
 	let	transcendenceApp = document.getElementById("appContainer");
 
 	transcendenceApp.innerHTML = `
-				<div class="row">
-					<div class="col-12 col-lg-3 my-3 mt-lg-0 border rounded-circle">
+				<div class="row text-center d-flex justify-content-center">
+					<div class="col-12 col-lg-2 my-3 mt-lg-0 border rounded-circle">
 						<!--PROFILE PIC-->
-<!--
+
 						<img src="" class="img-fluid rounded-circle" alt="User Profile Picture">
--->
+
 					</div>
-					<div class="col-12 col-lg-9 d-grid border rounded">
+					<div class="col-12 col-lg-8 d-grid border rounded">
 						<div class="row h-auto">
 							<div class="col d-flex justify-content-end align-items-start">
 								<!--EDIT PROFILE BTN (CHG DISPLAY NAME, CHG MOTTO, CHG PFP)-->
@@ -53,8 +53,8 @@ function	renderPage()
 						</div>
 					</div>
 				</div>
-				<div class="row mt-5 border rounded">
-					<div class="col-12 col-lg-3 border-end">
+				<div class="row mt-5 text-center d-flex justify-content-center">
+					<div class="col-12 col-lg-4 my-2 border rounded">
 						<h1 class="text-center">
 							<span>
 								<button id="manageFriendsBtn" class="btn btn-sm btn-outline-light"><i class="bi-pencil-fill"></i></button>
@@ -69,59 +69,60 @@ function	renderPage()
 							</table>
 						</div>
 					</div>
-					<div class="col-12 col-lg-9 border-start border-top">
+					<div class="col-12 col-lg-6 my-2 border rounded">
 						<h1 class="text-center">MATCH HISTORY</h1>
 						<div class="row">
-							<div class="col-12 col-lg-3 d-grid border-top">
-								<!--MATCH HISTORY (TOTAL GAMES PLAYED/WINS/LOSSES)-->
+							<div class="col-12 d-grid border-top">
+								<!--MATCH STATS (TOTAL GAMES PLAYED/WINS/LOSSES)-->
 								<div class="row d-flex my-2 py-2 align-content-center">
-									<div class="col-3 col-lg-9 text-wrap align-self-center text-end">
+									<div class="col-3 col-lg-3 text-wrap align-self-center text-end">
 										<small>MATCHES PLAYED</small>
 									</div>
-									<div class="col-1 col-lg-3 align-self-center text-start">
+									<div class="col-1 col-lg-1 align-self-center text-start">
 
 										<small>7</small>
 
 									</div>
-									<div class="col-3 col-lg-9 text-wrap align-self-center text-end">
+									<div class="col-3 col-lg-3 text-wrap align-self-center text-end">
 										<small>WINS</small>
 									</div>
-									<div class="col-1 col-lg-3 align-self-center text-start">
+									<div class="col-1 col-lg-1 align-self-center text-start">
 
 										<small>5</small>
 
 									</div>
-									<div class="col-3 col-lg-9 text-wrap align-self-center text-end">
+									<div class="col-3 col-lg-3 text-wrap align-self-center text-end">
 										<small>LOSSES</small>
 									</div>
-									<div class="col-1 col-lg-3 align-self-center text-start">
+									<div class="col-1 col-lg-1 align-self-center text-start">
 
 										<small>2</small>
 
 									</div>
 
 								</div>
-								<div class="row d-flex my-2 py-2 align-content-center border-top">
-									<!--TOURNAMENT HISTORY-->
-									<div class="col-5 col-lg-9 text-wrap align-self-center text-end">
+								<!--TOURNAMENT STATS-->
+								<div class="row d-flex my-2 py-2 align-content-center border-top border-bottom">
+									<div class="col-5 col-lg-4 text-wrap align-self-center text-end">
 										<small>TOURNAMENTS JOINED</small>
 									</div>
-									<div class="col-1 col-lg-3 align-self-center text-start">
+									<div class="col-1 col-lg-2 align-self-center text-start">
 
 										<small>1</small>
 
 									</div>
-									<div class="col-5 col-lg-9 text-wrap align-self-center text-end">
+									<div class="col-5 col-lg-4 text-wrap align-self-center text-end">
 										<small>TOURNAMENTS WON</small>
 									</div>
-									<div class="col-1 col-lg-3 align-self-center text-start">
+									<div class="col-1 col-lg-2 align-self-center text-start">
 
 										<small>2</small>
 
 									</div>
 								</div>
 							</div>
-							<div class="col-12 col-lg-9 border-top border-start">
+							<!--MATCH HISTORY-->
+							<div class="col-12 border-top border-start">
 								<div class="card bg-dark text-center">
 									<div class="card-header mx-auto">
 										<ul class="nav nav-tabs card-header-tabs">

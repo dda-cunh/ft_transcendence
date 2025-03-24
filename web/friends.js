@@ -16,8 +16,8 @@ function renderPage()
 	let	transcendenceApp = document.getElementById("appContainer");
 
 	transcendenceApp.innerHTML = `
-			<div class="row">
-				<div class="col border rounded">
+			<div class="row text-center d-flex justify-content-center">
+				<div class="col col-lg-10 border rounded">
 					<div class="card bg-dark text-center">
 						<div class="card-header mx-auto">
 							<ul class="nav nav-tabs card-header-tabs">
