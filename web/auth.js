@@ -1,4 +1,4 @@
-import {renderApp} from './app.js'
+import {App} from './app.js'
 
 "use strict";
 
@@ -139,7 +139,7 @@ async function	registerUser(event)
 		{
 			localStorage.setItem("access", responseData.tokens.access);
 			localStorage.setItem("refresh", responseData.tokens.refresh);
-			renderApp();
+			App();
 		}
 	}
 	catch (error)
@@ -196,7 +196,7 @@ async function	loginUser(event)
 		{
 			localStorage.setItem("access", responseData.access);
 			localStorage.setItem("refresh", responseData.refresh);
-			renderApp();
+			App();
 		}
 	}
 	catch(error)

@@ -31,6 +31,53 @@ function renderNavbar()
 	`;
 }
 
+function renderPlayerCard()
+{
+	let	transcendenceApp = document.getElementById("appContainer");
+
+	transcendenceApp.innerHTML = `
+			<div class="row text-center d-flex justify-content-center">
+				<div class="col-12 col-lg-2 my-3 mt-lg-0 border rounded-circle">
+					<!--PROFILE PIC-->
+
+					<img src="" class="img-fluid rounded-circle" alt="User Profile Picture">
+
+				</div>
+				<div class="col-12 col-lg-8 d-grid border rounded">
+					<div class="row h-auto">
+						<div class="col d-flex justify-content-end align-items-start">
+							<!--EDIT PROFILE BTN (CHG DISPLAY NAME, CHG MOTTO, CHG PFP)-->
+							<button type="button" class="btn btn-sm btn-outline-light mx-2 my-2"><i class="bi-pencil-fill"></i></button>
+							<!--SETTINGS BTN (CHG PASSWD, DELETE ACCOUNT)-->
+							<button type="button" class="btn btn-sm btn-outline-light my-2"><i class="bi-gear-fill"></i></button>
+						</div>
+					</div>
+					<div class="flex-row flex-fill align-middle">
+						<div class="col py-auto d-flex justify-content-center">
+							<!--USERNAME-->
+							<h1 id="userNameDisplay" class="display-1"><a href="#" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">$USER</a></h1>
+						</div>
+					</div>
+					<div class="row d-flex align-items-end">
+						<div class="col">
+							<!--MOTTO-->
+							<p class="fst-italic">"Some days you are the pidgeon, some days you are the statue. Today it's clearly statue day."</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="ctrlsRow" class="row mt-4 text-center d-flex justify-content-center">
+			</div>
+	`
+}
+
+
+function renderPage() 
+{
+	renderNavbar();
+	renderPlayerCard();
+}
+
 
 	/*	EVENT HANDLERS	*/
 function	logoutUser()
@@ -38,21 +85,24 @@ function	logoutUser()
 	localStorage.removeItem("access");
 	localStorage.removeItem("refresh");
 	localStorage.setItem("currentView", "home");
-	renderAuth()
+	renderAuth();
 }
+
 
 function	setupEventHandlers()
 {
 	document.getElementById("titleHeader").addEventListener("click", () => renderHome());
+	document.getElementById("userNameDisplay").addEventListener("click", ()=> renderProfile() );
+
 	document.getElementById("homeBtn").addEventListener("click", () => renderHome() );
 	document.getElementById("profileBtn").addEventListener("click", () => renderProfile() );
 	document.getElementById("logoutBtn").addEventListener("click", () => logoutUser());
 }
 
 
-export function	renderApp()
+export function	App()
 {
-	renderNavbar();
+	renderPage();
 	setupEventHandlers();
 
 	switch (localStorage.getItem("currentView") )
