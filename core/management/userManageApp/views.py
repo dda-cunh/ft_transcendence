@@ -118,6 +118,7 @@ class FriendListView(APIView):
                 "username": f.username,
                 "online": is_online,
                 "last_activity": f.last_activity.isoformat(),
+                "avatar": f.avatar.name if f.avatar else None,
             })
 
         return Response(response_data, status=status.HTTP_200_OK)
