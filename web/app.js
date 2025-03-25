@@ -1,7 +1,8 @@
-import {renderHome} from './home.js'
 import {renderAuth} from './auth.js'
+import {renderHome} from './home.js'
 import {renderProfile} from './profile.js'
 import {renderFriends} from './friends.js'
+import {renderAcctSettings} from './account_settings.js'
 
 
 "use strict";
@@ -65,9 +66,9 @@ function renderPlayerCard()
 					<div class="row h-auto">
 						<div class="col d-flex justify-content-end align-items-start">
 							<!--EDIT PROFILE BTN (CHG DISPLAY NAME, CHG MOTTO, CHG PFP)-->
-							<button type="button" class="btn btn-sm btn-outline-light mx-2 my-2"><i class="bi-pencil-fill"></i></button>
+							<button id="editProfileBtn" type="button" class="btn btn-sm btn-outline-light mx-2 my-2"><i class="bi-pencil-fill"></i></button>
 							<!--SETTINGS BTN (CHG PASSWD, DELETE ACCOUNT)-->
-							<button type="button" class="btn btn-sm btn-outline-light my-2"><i class="bi-gear-fill"></i></button>
+							<button id="acctSettingsBtn" type="button" class="btn btn-sm btn-outline-light my-2"><i class="bi-gear-fill"></i></button>
 						</div>
 					</div>
 					<div class="flex-row flex-fill align-middle">
@@ -110,7 +111,11 @@ function	logoutUser()
 function	setupEventHandlers()
 {
 	document.getElementById("titleHeader").addEventListener("click", () => renderHome());
-	document.getElementById("userPfp").addEventListener("click", ()=> renderProfile() )
+
+	document.getElementById("editProfileBtn").addEventListener("click", ()=> alert("This feature has not been implemented yet") );
+	document.getElementById("acctSettingsBtn").addEventListener("click", ()=> renderAcctSettings() );
+
+	document.getElementById("userPfp").addEventListener("click", ()=> renderProfile() );
 	document.getElementById("userNameDisplay").addEventListener("click", ()=> renderProfile() );
 
 	document.getElementById("homeBtn").addEventListener("click", () => renderHome() );
@@ -135,6 +140,9 @@ export function	App()
 			break ;
 		case ("friends"):
 			renderFriends();
+			break ;
+		case ("accountSettings"):
+			renderAcctSettings();
 			break ;
 	}
 }

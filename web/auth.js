@@ -35,13 +35,13 @@ function	renderPage()
 												<span class="input-group-text">
 													<span class="bi-person-fill"></span>
 												</span>
-												<input id="loginUserField" type="text" class="form-control" id="user" placeholder="Username">
+												<input id="loginUserField" type="text" class="form-control" placeholder="Username">
 											</div>
 											<div class="input-group mt-1">
 												<span class="input-group-text">
 													<span class="bi-lock-fill"></span>
 												</span>
-												<input id="loginPasswordField" type="password" class="form-control" id="password" placeholder="Password">
+												<input id="loginPasswordField" type="password" class="form-control" placeholder="Password">
 											</div>
 											<button type="submit" class="btn btn-primary mt-2">Login</button>
 										</form>
