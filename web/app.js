@@ -2,6 +2,7 @@ import {renderAuth} from './auth.js'
 import {renderHome} from './home.js'
 import {renderProfile} from './profile.js'
 import {renderFriends} from './friends.js'
+import {renderEditProfile} from './edit_profile.js'
 import {renderAcctSettings} from './account_settings.js'
 
 
@@ -112,7 +113,7 @@ function	setupEventHandlers()
 {
 	document.getElementById("titleHeader").addEventListener("click", () => renderHome());
 
-	document.getElementById("editProfileBtn").addEventListener("click", ()=> alert("This feature has not been implemented yet") );
+	document.getElementById("editProfileBtn").addEventListener("click", ()=> renderEditProfile() );
 	document.getElementById("acctSettingsBtn").addEventListener("click", ()=> renderAcctSettings() );
 
 	document.getElementById("userPfp").addEventListener("click", ()=> renderProfile() );
@@ -144,5 +145,8 @@ export function	App()
 		case ("accountSettings"):
 			renderAcctSettings();
 			break ;
+		case ("editProfile"):
+			renderEditProfile();
+			break ;	
 	}
 }
