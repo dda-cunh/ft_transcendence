@@ -6,6 +6,19 @@ import {renderFriends} from './friends.js'
 
 "use strict";
 
+/*
+async function	get_userID()
+{
+	let response = await fetch("management/user/", {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": "Bearer " + localStorage.getItem("access"),
+		}
+	});
+	console.log(await response.body);
+}
+*/
 	/*	PAGE RENDERING	*/
 function renderNavbar()
 {
@@ -22,6 +35,7 @@ function renderNavbar()
 					<!--ADD HOME BTN-->
 					<a id="homeBtn" href="#" class="nav-item nav-link">Home</a>
 					<a id="profileBtn" href="#" class="nav-item nav-link">Profile</a>
+					<a id="friendsMgmtBtn" href="#" class="nav-item nav-link">Manage Friends</a>
 					<a id="logoutBtn" href="#" class="nav-item nav-link text-light">Logout</a>
 				</div>
 			</div>
@@ -35,12 +49,16 @@ function renderPlayerCard()
 {
 	let	transcendenceApp = document.getElementById("appContainer");
 
+	let imgSrc = "./img/gyro.png";
+	let userName = "$USER";
+//	get_userID();
+
 	transcendenceApp.innerHTML = `
 			<div class="row text-center d-flex justify-content-center">
-				<div class="col-12 col-lg-2 my-3 mt-lg-0 border rounded-circle">
+				<div class="col-12 col-lg-2 my-3 mt-lg-0">
 					<!--PROFILE PIC-->
 
-					<img src="" class="img-fluid rounded-circle" alt="User Profile Picture">
+					<a href="#"><img id="userPfp" src="${imgSrc}" class="img-fluid rounded-circle" alt="User Profile Picture"></a>
 
 				</div>
 				<div class="col-12 col-lg-8 d-grid border rounded">
@@ -55,7 +73,7 @@ function renderPlayerCard()
 					<div class="flex-row flex-fill align-middle">
 						<div class="col py-auto d-flex justify-content-center">
 							<!--USERNAME-->
-							<h1 id="userNameDisplay" class="display-1"><a href="#" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">$USER</a></h1>
+							<h1 id="userNameDisplay" class="display-1"><a href="#" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">${userName}</a></h1>
 						</div>
 					</div>
 					<div class="row d-flex align-items-end">
@@ -92,10 +110,12 @@ function	logoutUser()
 function	setupEventHandlers()
 {
 	document.getElementById("titleHeader").addEventListener("click", () => renderHome());
+	document.getElementById("userPfp").addEventListener("click", ()=> renderProfile() )
 	document.getElementById("userNameDisplay").addEventListener("click", ()=> renderProfile() );
 
 	document.getElementById("homeBtn").addEventListener("click", () => renderHome() );
 	document.getElementById("profileBtn").addEventListener("click", () => renderProfile() );
+	document.getElementById("friendsMgmtBtn").addEventListener("click", () => renderFriends() );
 	document.getElementById("logoutBtn").addEventListener("click", () => logoutUser());
 }
 

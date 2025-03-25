@@ -24,7 +24,7 @@ function	renderPage()
 
 	transcendenceApp.innerHTML = `
 			<div class="col-12 col-lg-4 my-2 border rounded">
-				<h1 class="text-center">
+				<h1 class="text-center mt-4">
 					<span>
 						<button id="manageFriendsBtn" class="btn btn-sm btn-outline-light"><i class="bi-pencil-fill"></i></button>
 					</span>
@@ -39,7 +39,7 @@ function	renderPage()
 				</div>
 			</div>
 			<div class="col-12 col-lg-6 my-2 border rounded">
-				<h1 class="text-center">MATCH HISTORY</h1>
+				<h1 class="text-center mt-4">MATCH HISTORY</h1>
 				<div class="row">
 					<div class="col-12 d-grid border-top">
 						<!--MATCH STATS (TOTAL GAMES PLAYED/WINS/LOSSES)-->

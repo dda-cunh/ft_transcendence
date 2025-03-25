@@ -17,7 +17,7 @@ function renderPage()
 
 	transcendenceApp.innerHTML = `
 		<div class="col col-lg-10 mt-2 border rounded">
-			<div class="card bg-dark text-center">
+			<div class="card bg-dark text-center mt-4">
 				<div class="card-header mx-auto">
 					<ul class="nav nav-tabs card-header-tabs">
 						<li class="nav-item">
