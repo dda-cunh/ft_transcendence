@@ -64,6 +64,17 @@ services:
       - ./auth/:/service
     <<: *common
 
+  management:
+    container_name: management
+    build: ./management
+    depends_on:
+      - gunicorn-base
+      - auth
+    volumes:
+      - ./management/:/service
+      - ./auth/user/:/service/user
+    <<: *common
+
   nginx:
     container_name: nginx
     build: ./nginx

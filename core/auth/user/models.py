@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 import uuid
+from django.core.validators import FileExtensionValidator
+from django.utils import timezone
 
 class UserManager(BaseUserManager):
     def create_user(self, username, password, **extra_fields):
@@ -17,8 +19,20 @@ class User(AbstractBaseUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField(max_length=15, unique=True)
     password = models.CharField(max_length=128)
-    avatar = models.CharField(max_length=100, default='default-avatar.png')
-    last_activity = models.DateField(auto_now=True)
+    avatar = models.ImageField(
+        upload_to='avatars/',
+        default='avatars/default-avatar.png',
+        blank=True,
+        null=True,
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])]
+    )
+    motto = models.CharField(
+        max_length=200,
+        blank=True,
+        default="Hello, I'm new here!"
+    )
+
+    last_activity = models.DateTimeField(auto_now=True)
 
     last_login = None
 
