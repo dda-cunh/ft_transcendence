@@ -8,11 +8,10 @@ import {renderPongGame} from './pong_game.js'
 	/*	PAGE RENDERING	*/
 function	renderPage()
 {
-	let	transcendenceApp = document.getElementById("appContainer");
+	let	transcendenceApp = document.getElementById("ctrlsRow");
 
 	transcendenceApp.innerHTML = `
-			<div class="row text-center justify-content-center">
-				<div class="col-12 col-lg-5 mx-lg-1 mt-4 border">
+				<div class="col-12 col-lg-5 mx-lg-1 my-2 border">
 					<div class="row">
 						<div class="col-12">
 							<h1 class="mt-4">PLAY PONG</h1>
@@ -25,7 +24,7 @@ function	renderPage()
 						</div>
 					</div>
 				</div>
-				<div class="col-12 col-lg-5 mx-lg-1 mt-4 px-5 border">
+				<div class="col-12 col-lg-5 mx-lg-1 my-2 px-5 border">
 					<h1 class="mt-4">SETTINGS</h1>
 					<div class="row my-1 justify-content-center">
 						<div class="col col-lg-10 mt-4">
@@ -77,7 +76,6 @@ function	renderPage()
 						</div>
 					</div>
 				</div>
-			</div>
 	`;
 }
 
@@ -94,6 +92,9 @@ function	selectSettings()
 
 function	setupEventHandlers()
 {
+
+
+
 	document.getElementById("btnFriendlyMatch").addEventListener("click", ()=> renderPongGame() );
 	document.getElementById("btnTournament").addEventListener("click", ()=> alert("This feature has not been implemented yet.") ) ;
 

@@ -1,5 +1,5 @@
 import {renderAuth} from './auth.js'
-import {renderApp} from './app.js'
+import {App} from './app.js'
 
 
 "use strict";
@@ -90,7 +90,7 @@ async function	main()
 	if (!(await userIsLoggedIn() ) )
 		renderAuth();
 	else
-		renderApp();
+		App();
 }
 
 
