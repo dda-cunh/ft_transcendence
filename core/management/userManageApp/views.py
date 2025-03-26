@@ -86,13 +86,27 @@ class FriendRequestAcceptView(APIView):
 
     def post(self, request, pk):
         try:
-            friend_request = FriendRequest.objects.get(pk=pk, receiver=request.user, accepted_at__isnull=True)
+            friend_request = FriendRequest.objects.get(pk=pk, receiver=request.user, accepted_at__isnull=True, rejected_at__isnull=True)
         except FriendRequest.DoesNotExist:
             return Response({"detail": "No pending friend request with that ID."}, status=status.HTTP_404_NOT_FOUND)
 
         friend_request.accepted_at = timezone.now()
         friend_request.save()
         return Response({"detail": "Friend request accepted."}, status=status.HTTP_200_OK)
+
+
+class FriendRequestRejectView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            friend_request = FriendRequest.objects.get(pk=pk, receiver=request.user, accepted_at__isnull=True, rejected_at__isnull=True)
+        except FriendRequest.DoesNotExist:
+            return Response({"detail": "No pending friend request with that ID."}, status=status.HTTP_404_NOT_FOUND)
+
+        friend_request.rejected_at = timezone.now()
+        friend_request.save()
+        return Response({"detail": "Friend request rejected."}, status=status.HTTP_200_OK)
 
 
 class FriendListView(APIView):
@@ -102,7 +116,8 @@ class FriendListView(APIView):
         user = request.user
 
         accepted_reqs = FriendRequest.objects.filter(
-            accepted_at__isnull=False
+            accepted_at__isnull=False, # accepted
+            rejected_at__isnull=True # not rejected
         ).filter(
             models.Q(sender=user) | models.Q(receiver=user)
         )

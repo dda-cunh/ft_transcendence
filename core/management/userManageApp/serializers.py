@@ -33,8 +33,8 @@ class UserAvatarSerializer(serializers.ModelSerializer):
 class FriendRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = FriendRequest
-        fields = ['id', 'sender', 'receiver', 'sent_at', 'accepted_at']
-        read_only_fields = ['sent_at', 'accepted_at']
+        fields = ['id', 'sender', 'receiver', 'sent_at', 'accepted_at', 'rejected_at']
+        read_only_fields = ['sent_at', 'accepted_at', 'rejected_at']
 
     def validate(self, attrs):
         sender = self.context['request'].user

@@ -18,6 +18,7 @@ class FriendRequest(models.Model):
     )
     sent_at = models.DateTimeField(default=timezone.now)
     accepted_at = models.DateTimeField(null=True, blank=True)
+    rejected_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         unique_together = (('sender', 'receiver'),)
