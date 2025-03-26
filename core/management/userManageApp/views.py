@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response 
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
-from .serializers import UserLoginSerializer, UserAvatarSerializer, FriendRequestSerializer
+from .serializers import UserLoginSerializer, UserMottoSerializer, UserAvatarSerializer, FriendRequestSerializer
 from .models import FriendRequest
 from rest_framework import status
 from django.utils import timezone
@@ -16,6 +16,15 @@ User = get_user_model()
 class UpdateLoginView(UpdateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserLoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+    def get_object(self):
+        return self.request.user
+
+class UpdateMottoView(UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserMottoSerializer
 
     def post(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
@@ -52,6 +61,7 @@ class PrivateUserInfoView(APIView):
         data = {
             "id": str(user.id),
             "username": user.username,
+            "motto": user.motto,
             "avatar": user.avatar.name if user.avatar else None,
             "last_activity": user.last_activity,
         }

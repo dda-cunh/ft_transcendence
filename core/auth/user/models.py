@@ -26,6 +26,12 @@ class User(AbstractBaseUser):
         null=True,
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])]
     )
+    motto = models.CharField(
+        max_length=200,
+        blank=True,
+        default="Hello, I'm new here!"
+    )
+
     last_activity = models.DateTimeField(auto_now=True)
 
     last_login = None

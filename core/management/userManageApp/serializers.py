@@ -20,6 +20,11 @@ class UserLoginSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("This username is already taken.")
         return value
 
+class UserMottoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['motto']
+
 class UserAvatarSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
