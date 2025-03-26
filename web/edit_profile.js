@@ -56,9 +56,9 @@ function	renderPage()
 								<div class="col-7 col-lg-3 gap-2 mx-auto">
 									<form id="changePfpForm">
 										<div class="my-2 d-grid">
-											<button type="button" class="btn btn-light text-start">												
+											<button id="pfpUploadBtn" type="button" class="btn btn-light text-start">												
 												<span class="bi-upload"></span>
-												&ensp;&ensp;Browse...
+												&ensp;&ensp;Browse... <!--REPLACE WITH PATH-->
 											</button>
 										</div>
 										<button type="submit" class="btn btn-outline-light mt-2">Confirm</button>
@@ -72,8 +72,20 @@ function	renderPage()
 	`
 }
 
+
+function	setupEventHandlers()
+{
+	document.getElementById("changeUsernameForm").addEventListener("submit", (event) => alert("This feature has not been implemented yet") );
+	document.getElementById("changeMottoForm").addEventListener("submit", (event) => alert("This feature has not been implemented yet") );
+	document.getElementById("changePfpForm").addEventListener("submit", (event) => alert("This feature has not been implemented yet") );
+
+	document.getElementById("pfpUploadBtn").addEventListener("click", (event) => alert("This feature has not been implemented yet") );
+}
+
+
 export function	renderEditProfile()
 {
 	localStorage.setItem("currentView", "editProfile");
 	renderPage();
+	setupEventHandlers();
 }

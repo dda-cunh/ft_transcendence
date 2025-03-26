@@ -68,8 +68,27 @@ function	renderPage()
 	`
 }
 
+
+function	doChange(event)
+{
+	alert("This feature has not been implemented yet");
+}
+
+function	doDelete(event)
+{
+	alert("This feature has not been implemented yet");
+}
+
+function	setupEventHandlers()
+{
+	document.getElementById("chgPasswdForm").addEventListener("submit", (event) => doChange(event) );
+	document.getElementById("deleteAcctForm").addEventListener("submit", (event) => doDelete(event) );
+}
+
+
 export function	renderAcctSettings()
 {
 	localStorage.setItem("currentView", "accountSettings");
 	renderPage();
+	setupEventHandlers();
 }
