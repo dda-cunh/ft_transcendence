@@ -7,20 +7,28 @@ x-common-conf: &common
 networks:
   transcendence:
     name: transcendence
+    driver: bridge
 
 volumes:
   db_data:
     driver: local
     driver_opts:
       type: none
-      device: ${HOME}/data/db
+      device: /home/pietro/Desktop/ft_transcendence/data/db
       o: bind
 
   redis_data:
     driver: local
     driver_opts:
       type: none
-      device: ${HOME}/data/redis
+      device: /home/pietro/Desktop/ft_transcendence/data/redis
+      o: bind
+
+  web_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/pietro/Desktop/ft_transcendence/web
       o: bind
 
 services:
@@ -74,6 +82,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
+      - web_data:/var/www/html
       - ./nginx/conf/nginx.conf:/etc/nginx/conf.d/default.conf  # Mount config
     depends_on:
       - auth

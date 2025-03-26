@@ -7,5 +7,6 @@ RUN		set -eux; \
 			libjpeg-dev;
 
 COPY	docker_exec.sh .
+#EXPOSE	8000
 
 CMD 	["bash", "docker_exec.sh"]
