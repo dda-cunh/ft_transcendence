@@ -14,22 +14,22 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/pietro/Desktop/ft_transcendence/data/db
+      device: ${HOME}/data/db
       o: bind
 
   redis_data:
     driver: local
     driver_opts:
       type: none
-      device: /home/pietro/Desktop/ft_transcendence/data/redis
+      device: ${HOME}/data/redis
       o: bind
 
-  web_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/pietro/Desktop/ft_transcendence/web
-      o: bind
+  # web_data:
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     device: ${HOME}/web
+  #     o: bind
 
 services:
   postgresql:
@@ -82,9 +82,10 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - web_data:/var/www/html
+      # - web_data:/var/www/html
       - ./nginx/conf/nginx.conf:/etc/nginx/conf.d/default.conf  # Mount config
     depends_on:
       - auth
+      - management
     networks:
       - transcendence
