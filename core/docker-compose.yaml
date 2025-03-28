@@ -14,21 +14,21 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/pietro/Desktop/ft_transcendence/data/db
+      device: ${HOME}/data/db
       o: bind
 
   redis_data:
     driver: local
     driver_opts:
       type: none
-      device: /home/pietro/Desktop/ft_transcendence/data/redis
+      device: ${HOME}/data/redis
       o: bind
 
   web_data:
     driver: local
     driver_opts:
       type: none
-      device: /home/pietro/Desktop/ft_transcendence/web
+      device: ${HOME}/web
       o: bind
 
 services:
