@@ -169,9 +169,9 @@ export async function renderFriendsList()
 			return
 		let data = await response.json();
 		data.forEach(entry => {
-            let row = `<tr>
-				<td><img src="${entry.avatar}" alt="${entry.username}'s avatar" /></td>
-				<td>${entry.username}</td>
+            let row = `<tr class="m-0 p-0 w-100 d-flex flex-row align-items-center justify-content-around border-top">
+				<td class="d-flex flex-column"><img height="75px" class="rounded-circle" src="/management/media/${entry.avatar}" alt="${entry.username}'s avatar" /></td>
+				<td class="d-flex flex-column">${entry.username}</td>
             </tr>`;
             dest.innerHTML += row;
         });
