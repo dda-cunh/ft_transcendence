@@ -51,7 +51,6 @@ services:
     build: ./auth
     depends_on:
       - gunicorn-base
-      - redis
     volumes:
       - ./auth/:/service
     <<: *common
@@ -68,3 +67,14 @@ services:
       - auth
     networks:
       - transcendence
+
+  game:
+    container_name: game
+    build: ./game
+    depends_on:
+      - redis
+    volumes:
+      - ./game/:/service
+    ports:          #TODO: REMOVE THIS
+      - "8000:8000" #TODO: REMOVE THIS
+    <<: *common
