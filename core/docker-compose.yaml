@@ -28,7 +28,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: ${HOME}/web
+      device: ../web
       o: bind
 
 services:
@@ -78,22 +78,23 @@ services:
   nginx:
     container_name: nginx
     build: ./nginx     
-    volumes:
+    # volumes:
       # - web_data:/var/www/html
-      - ./nginx/conf/nginx.conf:/etc/nginx/conf.d/default.conf  # Mount config
     depends_on:
       - auth
       - management
     networks:
       - transcendence
   nginx_frontend:
-    container_name: nginx
-    build: ./nginx     
+    container_name: nginx_frontend
+    build: ./nginx_frontend
+    ports:     
+      - "80:80"
+      - "443:443"  
     volumes:
-      # - web_data:/var/www/html
-      - ./nginx/conf/nginx.conf:/etc/nginx/conf.d/default.conf  # Mount config
+      - web_data:/var/www/html
     depends_on:
-      - auth
+      - nginx
     networks:
       - transcendence
 
