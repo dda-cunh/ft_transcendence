@@ -1,6 +1,6 @@
 
 from django.urls import re_path
-from .views import UpdateLoginView, UpdateMottoView, UpdateAvatarView, PublicUserDetailView, PrivateUserInfoView, FriendRequestCreateView, FriendRequestAcceptView, FriendRequestRejectView, FriendListView
+from .views import UpdateLoginView, UpdateMottoView, UpdateAvatarView, PublicUserDetailView, PrivateUserInfoView, FriendRequestCreateView, FriendRequestAcceptView, FriendRequestRejectView, FriendListView, PendingFriendRequestsView
 
 urlpatterns = [
     re_path(r'^username/?$', UpdateLoginView.as_view(), name='update_username'),
@@ -12,4 +12,5 @@ urlpatterns = [
     re_path(r'^friends/request/(?P<pk>\d+)/accept/?$', FriendRequestAcceptView.as_view(), name='friend_request_accept'),
     re_path(r'^friends/request/(?P<pk>\d+)/reject/?$', FriendRequestRejectView.as_view(), name='friend_request_reject'),
     re_path(r'^friends/?$', FriendListView.as_view(), name='friend_list'),
+    re_path(r'^friends/pending/?$', PendingFriendRequestsView.as_view(), name='pending_friend_requests'),
 ]

@@ -42,3 +42,20 @@ class FriendRequestSerializer(serializers.ModelSerializer):
         if sender == receiver:
             raise serializers.ValidationError("You cannot send a friend request to yourself.")
         return attrs
+
+class PendingFriendRequestsViewSerializer(serializers.ModelSerializer):
+    receiver_username = serializers.CharField(source='receiver.username', read_only=True)
+    receiver_avatar = serializers.SerializerMethodField()
+
+    class Meta:
+        model = FriendRequest
+
+        fields = ['id', 'receiver', 'receiver_username', 'receiver_avatar', 'sent_at']
+        read_only_fields = ['sent_at', 'receiver_username', 'receiver_avatar']
+
+    def get_receiver_avatar(self, obj):
+        if obj.receiver.avatar:
+            request = self.context.get('request')
+        
+            return request.build_absolute_uri(obj.receiver.avatar.url) if request else obj.receiver.avatar.url
+        return None
