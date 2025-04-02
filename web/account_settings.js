@@ -69,20 +69,20 @@ function	renderPage()
 }
 
 
-function	doChange(event)
+function	chgPassword(event)
 {
 	alert("This feature has not been implemented yet");
 }
 
-function	doDelete(event)
+function	deleteAccount(event)
 {
 	alert("This feature has not been implemented yet");
 }
 
 function	setupEventHandlers()
 {
-	document.getElementById("chgPasswdForm").addEventListener("submit", (event) => doChange(event) );
-	document.getElementById("deleteAcctForm").addEventListener("submit", (event) => doDelete(event) );
+	document.getElementById("chgPasswdForm").addEventListener("submit", (event) => chgPassword(event) );
+	document.getElementById("deleteAcctForm").addEventListener("submit", (event) => deleteAccount(event) );
 }
 
 

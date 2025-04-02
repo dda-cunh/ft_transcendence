@@ -34,19 +34,6 @@ function	initApp()
 		localStorage.setItem("backgroundColor", "Black");
 }
 
-async function	checkToken(path, method, tkn)
-{
-	let	response = await fetch("auth/" + path, {
-		method: method,
-		headers: {
-			"Content-Type": "application/json",
-			"Authorization": "Bearer " + tkn,
-		},
-	} );
-
-	return (response);
-}
-
 async function	userIsLoggedIn()
 {
 	let	accessToken = localStorage.getItem("access");

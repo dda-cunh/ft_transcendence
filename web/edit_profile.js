@@ -73,10 +73,77 @@ function	renderPage()
 }
 
 
+async function	chgUserName(event)
+{
+	let newUserField = document.getElementById("newUserField");
+
+	try
+	{
+		if (!newUserField.value)
+			throw new Error("This field cannot be empty.");
+
+		await fetch("management/profile/username/", 
+					{
+						method: "PATCH",
+						headers: {
+							"Content-Type": "application/json",
+							"Authorization": "Bearer " + localStorage.getItem("access"),
+						},
+						body: JSON.stringify({"username": newUserField.value}),
+					}
+		);
+
+		location.reload();
+	}
+	catch(error)
+	{
+			let errMsg = document.getElementById("errMsg");
+			if (errMsg !== null)
+				errMsg.remove();
+			newUserField.classList.add("is-invalid");
+			newUserField.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>");
+			event.stopPropagation();
+	}
+}
+
+async function	chgMotto(event)
+{
+	let newMottoField = document.getElementById("newMottoField");
+
+	try
+	{
+		if (!newMottoField.value)
+			throw new Error("This field cannot be empty.");
+
+		await fetch("management/profile/motto/", 
+					{
+						method: "PATCH",
+						headers: {
+							"Content-Type": "application/json",
+							"Authorization": "Bearer " + localStorage.getItem("access"),
+						},
+						body: JSON.stringify({"motto": newMottoField.value}),
+					}
+		);
+
+		location.reload();
+	}
+	catch (error)
+	{
+			let errMsg = document.getElementById("errMsg");
+			if (errMsg !== null)
+				errMsg.remove();
+			newMottoField.classList.add("is-invalid");
+			newMottoField.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>");
+			event.stopPropagation();
+	}
+}
+
+
 function	setupEventHandlers()
 {
-	document.getElementById("changeUsernameForm").addEventListener("submit", (event) => alert("This feature has not been implemented yet") );
-	document.getElementById("changeMottoForm").addEventListener("submit", (event) => alert("This feature has not been implemented yet") );
+	document.getElementById("changeUsernameForm").addEventListener("submit", (event) => chgUserName(event) );
+	document.getElementById("changeMottoForm").addEventListener("submit", (event) => chgMotto(event) );
 	document.getElementById("changePfpForm").addEventListener("submit", (event) => alert("This feature has not been implemented yet") );
 
 	document.getElementById("pfpUploadBtn").addEventListener("click", (event) => alert("This feature has not been implemented yet") );
