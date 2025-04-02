@@ -1,9 +1,10 @@
 
 from django.urls import re_path
-from .views import UpdateLoginView, UpdateMottoView, UpdateAvatarView, PublicUserDetailView, PrivateUserInfoView, FriendRequestCreateView, FriendRequestAcceptView, FriendRequestRejectView, FriendListView, PendingFriendRequestsView
+from .views import UpdateLoginView, UpdatePasswordView, UpdateMottoView, UpdateAvatarView, PublicUserDetailView, PrivateUserInfoView, FriendRequestCreateView, FriendRequestAcceptView, FriendRequestRejectView, FriendListView, PendingFriendRequestsView
 
 urlpatterns = [
     re_path(r'^username/?$', UpdateLoginView.as_view(), name='update_username'),
+    re_path(r'^password/?$', UpdatePasswordView.as_view(), name='update_password'),
     re_path(r'^motto/?$', UpdateMottoView.as_view(), name='update_motto'),
     re_path(r'^avatar/?$', UpdateAvatarView.as_view(), name='update_avatar'),
     re_path(r'^user/(?P<user_id>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/?$', PublicUserDetailView.as_view(), name='public_user_detail'),
