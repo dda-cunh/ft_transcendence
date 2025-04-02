@@ -14,21 +14,21 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: ${HOME}data/db
+      device: ${HOME}/data/db
       o: bind
 
   redis_data:
     driver: local
     driver_opts:
       type: none
-      device: ${HOME}data/redis
+      device: ${HOME}/data/redis
       o: bind
 
   web_data:
     driver: local
     driver_opts:
       type: none
-      device: ${HOME}web
+      device: ${HOME}/web
       o: bind
 
 services:
