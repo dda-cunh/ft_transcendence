@@ -1,4 +1,4 @@
-import {renderProfile} from './profile.js'
+import {renderFriendsList, renderProfile} from './profile.js'
 
 
 "use strict";
@@ -34,24 +34,7 @@ function renderPage()
 						<div class="tab-pane fade show active" id="manageFriends">
 							<div class="position-relative d-grid">
 								<table class="table table-responsive table-dark table-hover table-borderless">
-									<tbody style="height: 320px;">
-										<!--FRIENDS LIST-->
-										<!--SHOW 5 PER PAGE? FILL WITH BLANKS IF N < MAX-->
-										<tr>
-											<td></td>
-										</tr>
-										<tr>
-											<td></td>
-										</tr>
-										<tr>
-											<td></td>
-										</tr>
-										<tr>
-											<td></td>
-										</tr>
-										<tr>
-											<td></td>
-										</tr>
+									<tbody id="friendsList" style="height: 320px;">
 									</tbody>
 								</table>
 								<div class="row position-relative bottom-0">
@@ -161,4 +144,5 @@ export function	renderFriends()
 {
 	localStorage.setItem("currentView", "friends");
 	renderPage();
+	renderFriendsList();
 }
