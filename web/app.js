@@ -8,19 +8,22 @@ import {renderAcctSettings} from './account_settings.js'
 
 "use strict";
 
-/*
-async function	get_userID()
+
+async function	get_userData()
 {
-	let response = await fetch("management/user/", {
+	let response = await fetch("management/management/user/", {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
 			"Authorization": "Bearer " + localStorage.getItem("access"),
 		}
 	});
-	console.log(await response.body);
+
+//	console.log(await response.json());
+
+	return (await response.json());
 }
-*/
+
 	/*	PAGE RENDERING	*/
 function renderNavbar()
 {
@@ -47,20 +50,22 @@ function renderNavbar()
 	`;
 }
 
-function renderPlayerCard()
+async function renderPlayerCard()
 {
 	let	transcendenceApp = document.getElementById("appContainer");
 
-	let imgSrc = "./img/gyro.png";
-	let userName = "$USER";
-//	get_userID();
+	let userData = await get_userData();
+
+	let imgSrc = userData.avatar;
+	let userName = userData.username;
+	let motto = userData.motto;
 
 	transcendenceApp.innerHTML = `
 			<div class="row text-center d-flex justify-content-center">
 				<div class="col-12 col-lg-2 my-3 mt-lg-0">
 					<!--PROFILE PIC-->
 
-					<a href="#"><img id="userPfp" src="${imgSrc}" class="img-fluid rounded-circle" alt="User Profile Picture"></a>
+					<a href="#"><img id="userPfp" src="management/media/${imgSrc}" class="img-fluid rounded-circle" alt="User Profile Picture"></a>
 
 				</div>
 				<div class="col-12 col-lg-8 d-grid border rounded">
@@ -78,10 +83,10 @@ function renderPlayerCard()
 							<h1 id="userNameDisplay" class="display-1"><a href="#" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">${userName}</a></h1>
 						</div>
 					</div>
-					<div class="row d-flex align-items-end">
+					<div class="row d-flex">
 						<div class="col">
 							<!--MOTTO-->
-							<p class="fst-italic">"Some days you are the pidgeon, some days you are the statue. Today it's clearly statue day."</p>
+							<p class="fst-italic">"${motto}"</p>
 						</div>
 					</div>
 				</div>
@@ -92,10 +97,10 @@ function renderPlayerCard()
 }
 
 
-function renderPage() 
+async function renderPage() 
 {
 	renderNavbar();
-	renderPlayerCard();
+	await renderPlayerCard();
 }
 
 
@@ -123,12 +128,20 @@ function	setupEventHandlers()
 	document.getElementById("profileBtn").addEventListener("click", () => renderProfile() );
 	document.getElementById("friendsMgmtBtn").addEventListener("click", () => renderFriends() );
 	document.getElementById("logoutBtn").addEventListener("click", () => logoutUser());
+
+	const	navLinks = document.querySelectorAll(".nav-item");
+	const	menuToggle = document.getElementById("navbarCollapse");
+	const	bsCollapse = new bootstrap.Collapse(menuToggle, {toggle: false});
+	navLinks.forEach((link) => {
+			link.addEventListener("click", () => { bsCollapse.toggle() });
+		}
+	);
 }
 
 
-export function	App()
+export async function	App()
 {
-	renderPage();
+	await renderPage();
 	setupEventHandlers();
 
 	switch (localStorage.getItem("currentView") )
