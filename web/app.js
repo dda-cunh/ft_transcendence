@@ -128,6 +128,14 @@ function	setupEventHandlers()
 	document.getElementById("profileBtn").addEventListener("click", () => renderProfile() );
 	document.getElementById("friendsMgmtBtn").addEventListener("click", () => renderFriends() );
 	document.getElementById("logoutBtn").addEventListener("click", () => logoutUser());
+
+	const	navLinks = document.querySelectorAll(".nav-item");
+	const	menuToggle = document.getElementById("navbarCollapse");
+	const	bsCollapse = new bootstrap.Collapse(menuToggle, {toggle: false});
+	navLinks.forEach((link) => {
+			link.addEventListener("click", () => { bsCollapse.toggle() });
+		}
+	);
 }
 
 
