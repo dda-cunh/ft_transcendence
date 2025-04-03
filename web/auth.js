@@ -92,6 +92,9 @@ async function	doAuth(creds, dir)
 	} );
 
 	let data = await response.json();
+
+//	console.log(data);
+
 	data.ok = response.ok;
 
 	return (data);
