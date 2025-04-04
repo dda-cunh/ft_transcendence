@@ -108,6 +108,10 @@ async function	chgUserName(event)
 
 async function	chgMotto(event)
 {
+	let errMsg = document.getElementById("errMsg");
+	if (errMsg !== null)
+		errMsg.remove();
+
 	let newMottoField = document.getElementById("newMottoField");
 
 	try
@@ -130,12 +134,12 @@ async function	chgMotto(event)
 	}
 	catch (error)
 	{
-			let errMsg = document.getElementById("errMsg");
-			if (errMsg !== null)
-				errMsg.remove();
-			newMottoField.classList.add("is-invalid");
-			newMottoField.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>");
-			event.stopPropagation();
+		let errMsg = document.getElementById("errMsg");
+		if (errMsg !== null)
+			errMsg.remove();
+		newMottoField.classList.add("is-invalid");
+		newMottoField.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>");
+		event.stopPropagation();
 	}
 }
 

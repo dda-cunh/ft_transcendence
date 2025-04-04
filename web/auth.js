@@ -117,7 +117,7 @@ async function	registerUser(event)
 		if (creds.password !== confirmPasswd)
 		{
 			errField = "confirmPasswordField";
-			throw new Error("Password mismatch.");	//	WRITE A BETTER MESSAGE?
+			throw new Error("Password mismatch.");
 		}
 
 		let responseData = await doAuth(creds, "auth/register/");

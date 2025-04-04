@@ -35,14 +35,14 @@ function	renderPage()
 											<span class="input-group-text">
 												<span class="bi-lock-fill"></span>
 											</span>		
-											<input id="oldPasswordField" type="password" class="form-control" placeholder="New Password">
+											<input id="newPasswordField" type="password" class="form-control" placeholder="New Password">
 										</div>
 										<!--CONFIRM NEW PASSWORD-->
 										<div class="input-group my-2">
 											<span class="input-group-text">
 												<span class="bi-lock-fill"></span>
 											</span>
-											<input id="oldPasswordField" type="password" class="form-control" placeholder="Confirm New Password">
+											<input id="confirmPasswordField" type="password" class="form-control" placeholder="Confirm New Password">
 										</div>
 										<button type="submit" class="btn btn-outline-light mt-2">Confirm</button>
 									</form>
@@ -68,10 +68,74 @@ function	renderPage()
 	`
 }
 
-
-function	chgPassword(event)
+async function	getUserName()
 {
-	alert("This feature has not been implemented yet");
+	let response = await fetch("management/management/user/", {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": "Bearer " + localStorage.getItem("access"),
+		}
+	});
+
+//	console.log(await response.json());
+	return (await response.json());
+}
+
+
+async function	chgPassword(event)
+{
+	let errField;
+	let errMsg = document.getElementById("errMsg");
+	if (errMsg !== null)
+		errMsg.remove();
+
+	let creds = {
+		username: (await getUserName()).username,
+		password: document.getElementById("oldPasswordField").value,
+	};
+
+//	console.log(creds);
+	try
+	{
+		if (document.getElementById("newPasswordField").value !== document.getElementById("confirmPasswordField").value)
+		{
+			errField = "confirmPasswordField";
+			throw new Error("Password mismatch.");
+		}
+
+		let response = await fetch("auth/", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(creds),
+		} );
+
+		//	THROW ERROR IF RESPONSE IS NOT OK; ELSE REFRESH PAGE
+
+		if (!response.ok)
+			throw new Error("wrong creds");
+
+		let responseData = await response.json();
+		localStorage.setItem("access", responseData.access);
+		localStorage.setItem("refresh", responseData.refresh);
+
+		//	SEND REQUEST TO CHANGE PASSWORD
+
+	}
+	catch(error)
+	{
+		if (errField !== undefined)
+		{
+			let	errElem = document.getElementById(errField);
+			errElem.classList.add("is-invalid");
+			errElem.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>")
+			event.stopPropagation();
+		}
+		else
+			alert(error);
+	}
 }
 
 function	deleteAccount(event)
