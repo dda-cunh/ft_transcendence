@@ -164,7 +164,7 @@ class PendingFriendRequestsView(APIView):
         user = request.user
 
         pending_requests = FriendRequest.objects.filter(
-            sender=user,
+            receiver=user,
             accepted_at__isnull=True,
             rejected_at__isnull=True
         )
