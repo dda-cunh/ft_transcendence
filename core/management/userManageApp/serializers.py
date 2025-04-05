@@ -65,18 +65,17 @@ class FriendRequestSerializer(serializers.ModelSerializer):
         return attrs
 
 class PendingFriendRequestsViewSerializer(serializers.ModelSerializer):
-    receiver_username = serializers.CharField(source='receiver.username', read_only=True)
-    receiver_avatar = serializers.SerializerMethodField()
+    sender_username = serializers.CharField(source='sender.username', read_only=True)
+    sender_avatar = serializers.SerializerMethodField()
 
     class Meta:
         model = FriendRequest
 
-        fields = ['id', 'receiver', 'receiver_username', 'receiver_avatar', 'sent_at']
-        read_only_fields = ['sent_at', 'receiver_username', 'receiver_avatar']
+        fields = ['id', 'sender', 'sender_username', 'sender_avatar', 'sent_at']
+        read_only_fields = ['sent_at', 'sender_username', 'sender_avatar']
 
-    def get_receiver_avatar(self, obj):
-        if obj.receiver.avatar:
+    def get_sender_avatar(self, obj):
+        if obj.sender.avatar:
             request = self.context.get('request')
-        
-            return request.build_absolute_uri(obj.receiver.avatar.url) if request else obj.receiver.avatar.url
+            return request.build_absolute_uri(obj.sender.avatar.url) if request else obj.sender.avatar.url
         return None
