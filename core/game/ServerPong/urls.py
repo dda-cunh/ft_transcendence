@@ -1,6 +1,6 @@
 from django.urls import re_path
-from .views import pong
+from .views import game
 
 urlpatterns = [
-    re_path(r'^pong/?$', pong, name='pong'),
+    re_path(r'^game/?$', game.as_view(), name='game'),
 ]

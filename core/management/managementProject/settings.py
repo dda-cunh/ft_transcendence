@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'user',
     'userManageApp',
-    'gameManageApp',
 ]
 
 MIGRATION_MODULES = {

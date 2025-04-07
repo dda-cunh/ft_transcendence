@@ -3,8 +3,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
 
+class game(APIView):
+    permission_classes = [IsAuthenticated]
 
-@permission_classes([IsAuthenticated])
-def pong(request):
-    if request.method == 'GET':
+    def get(self, request):
+        user = request.user
+        print("Authorization Header:", request.headers.get('Authorization'))
         return JsonResponse({'status': 'pong'})
