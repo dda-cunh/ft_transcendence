@@ -60,6 +60,29 @@ function    renderPage()
     transcendenceApp.style.height = window.innerHeight;
 }
 
+// Get Game endpoint
+export async function renderPongEndpoint()
+{
+	try
+	{
+		let	response = await fetch("pong/", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": "Bearer " + localStorage.getItem("access"),
+			},
+		} );
+
+		if (!response.ok)
+			return
+
+		console.log(response)
+	}
+	catch(error)
+	{
+		alert(error)
+	}
+}
 
 export function renderPongGame()
 {
@@ -71,6 +94,9 @@ export function renderPongGame()
 
 //  GET INFO FROM BACKEND ON GAME STATUS [PONG MATCH/TOURNAMENT SCOREBOARD]
     renderGame(canvas, ctx);
+
+// Render temporary game endpoint
+    renderPongEndpoint();
 
 //  FOR MOBILE DEVICES ONLY
 //    alert("For a better experience, please flip your device to landscape view");
