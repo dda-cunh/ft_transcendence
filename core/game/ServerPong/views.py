@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
 
-class game(APIView):
+class singleGameView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):

@@ -65,7 +65,7 @@ export async function renderPongEndpoint()
 {
 	try
 	{
-		let	response = await fetch("game", {
+		let	response = await fetch("game/singlegame", {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
