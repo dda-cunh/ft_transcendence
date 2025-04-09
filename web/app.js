@@ -19,6 +19,11 @@ async function	get_userData()
 		}
 	});
 
+<<<<<<< HEAD
+=======
+//	console.log(await response.json());
+
+>>>>>>> frontend
 	return (await response.json());
 }
 
@@ -84,7 +89,11 @@ async function renderPlayerCard()
 					<div class="row d-flex">
 						<div class="col">
 							<!--MOTTO-->
+<<<<<<< HEAD
 							<p id="mottoDisplay" class="fst-italic"></p>
+=======
+							<p class="fst-italic">"${motto}"</p>
+>>>>>>> frontend
 						</div>
 					</div>
 				</div>
