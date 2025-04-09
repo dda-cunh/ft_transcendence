@@ -9,4 +9,12 @@ class singleGameView(APIView):
     def get(self, request):
         user = request.user
         print("Authorization Header:", request.headers.get('Authorization'))
-        return JsonResponse({'status': 'pong'})
+        return JsonResponse({'status': 'single game'})
+
+class tournamentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        print("Authorization Header:", request.headers.get('Authorization'))
+        return JsonResponse({'status': 'tournament'})

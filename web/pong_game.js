@@ -1,5 +1,7 @@
 "use strict"
 
+import { connectWebSocket } from "./socket.js";
+
 
 function    setupCanvas(canvas, ctx)
 {
@@ -77,6 +79,7 @@ export async function renderPongEndpoint()
 			return
 
 		console.log(response)
+        connectWebSocket();
 	}
 	catch(error)
 	{
