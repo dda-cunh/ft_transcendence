@@ -37,8 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'rest_framework',
     'rest_framework_simplejwt',
-    'user',
     'ServerPong',
+    'user',
 ]
 
 REST_FRAMEWORK = {
