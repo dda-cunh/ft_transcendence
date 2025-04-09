@@ -5,12 +5,15 @@ from django.contrib.auth import get_user_model
 from channels.generic.websocket import AsyncWebsocketConsumer
 from ServerPong.constants import REDIS_URL
 from .redis_utils import *
-from django.contrib.auth import get_user_model
 
 class ServerPongConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
 
+        if not self.scope['user'].id:
+            await self.accept()
+            await self.send(json.dumps({'message':"NOPE"}))
+            return
         self.user_id = self.scope['user'].id
         self.room_name = None
 
@@ -47,6 +50,8 @@ class ServerPongConsumer(AsyncWebsocketConsumer):
 
 
     async def disconnect(self, close_code):
+        if not hasattr(self, 'user_id'):
+            return
         user_room = get_room_by_user(self.user_id)
         if user_room:
             await self.channel_layer.group_discard(user_room)
