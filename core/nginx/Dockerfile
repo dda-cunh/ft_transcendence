@@ -15,6 +15,6 @@ COPY ./conf/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Create log directories
 RUN mkdir -p /var/log/nginx/transcendance/
-
+EXPOSE 8000
 # # Start the Nginx server
 ENTRYPOINT ["nginx", "-g", "daemon off;"]

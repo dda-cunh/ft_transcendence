@@ -10,6 +10,6 @@ RUN		set -eux; \
 RUN		pip install --no-cache-dir --upgrade pip wheel
 
 COPY	docker_exec.sh .
-#EXPOSE	8000
+EXPOSE	8000
 
 CMD 	["bash", "docker_exec.sh"]
