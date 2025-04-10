@@ -69,9 +69,6 @@ async function renderPlayerCard()
 				<div class="col-12 col-lg-8 d-grid border rounded">
 					<div class="row h-auto">
 						<div class="col d-flex justify-content-end align-items-start">
-							<!--EDIT PROFILE BTN (CHG DISPLAY NAME, CHG MOTTO, CHG PFP)-->
-							<button id="editProfileBtn" type="button" class="btn btn-sm btn-outline-light mx-2 my-2"><i class="bi-pencil-fill"></i></button>
-							<!--SETTINGS BTN (CHG PASSWD, DELETE ACCOUNT)-->
 							<button id="acctSettingsBtn" type="button" class="btn btn-sm btn-outline-light my-2"><i class="bi-gear-fill"></i></button>
 						</div>
 					</div>
@@ -119,7 +116,6 @@ function	setupEventHandlers()
 {
 	document.getElementById("titleHeader").addEventListener("click", () => renderHome());
 
-	document.getElementById("editProfileBtn").addEventListener("click", ()=> renderEditProfile() );
 	document.getElementById("acctSettingsBtn").addEventListener("click", ()=> renderAcctSettings() );
 
 	document.getElementById("userPfp").addEventListener("click", ()=> renderProfile() );
