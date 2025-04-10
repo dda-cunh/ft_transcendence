@@ -27,7 +27,7 @@ class ServerPongConsumer(AsyncWebsocketConsumer):
 			token = query_params.get('token', [None])[0]
 			if token is None:
 				await self.accept()
-				await self.send(json.dumps({'message': "NOPE"}))
+				await self.send(json.dumps({'message': "AUTH SERVER ERROR"}))
 				await self.close()
 				return
 			headers = {
@@ -45,13 +45,12 @@ class ServerPongConsumer(AsyncWebsocketConsumer):
 
 		await self.accept()
 		if response.status_code != 200:
-			await self.send(json.dumps({'message': "NOPE"}))
+			await self.send(json.dumps({'message': "AUTH SERVER ERROR"}))
 			return
 
 		data = response.json()
 		self.send(json.dumps({'message': data}))
 		self.user_id = data['payload']['user_id']
-		await self.send(json.dumps({'message': f"I can see you {self.user_id}"}))
 		self.room_name = None
 		
 		user_room = get_room_by_user(self.user_id)
@@ -68,11 +67,10 @@ class ServerPongConsumer(AsyncWebsocketConsumer):
 			cancel_expiry(self.user_id)
 			return
 		elif r.exists(f"user_room_{self.user_id}"):
-			await self.send(text_data=json.dumps({"message": "Uops 1!"}))
 			r.delete(f"user_room_{self.user_id}")
 
 		if is_user_in_queue(self.user_id):
-			await self.send(text_data=json.dumps({"status": "already_in_queue"}))
+			await self.send(text_data=json.dumps({"message": "already in queue"}))
 			await self.close()
 			return
 
@@ -91,7 +89,7 @@ class ServerPongConsumer(AsyncWebsocketConsumer):
 				return
 		
 		enqueue_user(self.user_id)
-		await self.send(text_data=json.dumps({"status": "queued"}))
+		await self.send(text_data=json.dumps({"message": "queued"}))
 
 
 	async def disconnect(self, close_code):
@@ -101,7 +99,6 @@ class ServerPongConsumer(AsyncWebsocketConsumer):
 		if user_room:
 			r.expire(f"user_room_{self.user_id}", TIMEOUT)
 			room_data = json.loads(r.get(user_room))
-			await self.send(text_data=json.dumps({"message": "Uops 2!"}))
 			if len(room_data) == 0:
 				r.expire(user_room, TIMEOUT)
 		else:
