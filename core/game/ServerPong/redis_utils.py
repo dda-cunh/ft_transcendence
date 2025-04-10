@@ -23,17 +23,23 @@ def set_room_by_user(user_id, room_name):
     r.set(f"user_room_{user_id}", room_name)
 
 def get_room_by_user(user_id):
-    return r.get(f"user_room_{user_id}")
-
-def get_room_user_count(room_name):
-    users = json.loads(r.get(room_name))
-    return len(users)
+    room = r.get(f"user_room_{user_id}")
+    if r.exists(f"{room}"):
+        return r.get(f"user_room_{user_id}")
+    return None
 
 def cancel_expiry(user_id):
     r.persist(f"user_room_{user_id}")
-    room_data = json.loads(r.get(get_room_by_user(user_id)))
-    if len(room_data) == 2:
-        r.persist(room_data)
+    room_name = get_room_by_user(user_id)
+    if not room_name:
+        return
+    room_data = r.get(room_name)
+    if not room_data:
+        return
+    users = json.loads(room_data)
+    if len(users) == 2:
+        r.persist(room_name)
+
 
 def get_queue_size():
     return r.llen(QUEUE_KEY)
