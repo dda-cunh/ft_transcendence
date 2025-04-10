@@ -1,5 +1,6 @@
 import redis
 import json
+import httpx
 
 from django.contrib.auth import get_user_model
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -9,16 +10,31 @@ from .redis_utils import *
 class ServerPongConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
+        scope = self.scope
 
-        if not self.scope['user'].id:
-            await self.accept()
-            await self.send(json.dumps({'message':"NOPE"}))
-            return
-        self.user_id = self.scope['user'].id
-        self.room_name = None
+        url = 'http://auth:8000/validate'
+
+        headers = scope['headers']
+
+        async with httpx.AsyncClient() as client:
+            try:
+                response = await client.get(url, headers=headers)
+            except httpx.RequestError as exc:
+                await self.accept()
+                await self.send(json.dumps({'message': "AUTH SERVER ERROR"}))
+                return
 
         await self.accept()
+        if response.status_code != 200:
+            await self.send(json.dumps({'message': "NOPE"}))
+            return
 
+        data = response.json()
+        # self.send(json.dumps({'message': data}))
+        self.user_id = data['payload']['user_id']
+        await self.send(json.dumps({'message': f"I can see you {self.user_id}"}))
+        self.room_name = None
+        
         user_room = get_room_by_user(self.user_id)
         if user_room:
             self.room_name = user_room
