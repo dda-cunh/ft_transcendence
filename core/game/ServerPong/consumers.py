@@ -2,6 +2,7 @@ import redis
 import json
 import httpx
 
+from urllib.parse import parse_qs
 from django.contrib.auth import get_user_model
 from channels.generic.websocket import AsyncWebsocketConsumer
 from ServerPong.constants import REDIS_URL
@@ -9,75 +10,91 @@ from .redis_utils import *
 
 class ServerPongConsumer(AsyncWebsocketConsumer):
 
-    async def connect(self):
-        scope = self.scope
+	async def connect(self):
+		scope = self.scope
 
-        url = 'http://auth:8000/validate'
+		url = 'http://auth:8000/validate'
 
-        headers = scope['headers']
+		headers = scope['headers']
 
-        async with httpx.AsyncClient() as client:
-            try:
-                response = await client.get(url, headers=headers)
-            except httpx.RequestError as exc:
-                await self.accept()
-                await self.send(json.dumps({'message': "AUTH SERVER ERROR"}))
-                return
+		headers_dict = {k.decode(): v.decode() for k, v in headers}
 
-        await self.accept()
-        if response.status_code != 200:
-            await self.send(json.dumps({'message': "NOPE"}))
-            return
+		if "authorization" in headers_dict:
+			token = headers_dict["authorization"]
+			headers = {"Authorization": token}
+		else:
+			query_params = parse_qs(self.scope['query_string'].decode())
+			token = query_params.get('token', [None])[0]
+			if token is None:
+				await self.accept()
+				await self.send(json.dumps({'message': "NOPE"}))
+				return
+			headers = {
+				"Authorization": f"Bearer {token}"
+			}
 
-        data = response.json()
-        # self.send(json.dumps({'message': data}))
-        self.user_id = data['payload']['user_id']
-        await self.send(json.dumps({'message': f"I can see you {self.user_id}"}))
-        self.room_name = None
-        
-        user_room = get_room_by_user(self.user_id)
-        if user_room:
-            self.room_name = user_room
-            await self.channel_layer.group_add(
-                self.room_name,
-            )
-            await self.send(text_data=json.dumps({
-                "status": "reconnected",
-                "user_room": user_room
-            }))
-            cancel_expiry(self.user_id)
-            return
+		async with httpx.AsyncClient() as client:
+			try:
+				response = await client.get(url, headers=headers)
+			except httpx.RequestError as exc:
+				await self.accept()
+				await self.send(json.dumps({'message': "AUTH SERVER ERROR"}))
+				return
 
-        if get_queue_size() > 0:
-            peer_id = dequeue_user()
-            if peer_id and int(peer_id) != self.user_id:
-                self.room_name = create_room(self.user_id, peer_id)
+		await self.accept()
+		if response.status_code != 200:
+			await self.send(json.dumps({'message': "NOPE"}))
+			return
 
-                await self.channel_layer.group_add(
-                    self.room_name,
-                )
-                set_room_by_user(user_id, self.room_name)
-                set_room_by_user(peer_id, self.room_name)
-                await self.send(json.dumps({'message': 'Connected to peer!'}))
-                return
-        
-        enqueue_user(self.user_id)
-        await self.send(text_data=json.dumps({"status": "queued"}))
+		data = response.json()
+		self.send(json.dumps({'message': data}))
+		self.user_id = data['payload']['user_id']
+		await self.send(json.dumps({'message': f"I can see you {self.user_id}"}))
+		self.room_name = None
+		
+		user_room = get_room_by_user(self.user_id)
+		if user_room:
+			self.room_name = user_room
+			await self.channel_layer.group_add(
+				self.room_name,
+			)
+			await self.send(text_data=json.dumps({
+				"status": "reconnected",
+				"user_room": user_room
+			}))
+			cancel_expiry(self.user_id)
+			return
+
+		if get_queue_size() > 0:
+			peer_id = dequeue_user()
+			if peer_id and peer_id != self.user_id:
+				self.room_name = create_room(self.user_id, peer_id)
+
+				await self.channel_layer.group_add(
+					self.room_name,
+				)
+				set_room_by_user(user_id, self.room_name)
+				set_room_by_user(peer_id, self.room_name)
+				await self.send(json.dumps({'message': 'Connected to peer!'}))
+				return
+		
+		enqueue_user(self.user_id)
+		await self.send(text_data=json.dumps({"status": "queued"}))
 
 
-    async def disconnect(self, close_code):
-        if not hasattr(self, 'user_id'):
-            return
-        user_room = get_room_by_user(self.user_id)
-        if user_room:
-            await self.channel_layer.group_discard(user_room)
-            r.expire(f"user_room_{self.user_id}", 180)
-            room_data = json.loads(r.get(user_room))
-            if len(room_data) == 0:
-                r.expire(user_room, 180)
-        else:
-            remove_user_from_queue(self.user_id)
+	async def disconnect(self, close_code):
+		if not hasattr(self, 'user_id'):
+			return
+		user_room = get_room_by_user(self.user_id)
+		if user_room:
+			await self.channel_layer.group_discard(user_room)
+			r.expire(f"user_room_{self.user_id}", 180)
+			room_data = json.loads(r.get(user_room))
+			if len(room_data) == 0:
+				r.expire(user_room, 180)
+		else:
+			remove_user_from_queue(self.user_id)
 
 
-    async def receive(self, text_data):
-        data = json.loads(text_data)
+	async def receive(self, text_data):
+		data = json.loads(text_data)

@@ -1,7 +1,9 @@
+let socket;
 
 export function connectWebSocket() {
-  let wsUrl = `wss://${window.location.hostname}:${window.location.port}/ws/`;
-  let socket = new WebSocket(wsUrl);
+  let token = localStorage.getItem("access");
+  let wsUrl = `wss://${window.location.hostname}/ws/?token=${token}`;
+  socket = new WebSocket(wsUrl);
 
   socket.onopen = function(event) {
     console.log('WebSocket connection established');

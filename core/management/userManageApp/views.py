@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response 
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
-from .serializers import UserLoginSerializer, UserMottoSerializer, UserAvatarSerializer, FriendRequestSerializer
+from .serializers import UserLoginSerializer, UserPasswordSerializer, UserMottoSerializer, UserAvatarSerializer, FriendRequestSerializer, PendingFriendRequestsViewSerializer
 from .models import FriendRequest
 from rest_framework import status
 from django.utils import timezone
@@ -16,6 +16,15 @@ User = get_user_model()
 class UpdateLoginView(UpdateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserLoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+    def get_object(self):
+        return self.request.user
+
+class UpdatePasswordView(UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserPasswordSerializer
 
     def post(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
@@ -147,3 +156,18 @@ class FriendListView(APIView):
             })
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+class PendingFriendRequestsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        pending_requests = FriendRequest.objects.filter(
+            receiver=user,
+            accepted_at__isnull=True,
+            rejected_at__isnull=True
+        )
+
+        serializer = PendingFriendRequestsViewSerializer(pending_requests, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
