@@ -39,13 +39,10 @@ function	renderPage()
 							</div>
 							<!--CHANGE MOTTO-->
 							<div class="tab-pane fade" id="changeMotto">
-								<div class="col-7 col-lg-3 mx-auto">
+								<div class="col-7 mx-auto">
 									<form id="changeMottoForm">
 										<div class="input-group my-2">
-											<span class="input-group-text">
-												<span class="bi-person-fill"></span>
-											</span>
-											<input id="newMottoField" type="text" class="form-control" placeholder="New Motto">
+											<textarea id="newMottoField" type="text" class="form-control" placeholder="New Motto"></textarea>
 										</div>
 										<button type="submit" class="btn btn-outline-light mt-2">Confirm</button>
 									</form>

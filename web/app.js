@@ -63,7 +63,7 @@ async function renderPlayerCard()
 				<div class="col-12 col-lg-2 my-3 mt-lg-0">
 					<!--PROFILE PIC-->
 
-					<a href="#"><img id="userPfp" src="management/media/${imgSrc}" class="img-fluid rounded-circle" alt="User Profile Picture"></a>
+					<a href="#"><img id="userPfp" src="management/${imgSrc}" class="img-fluid rounded-circle" alt="User Profile Picture"></a>
 
 				</div>
 				<div class="col-12 col-lg-8 d-grid border rounded">
