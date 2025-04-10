@@ -2,7 +2,6 @@ import {renderAuth} from './auth.js'
 import {renderHome} from './home.js'
 import {renderProfile} from './profile.js'
 import {renderFriends} from './friends.js'
-import {renderEditProfile} from './edit_profile.js'
 import {renderAcctSettings} from './account_settings.js'
 
 
