@@ -71,6 +71,11 @@ class ServerPongConsumer(AsyncWebsocketConsumer):
 			await self.send(text_data=json.dumps({"message": "Uops 1!"}))
 			r.delete(f"user_room_{self.user_id}")
 
+		if is_user_in_queue(self.user_id):
+			await self.send(text_data=json.dumps({"status": "already_in_queue"}))
+			await self.close()
+			return
+
 		if get_queue_size() > 0:
 			peer_id = dequeue_user()
 			if peer_id and peer_id != self.user_id:
