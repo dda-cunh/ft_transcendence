@@ -23,18 +23,12 @@ class UserLoginSerializer(serializers.ModelSerializer):
 class UserPasswordSerializer(serializers.Serializer):
     current_password = serializers.CharField(required=True, write_only=True)
     new_password = serializers.CharField(required=True, write_only=True)
-    confirm_new_password = serializers.CharField(required=True, write_only=True)
 
     def validate_current_password(self, value):
         user = self.context['request'].user
         if not user.check_password(value):
             raise serializers.ValidationError("Current password is not correct.")
         return value
-
-    def validate(self, data):
-        if data['new_password'] != data['confirm_new_password']:
-            raise serializers.ValidationError("New passwords do not match.")
-        return data
 
     def update(self, instance, validated_data):
         instance.set_password(validated_data['new_password'])
