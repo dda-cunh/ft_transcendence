@@ -15,8 +15,8 @@ def dequeue_user():
 	return r.lpop(QUEUE_KEY)
 
 def create_room(user1, user2):
-	room_name = str(uuid.uuid4())
-	r.set(room_name, json.dumps([]))
+	room_name = f"room_{uuid.uuid4().hex[:24]}"
+	r.set(room_name, json.dumps([user1, user2]))
 	return room_name
 
 def set_room_by_user(user_id, room_name):

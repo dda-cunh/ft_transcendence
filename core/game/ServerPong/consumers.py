@@ -1,6 +1,7 @@
 import redis
 import json
 import httpx
+import asyncio
 
 from urllib.parse import parse_qs
 from django.contrib.auth import get_user_model
@@ -46,6 +47,7 @@ class ServerPongConsumer(AsyncWebsocketConsumer):
 		await self.accept()
 		if response.status_code != 200:
 			await self.send(json.dumps({'message': "AUTH SERVER ERROR"}))
+			await self.close()
 			return
 
 		data = response.json()
@@ -53,42 +55,54 @@ class ServerPongConsumer(AsyncWebsocketConsumer):
 		self.user_id = data['payload']['user_id']
 		self.room_name = None
 		
-		user_room = get_room_by_user(self.user_id)
-		if user_room:
-			self.room_name = user_room
-			await self.channel_layer.group_add(
-				self.room_name,
-				self.channel_name,
-			)
-			await self.send(text_data=json.dumps({
-				"status": "reconnected",
-				"user_room": user_room
-			}))
-			cancel_expiry(self.user_id)
-			return
-		elif r.exists(f"user_room_{self.user_id}"):
-			r.delete(f"user_room_{self.user_id}")
-
 		if is_user_in_queue(self.user_id):
 			await self.send(text_data=json.dumps({"message": "already in queue"}))
 			await self.close()
 			return
+
+		user_room = get_room_by_user(self.user_id)
+		if user_room:
+			await self.channel_layer.group_add(
+				user_room,
+				self.channel_name,
+			)
+			await self.channel_layer.group_send(
+				user_room,
+				{
+					'type': 'room_message',
+					'message': 'Reconnected to peer!',
+					'close': False,
+				}
+			)
+			cancel_expiry(self.user_id)
+			return
+		elif r.exists(f"user_room_{self.user_id}"):
+			r.delete(f"user_room_{self.user_id}")
 
 		if get_queue_size() > 0:
 			peer_id = dequeue_user()
 			if peer_id and peer_id != self.user_id:
 				self.room_name = create_room(self.user_id, peer_id)
 
-				await self.channel_layer.group_add(
-					self.room_name,
-					self.channel_name,
-				)
+				await self.channel_layer.group_add(self.room_name, self.channel_name)
+				await self.channel_layer.group_add(self.room_name, r.get(f"user_channel_{peer_id}"))
+				r.delete(f"user_channel_{peer_id}")
+
 				set_room_by_user(self.user_id, self.room_name)
 				set_room_by_user(peer_id, self.room_name)
-				await self.send(text_data=json.dumps({"message": "Connected to peer!"}))
+				await self.channel_layer.group_send(
+					self.room_name,
+					{
+						'type': 'room_message',
+						'message': 'Connected to peer!',
+						'close': False,
+					}
+				)
+				asyncio.create_task(self.periodic_check_for_room())
 				return
 		
 		enqueue_user(self.user_id)
+		r.set(f"user_channel_{self.user_id}", self.channel_name)
 		await self.send(text_data=json.dumps({"message": "queued"}))
 
 
@@ -97,14 +111,52 @@ class ServerPongConsumer(AsyncWebsocketConsumer):
 			return
 		user_room = get_room_by_user(self.user_id)
 		if user_room:
-			r.expire(f"user_room_{self.user_id}", TIMEOUT)
-			room_data = json.loads(r.get(user_room))
-			if len(room_data) == 0:
-				r.expire(user_room, TIMEOUT)
+			r.setex(f"user_room_{self.user_id}", TIMEOUT, user_room)
+			await self.channel_layer.group_send(
+				user_room,
+				{
+					'type': 'room_message',
+					'message': 'Player disconnected',
+					'close': False,
+				}
+			)
 		else:
 			remove_user_from_queue(self.user_id)
-			await self.close()
 
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
+
+	async def room_message(self, event):
+		message = event['message']
+		await self.send(text_data=json.dumps({
+			'message': message
+		}))
+		if event['close']:
+			await self.close()
+
+	async def periodic_check_for_room(self):
+		try:
+			while True:
+				await asyncio.sleep(30)
+				users = json.loads(r.get(self.room_name))
+				if not users:
+					break
+				still_active = []
+				for u in users:
+					if r.exists(f"user_room_{u}"):
+						still_active.append(u)
+				if len(still_active) != len(users):
+					await self.channel_layer.group_send(
+						self.room_name,
+						{
+							'type': 'room_message',
+							'message': 'Opponent player has not returned. Ending game',
+							'close': True,
+						}
+					)
+					r.delete(f"user_room_{self.user_id}")
+					r.delete(self.room_name)
+					break
+		except asyncio.CancelledError:
+			return
