@@ -93,8 +93,6 @@ async function	doAuth(creds, dir)
 
 	let data = await response.json();
 
-//	console.log(data);
-
 	data.ok = response.ok;
 
 	return (data);
@@ -127,16 +125,16 @@ async function	registerUser(event)
 			let errKey = Object.keys(responseData)[0];
 			switch (errKey)
 			{
-				case "username":
+				case ("username"):
 					errField = "registerUserField";
 					break ;
-				case "password":
+				case ("password"):
 					errField = "registerPasswordField";
 					break ;
 				default:
 					throw new Error("Unhandled exception");
 			}
-			throw new Error(responseData[Object.keys(responseData)[0]]);
+			throw new Error(responseData[errKey]);
 		}
 		else
 		{

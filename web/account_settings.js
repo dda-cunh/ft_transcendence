@@ -149,6 +149,12 @@ async function	chgUserName(event)
 					}
 		);
 
+		if (!response.ok)
+		{
+			let responseData = await response.json();
+			throw new Error(responseData[Object.keys(responseData)[0]]);
+		}
+
 		location.reload();
 	}
 	catch(error)
@@ -177,16 +183,20 @@ async function	chgMotto(event)
 
 		updateAccessTkn();
 
-		await fetch("management/profile/motto/", 
-					{
-						method: "PATCH",
-						headers: {
-							"Content-Type": "application/json",
-							"Authorization": "Bearer " + localStorage.getItem("access"),
-						},
-						body: JSON.stringify({"motto": newMottoField.value}),
-					}
-		);
+		let response = await fetch("management/profile/motto/", {
+									method: "PATCH",
+									headers: {
+										"Content-Type": "application/json",
+										"Authorization": "Bearer " + localStorage.getItem("access"),
+									},
+									body: JSON.stringify({"motto": newMottoField.value}),
+								}
+					);
+		if (!response.ok)
+		{
+			let responseData = await response.json();
+			throw new Error(responseData[Object.keys(responseData)[0]]);
+		}
 
 		location.reload();
 	}
@@ -201,19 +211,6 @@ async function	chgMotto(event)
 	}
 }
 
-async function	getUserName()
-{
-	let response = await fetch("management/management/user/", {
-		method: "GET",
-		headers: {
-			"Content-Type": "application/json",
-			"Authorization": "Bearer " + localStorage.getItem("access"),
-		}
-	});
-
-	return (await response.json());
-}
-
 async function	chgPassword(event)
 {
 	let errField;
@@ -224,8 +221,8 @@ async function	chgPassword(event)
 	updateAccessTkn()
 
 	let creds = {
-		username: (await getUserName()).username,
-		password: document.getElementById("oldPasswordField").value,
+		current_password: document.getElementById("oldPasswordField").value,
+		new_password: document.getElementById("newPasswordField").value,
 	};
 
 	try
@@ -236,25 +233,34 @@ async function	chgPassword(event)
 			throw new Error("Password mismatch.");
 		}
 
-		let response = await fetch("auth/", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(creds),
-		} );
-
-		//	THROW ERROR IF RESPONSE IS NOT OK; ELSE REFRESH PAGE
+		let response = await fetch("management/profile/password", {
+									method: "PATCH",
+									headers: {
+										"Content-Type": "application/json",
+										"Authorization": "Bearer " + localStorage.getItem("access"),
+									},
+									body: JSON.stringify(creds),
+		});
 
 		if (!response.ok)
-			throw new Error("wrong creds");
+		{
+			//	SET errField & THROW ERROR
+			let responseData = await response.json();
+			let errKey = Object.keys(responseData)[0];
 
-		let responseData = await response.json();
-		localStorage.setItem("access", responseData.access);
-		localStorage.setItem("refresh", responseData.refresh);
-
-		//	SEND REQUEST TO CHANGE PASSWORD
-
+			switch (errKey)
+			{
+				case ("current_password"):
+					errField = "oldPasswordField";
+					break ;
+				case ("new_password"):
+					errField = "newPasswordField";
+					break ;
+				default:
+					throw new Error("Unhandled exception");
+			}
+			throw new Error(responseData[errKey]);
+		}
 	}
 	catch(error)
 	{

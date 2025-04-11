@@ -92,9 +92,6 @@ function	selectSettings()
 
 function	setupEventHandlers()
 {
-
-
-
 	document.getElementById("btnFriendlyMatch").addEventListener("click", ()=> renderPongGame() );
 	document.getElementById("btnTournament").addEventListener("click", ()=> alert("This feature has not been implemented yet.") ) ;
 

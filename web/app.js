@@ -1,7 +1,6 @@
 import {renderAuth} from './auth.js'
 import {renderHome} from './home.js'
 import {renderProfile} from './profile.js'
-//import {renderFriends} from './friends.js'
 import {renderAcctSettings} from './account_settings.js'
 
 
@@ -37,7 +36,6 @@ function renderNavbar()
 					<!--ADD HOME BTN-->
 					<a id="homeBtn" href="#" class="nav-item nav-link">Home</a>
 					<a id="profileBtn" href="#" class="nav-item nav-link">Profile</a>
-					<a id="friendsMgmtBtn" href="#" class="nav-item nav-link">Manage Friends</a>
 					<a id="logoutBtn" href="#" class="nav-item nav-link text-light">Logout</a>
 				</div>
 			</div>
@@ -121,7 +119,6 @@ function	setupEventHandlers()
 
 	document.getElementById("homeBtn").addEventListener("click", () => renderHome() );
 	document.getElementById("profileBtn").addEventListener("click", () => renderProfile() );
-//	document.getElementById("friendsMgmtBtn").addEventListener("click", () => renderFriends() );
 	document.getElementById("logoutBtn").addEventListener("click", () => logoutUser());
 
 	const	navLinks = document.querySelectorAll(".nav-item");
@@ -133,7 +130,7 @@ function	setupEventHandlers()
 	);
 
 	window.addEventListener("popstate", (event) => {
-		console.log(event.state);
+		alert(event.state);
 		if (event.state)
 		{
 			localStorage.setItem("currentView", event.state);
@@ -164,9 +161,6 @@ export async function	App()
 		case("profile"):
 			renderProfile();
 			break ;
-		case ("friends"):
-			renderFriends();
-			break ;
 		case ("accountSettings"):
 			renderAcctSettings();
 			break ;
@@ -174,4 +168,6 @@ export async function	App()
 			renderEditProfile();
 			break ;	
 	}
+
+//	console.log(window.history);
 }
