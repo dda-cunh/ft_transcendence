@@ -222,6 +222,8 @@ async function	loginUser(event)
 	/*	MAIN FUNCTION	*/
 export function	renderAuth()
 {
+	localStorage.setItem("currentView", "home");
+
 	renderPage();
 
 	document.getElementById("loginForm").addEventListener("submit", (event) => loginUser(event) );

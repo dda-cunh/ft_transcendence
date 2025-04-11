@@ -261,6 +261,9 @@ async function	chgPassword(event)
 			}
 			throw new Error(responseData[errKey]);
 		}
+
+		alert("Password updated successfully");
+		location.reload();
 	}
 	catch(error)
 	{
