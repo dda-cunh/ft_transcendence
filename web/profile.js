@@ -193,6 +193,8 @@ function	setupEventHandlers()
 export function	renderProfile()	//	ADD id PARAMETER
 {
 	localStorage.setItem("currentView", "profile");
+	window.history.pushState("profile", null, "");
+
 	renderPage();
 	renderFriendsList();
 	setupEventHandlers();

@@ -283,6 +283,8 @@ function	setupEventHandlers()
 export function	renderAcctSettings()
 {
 	localStorage.setItem("currentView", "accountSettings");
+	window.history.pushState("accountSettings", null, "");
+
 	renderPage();
 	setupEventHandlers();
 }

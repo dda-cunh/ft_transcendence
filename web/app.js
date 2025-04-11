@@ -1,7 +1,7 @@
 import {renderAuth} from './auth.js'
 import {renderHome} from './home.js'
 import {renderProfile} from './profile.js'
-import {renderFriends} from './friends.js'
+//import {renderFriends} from './friends.js'
 import {renderAcctSettings} from './account_settings.js'
 
 
@@ -116,13 +116,12 @@ function	setupEventHandlers()
 	document.getElementById("titleHeader").addEventListener("click", () => renderHome());
 
 	document.getElementById("acctSettingsBtn").addEventListener("click", ()=> renderAcctSettings() );
-
 	document.getElementById("userPfp").addEventListener("click", ()=> renderProfile() );
 	document.getElementById("userNameDisplay").addEventListener("click", ()=> renderProfile() );
 
 	document.getElementById("homeBtn").addEventListener("click", () => renderHome() );
 	document.getElementById("profileBtn").addEventListener("click", () => renderProfile() );
-	document.getElementById("friendsMgmtBtn").addEventListener("click", () => renderFriends() );
+//	document.getElementById("friendsMgmtBtn").addEventListener("click", () => renderFriends() );
 	document.getElementById("logoutBtn").addEventListener("click", () => logoutUser());
 
 	const	navLinks = document.querySelectorAll(".nav-item");
@@ -132,6 +131,22 @@ function	setupEventHandlers()
 			link.addEventListener("click", () => { bsCollapse.toggle() });
 		}
 	);
+
+	window.addEventListener("popstate", (event) => {
+		console.log(event.state);
+		if (event.state)
+		{
+			localStorage.setItem("currentView", event.state);
+			location.reload();
+		}
+	});
+}
+
+function setupHistory()
+{
+	//	if HISTORY IS EMPTY:
+	if (window.history.state === null)
+		window.history.replaceState(localStorage.getItem("currentView"), null, "");
 }
 
 
@@ -139,6 +154,7 @@ export async function	App()
 {
 	await renderPage();
 	setupEventHandlers();
+	setupHistory();
 
 	switch (localStorage.getItem("currentView") )
 	{

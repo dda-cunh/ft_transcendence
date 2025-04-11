@@ -110,6 +110,8 @@ function	setupEventHandlers()
 export function	renderHome()
 {
 	localStorage.setItem("currentView", "home");
+	window.history.pushState("home", null, "");
+
 	renderPage();
 	selectSettings();
 
