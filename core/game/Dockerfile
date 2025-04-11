@@ -11,6 +11,6 @@ RUN		apt-get update -y \
 		&& rm -rf /var/lib/apt/lists/*
 
 RUN		pip install --no-cache-dir --upgrade pip wheel \
-		&& pip install --no-cache-dir daphne
+		&& pip install --no-cache-dir --upgrade daphne channels
 
 CMD 	["bash", "docker_exec.sh"]

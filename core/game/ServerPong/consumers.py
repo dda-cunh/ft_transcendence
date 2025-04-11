@@ -16,37 +16,27 @@ class ServerPongConsumer(AsyncWebsocketConsumer):
 
 		url = 'http://auth:8000/validate'
 
-		headers = scope['headers']
-
-		headers_dict = {k.decode(): v.decode() for k, v in headers}
-
-		if "authorization" in headers_dict:
-			token = headers_dict["authorization"]
-			headers = {"Authorization": token}
-		else:
-			query_params = parse_qs(self.scope['query_string'].decode())
-			token = query_params.get('token', [None])[0]
-			if token is None:
-				await self.accept()
-				await self.send(json.dumps({'message': "AUTH SERVER ERROR"}))
-				await self.close()
-				return
-			headers = {
-				"Authorization": f"Bearer {token}"
-			}
+		token = scope.get('token')
+		if not token:
+			await self.accept()
+			await self.send(json.dumps({'message': "Not authenticated"}))
+			await self.close()
+			return
+		
+		headers = {"Authorization": f"{token}"}
 
 		async with httpx.AsyncClient() as client:
 			try:
 				response = await client.get(url, headers=headers)
 			except httpx.RequestError as exc:
 				await self.accept()
-				await self.send(json.dumps({'message': "AUTH SERVER ERROR"}))
+				await self.send(json.dumps({'message': "Not authenticated"}))
 				await self.close()
 				return
 
 		await self.accept()
 		if response.status_code != 200:
-			await self.send(json.dumps({'message': "AUTH SERVER ERROR"}))
+			await self.send(json.dumps({'message': "Not authenticated"}))
 			await self.close()
 			return
 
