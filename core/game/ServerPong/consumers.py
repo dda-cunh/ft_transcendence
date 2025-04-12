@@ -1,41 +1,35 @@
 import redis
 import json
-import httpx
 import asyncio
 
 from urllib.parse import parse_qs
 from django.contrib.auth import get_user_model
 from channels.generic.websocket import AsyncWebsocketConsumer
+
 from ServerPong.constants import REDIS_URL, TIMEOUT
-from .redis_utils import *
+from ServerPong.redis_utils import *
+from ServerPong.utils import asyncGet, AsyncGetData
 
 class ServerPongConsumer(AsyncWebsocketConsumer):
 
 	async def connect(self):
+		await self.accept()
+
 		scope = self.scope
 
 		url = 'http://auth:8000/validate'
 
 		token = scope.get('token')
 		if not token:
-			await self.accept()
 			await self.send(json.dumps({'message': "Not authenticated"}))
 			await self.close()
 			return
-		
+
 		headers = {"Authorization": f"{token}"}
 
-		async with httpx.AsyncClient() as client:
-			try:
-				response = await client.get(url, headers=headers)
-			except httpx.RequestError as exc:
-				await self.accept()
-				await self.send(json.dumps({'message': "Not authenticated"}))
-				await self.close()
-				return
+		response :AsyncGetData = await asyncGet(url, headers)
 
-		await self.accept()
-		if response.status_code != 200:
+		if response.status != 200:
 			await self.send(json.dumps({'message': "Not authenticated"}))
 			await self.close()
 			return
@@ -44,7 +38,7 @@ class ServerPongConsumer(AsyncWebsocketConsumer):
 		self.send(json.dumps({'message': data}))
 		self.user_id = data['payload']['user_id']
 		self.room_name = None
-		
+
 		if is_user_in_queue(self.user_id):
 			await self.send(text_data=json.dumps({"message": "already in queue"}))
 			await self.close()
