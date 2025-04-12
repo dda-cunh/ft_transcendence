@@ -1,7 +1,7 @@
 from channels.middleware import BaseMiddleware
 import http.cookies
 
-class JWTSubprotocolMiddleware(BaseMiddleware):
+class TokenMiddleware(BaseMiddleware):
 	def __init__(self, inner):
 		super().__init__(inner)
 
