@@ -1,7 +1,9 @@
-let socket;
+let socket = null;
 
-export function connectWebSocket() {
-  let mode = "remote"; // temporary; mode depends on the clicked button; send 'local', 'remote' or 'tournament'
+export function connectWebSocket(mode) {
+  // mode depends on the clicked button; send 'local', 'remote' or 'tournament'
+
+  if (socket) socket.close();
 
   document.cookie = "access=" + localStorage.getItem("access") + "; path=/; Secure";
   let wsUrl = `wss://${window.location.hostname}/${mode}pong/`;

@@ -40,7 +40,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		self.user_id = data['payload']['user_id']
 		self.room_name = None
 
-		if is_user_in_queue(self.user_id):
+		if not get_user_mode(self.user_id):
+			set_user_mode(self.user_id, TOURN_MODE)
+		elif get_user_mode(self.user_id) != TOURN_MODE:
+			await self.send(text_data=json.dumps({"message": "subscribed to tournament. Rejecting..."}))
+			await self.close()
+			return
+		elif get_user_mode(self.user_id) == TOURN_MODE and is_user_in_queue(self.user_id, TOURN_MODE):
 			await self.send(text_data=json.dumps({"message": "already in queue"}))
 			await self.close()
 			return
@@ -64,8 +70,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		elif r.exists(f"user_room_{self.user_id}"):
 			r.delete(f"user_room_{self.user_id}")
 
-		if get_queue_size() > 0:
-			peer_id = dequeue_user()
+		if get_queue_size(TOURN_MODE) > 0:
+			peer_id = dequeue_user(TOURN_MODE)
 			if peer_id and peer_id != self.user_id:
 				self.room_name = create_room(self.user_id, peer_id)
 
@@ -86,7 +92,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				asyncio.create_task(self.periodic_check_for_room())
 				return
 		
-		enqueue_user(self.user_id)
+		enqueue_user(self.user_id, TOURN_MODE)
 		r.set(f"user_channel_{self.user_id}", self.channel_name)
 		await self.send(text_data=json.dumps({"message": "queued"}))
 
@@ -106,7 +112,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				}
 			)
 		else:
-			remove_user_from_queue(self.user_id)
+			remove_user_from_queue(self.user_id, TOURN_MODE)
+			r.delete(f"user_mode_{self.user_id}")
 
 
 	async def receive(self, text_data):
@@ -141,6 +148,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 						}
 					)
 					r.delete(f"user_room_{self.user_id}")
+					r.delete(f"user_mode_{self.user_id}")
 					r.delete(self.room_name)
 					break
 		except asyncio.CancelledError:
