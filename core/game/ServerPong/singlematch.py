@@ -144,6 +144,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 		user_room = get_room_by_user(self.user_id)
 		if user_room:
 			r.setex(f"user_room_{self.user_id}", TIMEOUT, user_room)
+			r.setex(f"user_mode_{self.user_id}", TIMEOUT, MATCH_MODE)
 			await self.channel_layer.group_send(
 				user_room,
 				{
