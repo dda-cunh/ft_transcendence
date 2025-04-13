@@ -33,6 +33,22 @@ def create_room(user1, user2):
 	r.set(room_name, json.dumps([user1, user2]))
 	return room_name
 
+def create_lobby(players):
+	room_name = f"lobby_{uuid.uuid4().hex[:24]}"
+	r.hset(room_name, mapping={
+		'players': json.dumps(players),
+		'wins': 0,
+		'losses': 0,
+	})
+	return room_name
+
+def create_tournament_room(user1, user2):
+	players = sorted([str(user1), str(user2)])
+	room_name = f"room_{players[0]}_{players[1]}"
+	if not r.exists(room_name):
+		r.set(room_name, json.dumps([user1, user2]))
+	return room_name
+
 def set_user_mode(user_id, mode):
 	r.set(f"user_mode_{user_id}", mode)
 
@@ -50,6 +66,9 @@ def get_room_by_user(user_id):
 
 def cancel_expiry(user_id):
 	r.persist(f"user_room_{user_id}")
+	r.persist(f"user_mode_{user_id}")
+	if r.exists(f"user_channel_{user_id}"):
+		r.persist(f"user_channel_{user_id}")
 	room_name = get_room_by_user(user_id)
 	if not room_name:
 		return

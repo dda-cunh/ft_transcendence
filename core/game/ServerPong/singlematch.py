@@ -156,6 +156,8 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 		else:
 			remove_user_from_queue(self.user_id, MATCH_MODE)
 			r.delete(f"user_mode_{self.user_id}")
+			if (r.exists(f"user_channel_{self.user_id}")):
+				r.delete(f"user_channel_{self.user_id}")
 
 
 	async def receive(self, text_data):
