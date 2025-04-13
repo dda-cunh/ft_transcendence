@@ -43,7 +43,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		if not get_user_mode(self.user_id):
 			set_user_mode(self.user_id, TOURN_MODE)
 		elif get_user_mode(self.user_id) != TOURN_MODE:
-			await self.send(text_data=json.dumps({"message": "subscribed to tournament. Rejecting..."}))
+			await self.send(text_data=json.dumps({"message": "subscribed to single match. Rejecting..."}))
 			await self.close()
 			return
 		elif get_user_mode(self.user_id) == TOURN_MODE and is_user_in_queue(self.user_id, TOURN_MODE):
