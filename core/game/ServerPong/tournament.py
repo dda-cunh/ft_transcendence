@@ -98,7 +98,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 
 	async def disconnect(self, close_code):
-		if not hasattr(self, 'user_id'):
+		if not hasattr(self, 'user_id') or get_user_mode(self.user_id) != TOURN_MODE:
 			return
 		user_room = get_room_by_user(self.user_id)
 		if user_room:
