@@ -60,7 +60,7 @@ async function renderPlayerCard()
 				<div class="col-12 col-lg-2 my-3 mt-lg-0">
 					<!--PROFILE PIC-->
 
-					<a href="#"><img id="userPfp" src="management/${imgSrc}" class="img-fluid rounded-circle" alt="User Profile Picture"></a>
+					<a href="#"><img id="userPfp" src="management/media/${imgSrc}" class="img-fluid rounded-circle" alt="User Profile Picture"></a>
 
 				</div>
 				<div class="col-12 col-lg-8 d-grid border rounded">
@@ -111,15 +111,15 @@ function	logoutUser()
 
 function	setupEventHandlers()
 {
-	document.getElementById("titleHeader").addEventListener("click", () => renderHome());
+	document.getElementById("titleHeader").addEventListener("click", () => renderHome(false));
 
-	document.getElementById("acctSettingsBtn").addEventListener("click", ()=> renderAcctSettings() );
-	document.getElementById("userPfp").addEventListener("click", ()=> renderProfile() );
-	document.getElementById("userNameDisplay").addEventListener("click", ()=> renderProfile() );
+	document.getElementById("acctSettingsBtn").addEventListener("click", ()=> renderAcctSettings(false) );
+	document.getElementById("userPfp").addEventListener("click", ()=> renderProfile(false) );
+	document.getElementById("userNameDisplay").addEventListener("click", ()=> renderProfile(false) );
 
-	document.getElementById("homeBtn").addEventListener("click", () => renderHome() );
-	document.getElementById("profileBtn").addEventListener("click", () => renderProfile() );
-	document.getElementById("logoutBtn").addEventListener("click", () => logoutUser());
+	document.getElementById("homeBtn").addEventListener("click", () => renderHome(false) );
+	document.getElementById("profileBtn").addEventListener("click", () => renderProfile(false) );
+	document.getElementById("logoutBtn").addEventListener("click", () => logoutUser(false));
 
 	const	navLinks = document.querySelectorAll(".nav-item");
 	const	menuToggle = document.getElementById("navbarCollapse");
@@ -128,26 +128,32 @@ function	setupEventHandlers()
 			link.addEventListener("click", () => { bsCollapse.toggle() });
 		}
 	);
-
-	window.addEventListener("popstate", (event) => {
-		alert(event.state);
-		if (event.state)
-		{
-			localStorage.setItem("currentView", event.state);
-			location.reload();
-		}
-	});
 }
+
 
 function setupHistory()
 {
 	//	if HISTORY IS EMPTY:
-	if (window.history.state === null)
-		window.history.replaceState(localStorage.getItem("currentView"), null, "");
+	if (localStorage.getItem("currentView"))
+	{
+//		alert(history.state);
+		window.history.replaceState(localStorage.getItem("currentView"), null);
+	}
 }
 
 
-export async function	App()
+window.addEventListener("popstate", (event) => {
+//	alert(window.history.state);
+	alert(history.state);
+	if (history.state)
+	{
+		localStorage.setItem("currentView", history.state);
+		App(true);
+	}
+});
+
+
+export async function	App(histLoad)
 {
 	await renderPage();
 	setupEventHandlers();
@@ -156,18 +162,13 @@ export async function	App()
 	switch (localStorage.getItem("currentView") )
 	{
 		case ("home"):
-			renderHome();
+			renderHome(histLoad);
 			break ;
 		case("profile"):
-			renderProfile();
+			renderProfile(histLoad);
 			break ;
 		case ("accountSettings"):
-			renderAcctSettings();
+			renderAcctSettings(histLoad);
 			break ;
-		case ("editProfile"):
-			renderEditProfile();
-			break ;	
 	}
-
-//	console.log(window.history);
 }

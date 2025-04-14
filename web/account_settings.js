@@ -58,10 +58,7 @@ function	renderPage()
 								<div class="col-7 col-lg-3 gap-2 mx-auto">
 									<form id="changePfpForm">
 										<div class="my-2 d-grid">
-											<button id="pfpUploadBtn" type="button" class="btn btn-light text-start">												
-												<span class="bi-upload"></span>
-												&ensp;&ensp;Browse... <!--REPLACE WITH PATH-->
-											</button>
+										<input id="pfpUploadBtn" type="file" class="btn btn-light" accept="image/*" />
 										</div>
 										<button type="submit" class="btn btn-outline-light mt-2">Confirm</button>
 									</form>
@@ -211,6 +208,39 @@ async function	chgMotto(event)
 	}
 }
 
+async function	chgPfp(event)
+{
+	console.log(document.getElementById("pfpUploadBtn").files);
+
+	let errField;
+	let errMsg = document.getElementById("errMsg");
+	if (errMsg !== null)
+		errMsg.remove();
+
+	updateAccessTkn();
+
+	let uploadBtn = document.getElementById("pfpUploadBtn");
+
+	try
+	{
+		let response = fetch(
+			);
+
+		let responseData = await response.json();
+
+		if (!response.ok)
+			throw new Error();
+
+		location.reload();
+	}
+	catch (error)
+	{
+		uploadBtn.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>");
+		event.stopPropagation();
+	}
+
+}
+
 async function	chgPassword(event)
 {
 	let errField;
@@ -218,7 +248,7 @@ async function	chgPassword(event)
 	if (errMsg !== null)
 		errMsg.remove();
 
-	updateAccessTkn()
+	updateAccessTkn();
 
 	let creds = {
 		current_password: document.getElementById("oldPasswordField").value,
@@ -283,16 +313,19 @@ function	setupEventHandlers()
 {
 	document.getElementById("changeUsernameForm").addEventListener("submit", (event) => chgUserName(event) );
 	document.getElementById("changeMottoForm").addEventListener("submit", (event) => chgMotto(event) );
-	document.getElementById("changePfpForm").addEventListener("submit", (event) => alert("This feature has not been implemented yet") );
-	document.getElementById("pfpUploadBtn").addEventListener("click", (event) => alert("This feature has not been implemented yet") );
+	document.getElementById("changePfpForm").addEventListener("submit", (event) => chgPfp(event) );
 	document.getElementById("chgPasswdForm").addEventListener("submit", (event) => chgPassword(event) );
 }
 
 
-export function	renderAcctSettings()
+export function	renderAcctSettings(histLoad)
 {
 	localStorage.setItem("currentView", "accountSettings");
-	window.history.pushState("accountSettings", null, "");
+	if (!histLoad)
+	{
+		history.pushState("accountSettings", null);
+		alert(history.state);
+	}
 
 	renderPage();
 	setupEventHandlers();

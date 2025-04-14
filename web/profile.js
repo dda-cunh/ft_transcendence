@@ -3,21 +3,6 @@ import {renderFriends} from './friends.js'
 "use strict";
 
 
-/*
-	DATA NEEDED:
-		USER NAME
-		PLAYER MOTTO
-		FRIENDS LIST
-
-		MATCH HISTORY
-			GAMES PLAYED/WON/LOSS + TOURNAMENTS
-			MATCHES + TOURNAMENTS LIST
-
-
-	ALL MATCHES + TOURNAMENTS NEED ID
-	TOURNAMENT ID 0 IS RESERVED FOR FRIENDLY MATCHES
-*/
-
 function	renderPage()
 {
 	let	transcendenceApp = document.getElementById("ctrlsRow");
@@ -25,9 +10,6 @@ function	renderPage()
 	transcendenceApp.innerHTML = `
 			<div class="col-12 col-lg-4 my-2 border rounded">
 				<h1 class="text-center mt-4">
-					<span>
-						<button id="manageFriendsBtn" class="btn btn-sm btn-outline-light"><i class="bi-pencil-fill"></i></button>
-					</span>
 					FRIENDS LIST
 				</h1>
 				<div class="position-relative" style="height: 250px; overflow-x: auto;">
@@ -183,19 +165,16 @@ export async function renderFriendsList()
 }
 
 
-function	setupEventHandlers()
-{
-	document.getElementById("manageFriendsBtn").addEventListener("click", () => renderFriends());
-}
-
-
 	/*	MAIN FUNCTION	*/
-export function	renderProfile()	//	ADD id PARAMETER
+export function	renderProfile(histLoad)	//	ADD id PARAMETER
 {
 	localStorage.setItem("currentView", "profile");
-	window.history.pushState("profile", null, "");
+	if (!histLoad)
+	{
+		history.pushState("profile", null);
+		alert(history.state);
+	}
 
 	renderPage();
 	renderFriendsList();
-	setupEventHandlers();
 }

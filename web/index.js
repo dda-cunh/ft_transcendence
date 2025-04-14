@@ -73,11 +73,10 @@ async function	main()
 {
 	initApp();
 
-
 	if (!(await userIsLoggedIn() ) )
 		renderAuth();
 	else
-		App();
+		App(false);
 }
 
 

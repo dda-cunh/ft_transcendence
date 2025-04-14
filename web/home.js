@@ -104,10 +104,14 @@ function	setupEventHandlers()
 
 
 	/*	MAIN FUNCTION	*/
-export function	renderHome()
+export function	renderHome(histLoad)
 {
 	localStorage.setItem("currentView", "home");
-	window.history.pushState("home", null, "");
+	if (!histLoad)
+	{
+		history.pushState("home", null);
+		alert(history.state);
+	}
 
 	renderPage();
 	selectSettings();
