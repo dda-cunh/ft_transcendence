@@ -104,9 +104,11 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 					'type': 'room_message',
 					'message': 'Reconnected to peer!',
 					'close': False,
+					'task': False,
 				}
 			)
 			cancel_expiry(self.user_id)
+			asyncio.create_task(self.periodic_check_for_room())
 			return
 		elif r.exists(f"user_room_{self.user_id}"):
 			r.delete(f"user_room_{self.user_id}")
@@ -128,9 +130,9 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 						'type': 'room_message',
 						'message': 'Connected to peer!',
 						'close': False,
+						'task': True,
 					}
 				)
-				asyncio.create_task(self.periodic_check_for_room())
 				return
 		
 		enqueue_user(self.user_id, MATCH_MODE)
@@ -151,6 +153,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 					'type': 'room_message',
 					'message': 'Player disconnected',
 					'close': False,
+					'task': False,
 				}
 			)
 		else:
@@ -170,11 +173,13 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 		}))
 		if event['close']:
 			await self.close()
+		if event['task']:
+			asyncio.create_task(self.periodic_check_for_room())
 
 	async def periodic_check_for_room(self):
 		try:
 			while True:
-				await asyncio.sleep(30)
+				await asyncio.sleep(1)
 				users = json.loads(r.get(self.room_name))
 				if not users:
 					break
@@ -189,6 +194,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 							'type': 'room_message',
 							'message': 'Opponent player has not returned. Ending game',
 							'close': True,
+							'task': False,
 						}
 					)
 					r.delete(f"user_room_{self.user_id}")
