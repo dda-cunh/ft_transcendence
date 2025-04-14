@@ -61,11 +61,22 @@ def get_room_by_user(user_id):
 		return r.get(f"user_room_{user_id}")
 	return None
 
+def set_lobby_by_user(user_id, room_name):
+	r.set(f"user_lobby_{user_id}", room_name)
+
+def get_lobby_by_user(user_id):
+	room = r.get(f"user_lobby_{user_id}")
+	if r.exists(f"{room}"):
+		return r.get(f"user_lobby_{user_id}")
+	return None
+
 def cancel_expiry(user_id):
 	r.persist(f"user_room_{user_id}")
 	r.persist(f"user_mode_{user_id}")
 	if r.exists(f"user_channel_{user_id}"):
 		r.persist(f"user_channel_{user_id}")
+	if r.exists(f"user_lobby_{user_id}"):
+		r.persist(f"user_lobby_{user_id}")
 	room_name = get_room_by_user(user_id)
 	if not room_name:
 		return
