@@ -35,11 +35,8 @@ def create_room(user1, user2):
 
 def create_lobby(players):
 	room_name = f"lobby_{uuid.uuid4().hex[:24]}"
-	r.hset(room_name, mapping={
-		'players': json.dumps(players),
-		'wins': 0,
-		'losses': 0,
-	})
+	for p in players:
+		r.sadd(room_name, p)
 	return room_name
 
 def create_tournament_room(user1, user2):

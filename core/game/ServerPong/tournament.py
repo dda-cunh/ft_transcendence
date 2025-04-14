@@ -82,8 +82,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			random.shuffle(players)
 			lobby_name = create_lobby(players)
 
-			allplayers = r.hget(lobby_name, 'players')
-			player_list = json.loads(allplayers)
+			player_list = [p for p in r.smembers(lobby_name)]
 
 			for player_id in player_list:
 				channel = r.get(f"user_channel_{player_id}")
@@ -124,6 +123,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					'lobby_name': None,
 				}
 			)
+			self.task.cancel()
+			del self.task
 		else:
 			remove_user_from_queue(self.user_id, TOURN_MODE)
 			r.delete(f"user_mode_{self.user_id}")
@@ -142,37 +143,40 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		if event['close']:
 			await self.close()
 		if event['task']:
-			#await self.periodic_check_for_room(event['lobby_name'], self.user_id)
-			asyncio.create_task(self.periodic_check_for_room(event['lobby_name'], self.user_id))
+			if hasattr(self, 'task'):
+				self.task.cancel()
+				del self.task
+			self.task = asyncio.create_task(self.periodic_check_for_room(r.get(f"user_channel_{self.user_id}"), \
+			event['lobby_name'], self.user_id))
 
-	async def periodic_check_for_room(self, lobby_name, player_id):
-		allplayers = r.hget(lobby_name, 'players')
-		player_list = json.loads(allplayers)
-
-		while len(player_list) < 2:
-			await asyncio.sleep(1)
-			allplayers = r.hget(lobby_name, 'players')
-			player_list = json.loads(allplayers)
-
-		match_name = None
-		opponent_id = None
-		
-		i = player_list.index(player_id)
-		if i % 2 == 0:
-			opponent_id = player_list[i + 1]
-		else:
-			opponent_id = player_list[i - 1]
-
-		await self.send(text_data=json.dumps({"message": f"You are {player_id}!"}))
-		match_name = create_tournament_room(player_id, opponent_id)
-		set_room_by_user(player_id, match_name)
-		await self.channel_layer.group_add(match_name, r.get(f"user_channel_{player_id}"))
-		await self.channel_layer.group_discard(lobby_name, self.channel_name)
-		await self.send(text_data=json.dumps({"message": f"Match against {opponent_id}!"}))
-
+	async def periodic_check_for_room(self, channel, lobby_name, player_id):
 		try:
+			player_list = [p for p in r.smembers(lobby_name)]
+
+			while len(player_list) < 2:
+				await asyncio.sleep(1)
+				player_list = [p for p in r.smembers(lobby_name)]
+
+			match_name = None
+			opponent_id = None
+			
+			i = player_list.index(player_id)
+			if i % 2 == 0:
+				opponent_id = player_list[i + 1]
+			else:
+				opponent_id = player_list[i - 1]
+
+			await self.send(text_data=json.dumps({"message": f"You are {player_id}!"}))
+			match_name = create_tournament_room(player_id, opponent_id)
+			set_room_by_user(player_id, match_name)
+			
+			await self.channel_layer.group_add(match_name, channel)
+			await self.channel_layer.group_discard(lobby_name, channel)
+
+			await self.send(text_data=json.dumps({"message": f"Match against {opponent_id}!"}))
+
 			while True:
-				await asyncio.sleep(10)
+				await asyncio.sleep(5)
 				still_active = []
 				if get_room_by_user(player_id):
 					still_active.append(player_id)
@@ -183,29 +187,28 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 						match_name,
 						{
 							'type': 'room_message',
-							'message': 'Opponent player has not returned. Ending game',
+							'message': f'Player {opponent_id} has not returned. Ending game',
 							'close': False,
 							'task': False,
 							'lobby_name': None,
 						}
 					)
-					await self.channel_layer.group_add(lobby_name, self.channel_name)
-					matchPlayers = r.hget(lobby_name, 'players')
-					filtered_players = [p for p in matchPlayers if p not in [player_id, opponent_id]]
-					filtered_players.append(player_id)
-					r.hset(lobby_name, 'players', json.dumps(filtered_players))
+					await self.channel_layer.group_add(lobby_name, channel)
+					await self.channel_layer.group_discard(match_name, channel)
 					r.delete(match_name)
 					r.delete(f"user_room_{player_id}")
 					break
 
+			if r.sismember(lobby_name, opponent_id):
+				r.srem(lobby_name, opponent_id)
+			if not r.sismember(lobby_name, player_id):
+				r.sadd(lobby_name, player_id)
+
 			# check end of tournament
-			allplayers = r.hget(lobby_name, 'players')
-			nextplayers = json.loads(allplayers)
-			if player_list == nextplayers * 2 and nextplayers == 1:
+			nextplayers = [p for p in r.smembers(lobby_name)]
+
+			if len(player_list) == 2 and len(nextplayers) == 1:
 				await self.send(text_data=json.dumps({"message": "You won the tournament! CONGRATS!!!"}))
-				r.delete(lobby_name)
-				r.delete(f"user_room_{player_id}")
-				r.delete(f"user_mode_{player_id}")
 				await self.channel_layer.group_send(
 					lobby_name,
 					{
@@ -216,15 +219,18 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 						'lobby_name': None,
 					}
 				)
-				return
-			await self.send(text_data=json.dumps({"message": "You won this match!"}))
-			await self.send(text_data=json.dumps({"message": "Awaiting next one..."}))
+				r.delete(lobby_name)
+				r.delete(f"user_room_{player_id}")
+				r.delete(f"user_mode_{player_id}")
+				asyncio.current_task().cancel()
+			elif len(nextplayers) < 2:
+				asyncio.current_task().cancel()
 
 			await self.channel_layer.group_send(
 				lobby_name,
 				{
 					'type': 'room_message',
-					'message': 'Next round!',
+					'message': 'You won this match! Awaiting next round...',
 					'close': False,
 					'task': True,
 					'lobby_name': lobby_name,
