@@ -64,7 +64,6 @@ function	renderPage()
 									</form>
 								</div>
 							</div>
-
 							<div class="tab-pane fade" id="chgPasswd">
 								<div class="col-7 col-lg-3 mx-auto">
 									<form id="chgPasswdForm">
@@ -112,7 +111,6 @@ async function	updateAccessTkn()
 		if (refreshCheck.ok)
 		{
 			let body = await refreshCheck.json();
-			console.log(body);
 			localStorage.setItem("access", body.access);
 		}
 		else
@@ -210,8 +208,6 @@ async function	chgMotto(event)
 
 async function	chgPfp(event)
 {
-	console.log(document.getElementById("pfpUploadBtn").files);
-
 	let errField;
 	let errMsg = document.getElementById("errMsg");
 	if (errMsg !== null)
@@ -223,18 +219,24 @@ async function	chgPfp(event)
 
 	try
 	{
-		let response = fetch(
-			);
+		let response = await fetch("management/profile/avatar", {
+							method: "PATCH",
+							headers: {
+								"Authorization": "Bearer " + localStorage.getItem("access"),
+							},
+							body: uploadBtn.files[0],
+			});
 
 		let responseData = await response.json();
 
 		if (!response.ok)
-			throw new Error();
+			throw new Error(responseData[Object.keys(responseData)[0]]);
 
 		location.reload();
 	}
 	catch (error)
 	{
+		console.log(error);
 		uploadBtn.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>");
 		event.stopPropagation();
 	}
