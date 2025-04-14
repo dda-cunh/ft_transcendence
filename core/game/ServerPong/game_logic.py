@@ -36,3 +36,12 @@ def	get_next_frame(old: GameState, actions: PlayersActions)-> GameState:
 		else:
 			new.p2_score = old.p2_score + 1
 	return (new)
+
+def	do_test():
+	state= GameState(Point2D(P1_START_X, P1_START_Y), Point2D(P2_START_X, P2_START_Y),
+					 0, 0, Point2D(CANVAS_MID_X, CANVAS_MID_Y), Vec2D(1, 1))
+	while (True):
+		p1_action = random.choice(list(KeyState))
+		p2_action = random.choice(list(KeyState))
+		curr_state = get_next_frame(state, PlayersActions(p1_action, p2_action))
+		print(curr_state)

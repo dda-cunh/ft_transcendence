@@ -21,6 +21,11 @@ class	Point2D:
 	x: float
 	y: float
 
+P1_START_Y = CANVAS_H / 2
+P1_START_X = - CANVAS_W / 2
+P2_START_Y = CANVAS_H / 2
+P2_START_X = CANVAS_W / 2
+
 class	Line:
 	"""Represents a line in 2D space in the general form Ax + By + C = 0."""
 	def	__init__(self, a: float, b: float, c: float):
