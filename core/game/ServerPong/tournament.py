@@ -54,12 +54,15 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 		user_lobby = get_lobby_by_user(self.user_id)
 		if user_lobby:
+			warnChannel = user_lobby
+			if get_room_by_user(self.user_id):
+				warnChannel = get_room_by_user(self.user_id)
 			await self.channel_layer.group_add(
-				user_lobby,
+				warnChannel,
 				self.channel_name,
 			)
 			await self.channel_layer.group_send(
-				user_lobby,
+				warnChannel,
 				{
 					'type': 'room_message',
 					'message': 'Reconnected to peer!',
@@ -114,13 +117,15 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			return
 		lobby = get_lobby_by_user(self.user_id)
 		if lobby:
+			warnChannel = lobby
 			r.setex(f"user_lobby_{self.user_id}", TIMEOUT, get_lobby_by_user(self.user_id))
 			r.setex(f"user_mode_{self.user_id}", TIMEOUT, TOURN_MODE)
 			if get_room_by_user(self.user_id):
 				r.setex(f"user_room_{self.user_id}", TIMEOUT, get_room_by_user(self.user_id))
+				warnChannel = get_room_by_user(self.user_id)
 			r.setex(f"user_channel_{self.user_id}", TIMEOUT, self.channel_name)
 			await self.channel_layer.group_send(
-				lobby,
+				warnChannel,
 				{
 					'type': 'room_message',
 					'message': 'Player disconnected',
@@ -131,7 +136,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			)
 			self.task.cancel()
 			del self.task
-		else:
+		elif is_user_in_queue(self.user_id, TOURN_MODE):
 			remove_user_from_queue(self.user_id, TOURN_MODE)
 			r.delete(f"user_mode_{self.user_id}")
 			if (r.exists(f"user_channel_{self.user_id}")):
