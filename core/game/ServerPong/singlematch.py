@@ -9,7 +9,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from ServerPong.constants import REDIS_URL, TIMEOUT
 from ServerPong.redis_utils import *
 from ServerPong.utils import asyncGet, AsyncGetData
-
+from ServerPong.room_monitor import start_monitor
 
 class LocalPongConsumer(AsyncWebsocketConsumer):
 
@@ -108,7 +108,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 				}
 			)
 			cancel_expiry(self.user_id)
-			asyncio.create_task(self.periodic_check_for_room())
+			start_monitor(user_room, self.channel_layer)
 			return
 		elif r.exists(f"user_room_{self.user_id}"):
 			r.delete(f"user_room_{self.user_id}")
@@ -124,6 +124,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 
 				set_room_by_user(self.user_id, self.room_name)
 				set_room_by_user(peer_id, self.room_name)
+				
 				await self.channel_layer.group_send(
 					self.room_name,
 					{
@@ -133,6 +134,10 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 						'task': True,
 					}
 				)
+
+				opponentName = r.get(f"name_{peer_id}")
+				await self.send(text_data=json.dumps({"message": f"Playing against {opponentName}"}))
+
 				return
 		
 		enqueue_user(self.user_id, MATCH_MODE)
@@ -161,10 +166,14 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 			r.delete(f"user_mode_{self.user_id}")
 			if (r.exists(f"user_channel_{self.user_id}")):
 				r.delete(f"user_channel_{self.user_id}")
+			r.delete(f"name_{self.user_id}")
 
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
+		if data.get('tname') and not r.exists(f"name_{self.user_id}"):
+			r.set(f"name_{self.user_id}", data['tname'])
+
 
 	async def room_message(self, event):
 		message = event['message']
@@ -174,32 +183,4 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 		if event['close']:
 			await self.close()
 		if event['task']:
-			asyncio.create_task(self.periodic_check_for_room())
-
-	async def periodic_check_for_room(self):
-		try:
-			while True:
-				await asyncio.sleep(1)
-				users = json.loads(r.get(self.room_name))
-				if not users:
-					break
-				still_active = []
-				for u in users:
-					if r.exists(f"user_room_{u}"):
-						still_active.append(u)
-				if len(still_active) != len(users):
-					await self.channel_layer.group_send(
-						self.room_name,
-						{
-							'type': 'room_message',
-							'message': 'Opponent player has not returned. Ending game',
-							'close': True,
-							'task': False,
-						}
-					)
-					r.delete(f"user_room_{self.user_id}")
-					r.delete(f"user_mode_{self.user_id}")
-					r.delete(self.room_name)
-					break
-		except asyncio.CancelledError:
-			return
+			start_monitor(self.room_name, self.channel_layer)

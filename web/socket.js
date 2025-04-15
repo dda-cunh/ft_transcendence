@@ -12,6 +12,12 @@ export function connectWebSocket(mode) {
   socket.onopen = function(event) {
     console.log('WebSocket connection established');
     document.cookie = "access=; path=/; Secure; SameSite=None; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+   
+    // substitute temp for username
+    if (mode === "remote") socket.send(JSON.stringify({ tname: "username" }));
+
+    // substitute temp for the name chosen by the user for this tournament
+    if (mode === "tournament") socket.send(JSON.stringify({ tname: "temp" }));
   };
 
   socket.onmessage = function(event) {

@@ -124,6 +124,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				r.setex(f"user_room_{self.user_id}", TIMEOUT, get_room_by_user(self.user_id))
 				warnChannel = get_room_by_user(self.user_id)
 			r.setex(f"user_channel_{self.user_id}", TIMEOUT, self.channel_name)
+			r.expire(f"name_{self.user_id}", TIMEOUT)
 			await self.channel_layer.group_send(
 				warnChannel,
 				{
@@ -141,10 +142,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			r.delete(f"user_mode_{self.user_id}")
 			if (r.exists(f"user_channel_{self.user_id}")):
 				r.delete(f"user_channel_{self.user_id}")
+			r.delete(f"name_{self.user_id}")
 
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
+		if data.get('tname') and not r.exists(f"name_{self.user_id}"):
+			r.set(f"name_{self.user_id}", data['tname'])
 
 
 	async def room_message(self, event):
@@ -178,14 +182,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		else:
 			opponent_id = player_list[i - 1]
 
-		await self.send(text_data=json.dumps({"message": f"You are {player_id}!"}))
+		userName = r.get(f"name_{player_id}")
+		opponentName = r.get(f"name_{opponent_id}")
+
 		match_name = create_tournament_room(player_id, opponent_id)
 		set_room_by_user(player_id, match_name)
 		
 		await self.channel_layer.group_add(match_name, channel)
 		await self.channel_layer.group_discard(lobby_name, channel)
 
-		await self.send(text_data=json.dumps({"message": f"Match against {opponent_id}!"}))
+		await self.send(text_data=json.dumps({"message": f"Match: {userName} against {opponentName}!"}))
 
 		return player_list, opponent_id, match_name
 
@@ -204,6 +210,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					if p != player_id and get_room_by_user(p) and get_room_by_user(p) == match_name:
 						opponent_id = p
 
+			opponentName = r.get(f"name_{opponent_id}")
 			while True:
 				await asyncio.sleep(1)
 				still_active = 0
@@ -216,7 +223,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 						match_name,
 						{
 							'type': 'room_message',
-							'message': f'Player {opponent_id} has not returned. Ending game',
+							'message': f'Player {opponentName} has not returned. Ending game',
 							'close': False,
 							'task': False,
 							'lobby_name': None,
