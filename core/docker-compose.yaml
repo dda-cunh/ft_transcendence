@@ -98,3 +98,13 @@ services:
     networks:
       - transcendence
 
+  game:
+    container_name: game
+    build: ./game
+    depends_on:
+      - auth
+      - redis
+    volumes:
+      - ./game/:/service
+      - ./auth/user/:/service/user
+    <<: *common
