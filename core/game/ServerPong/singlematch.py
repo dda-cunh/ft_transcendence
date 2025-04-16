@@ -62,7 +62,6 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 					'type': 'room_message',
 					'message': 'Reconnected to peer!',
 					'close': False,
-					'task': False,
 				}
 			)
 			cancel_expiry(self.user_id)
@@ -91,9 +90,9 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 						'type': 'room_message',
 						'message': 'Connected to peer!',
 						'close': False,
-						'task': True,
 					}
 				)
+				start_monitor(self.room_name, self.channel_layer)
 
 				return
 		
@@ -115,7 +114,6 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 					'type': 'room_message',
 					'message': 'Player disconnected',
 					'close': False,
-					'task': False,
 				}
 			)
 		elif is_user_in_queue(self.user_id, MATCH_MODE):
@@ -139,5 +137,4 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 		}))
 		if event['close']:
 			await self.close()
-		if event['task']:
-			start_monitor(self.room_name, self.channel_layer)
+		
