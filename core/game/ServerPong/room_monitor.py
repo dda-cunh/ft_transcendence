@@ -10,6 +10,8 @@ async def monitor_room(room_name, channel_layer):
     try:
         while True:
             await asyncio.sleep(1)
+            if not room_name:
+                break
             users_raw = r.get(room_name)
             if not users_raw:
                 break
@@ -50,8 +52,3 @@ def start_monitor(room_name, channel_layer):
     if room_name not in room_tasks:
         task = asyncio.create_task(monitor_room(room_name, channel_layer))
         room_tasks[room_name] = task
-
-def stop_monitor(room_name):
-    task = room_tasks.get(room_name)
-    if task:
-        task.cancel()

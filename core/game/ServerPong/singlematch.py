@@ -8,7 +8,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 from ServerPong.constants import REDIS_URL, TIMEOUT
 from ServerPong.redis_utils import *
-from ServerPong.utils import asyncGet, AsyncGetData, validate_user_token
+from ServerPong.utils import asyncGet, AsyncGetData, validate_user_token, validate_mode
 from ServerPong.room_monitor import start_monitor
 
 
@@ -25,7 +25,6 @@ class LocalPongConsumer(AsyncWebsocketConsumer):
 
 		self.room_name = create_local_room(self.user_id)
 
-		await self.channel_layer.group_add(self.room_name, self.channel_name)
 		await self.send(json.dumps({'message': "Welcome to local room!"}))
 
 	async def disconnect(self, close_code):
@@ -42,23 +41,14 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 		await self.accept()
 
 		self.user_id, error_msg = await validate_user_token(self.scope)
+		if self.user_id:
+			error_msg = await validate_mode(self.user_id, MATCH_MODE, "tournament")
 		if error_msg:
 			await self.send(error_msg)
 			await self.close()
 			return
 		
 		self.room_name = None
-
-		if not get_user_mode(self.user_id):
-			set_user_mode(self.user_id, MATCH_MODE)
-		elif get_user_mode(self.user_id) != MATCH_MODE:
-			await self.send(text_data=json.dumps({"message": "subscribed to tournament. Rejecting..."}))
-			await self.close()
-			return
-		elif get_user_mode(self.user_id) == MATCH_MODE and is_user_in_queue(self.user_id, MATCH_MODE):
-			await self.send(text_data=json.dumps({"message": "already in queue"}))
-			await self.close()
-			return
 
 		user_room = get_room_by_user(self.user_id)
 		if user_room:

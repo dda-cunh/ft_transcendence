@@ -9,7 +9,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 from ServerPong.constants import REDIS_URL, TIMEOUT
 from ServerPong.redis_utils import *
-from ServerPong.utils import asyncGet, AsyncGetData, validate_user_token
+from ServerPong.utils import asyncGet, AsyncGetData, validate_user_token, validate_mode
 
 
 class TournamentConsumer(AsyncWebsocketConsumer):
@@ -18,23 +18,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.accept()
 
 		self.user_id, error_msg = await validate_user_token(self.scope)
+		if self.user_id:
+			error_msg = await validate_mode(self.user_id, TOURN_MODE, "single match")
 		if error_msg:
 			await self.send(error_msg)
 			await self.close()
 			return
 		
 		self.lobby_name = None
-
-		if not get_user_mode(self.user_id):
-			set_user_mode(self.user_id, TOURN_MODE)
-		elif get_user_mode(self.user_id) != TOURN_MODE:
-			await self.send(text_data=json.dumps({"message": "subscribed to single match. Rejecting..."}))
-			await self.close()
-			return
-		elif get_user_mode(self.user_id) == TOURN_MODE and is_user_in_queue(self.user_id, TOURN_MODE):
-			await self.send(text_data=json.dumps({"message": "already in queue"}))
-			await self.close()
-			return
 
 		user_lobby = get_lobby_by_user(self.user_id)
 		if user_lobby:

@@ -3,6 +3,7 @@ import json
 
 from dataclasses import dataclass
 from typing import Optional, Tuple
+from ServerPong.redis_utils import get_user_mode, set_user_mode, is_user_in_queue
 
 @dataclass
 class AsyncGetData:
@@ -38,3 +39,12 @@ async def validate_user_token(scope) -> Tuple[Optional[str], Optional[str]]:
 	data = response.json()
 	user_id = data['payload']['user_id']
 	return user_id, None
+
+async def validate_mode(user_id, mode, resp) -> Tuple[Optional[str]]:
+	if not get_user_mode(user_id):
+		set_user_mode(user_id, mode)
+	elif get_user_mode(user_id) != mode:
+		return json.dumps({'message': f"subscribed to {resp} mode. Rejecting..."})
+	elif get_user_mode(user_id) == mode and is_user_in_queue(user_id, mode):
+		return json.dumps({'message': "already in queue"})
+	return None
