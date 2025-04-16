@@ -8,44 +8,28 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 from ServerPong.constants import REDIS_URL, TIMEOUT
 from ServerPong.redis_utils import *
-from ServerPong.utils import asyncGet, AsyncGetData
+from ServerPong.utils import asyncGet, AsyncGetData, validate_user_token
 from ServerPong.room_monitor import start_monitor
+
 
 class LocalPongConsumer(AsyncWebsocketConsumer):
 
 	async def connect(self):
 		await self.accept()
 
-		scope = self.scope
-
-		url = 'http://auth:8000/validate'
-
-		token = scope.get('token')
-		if not token:
-			await self.send(json.dumps({'message': "Not authenticated"}))
+		self.user_id, error_msg = await validate_user_token(self.scope)
+		if error_msg:
+			await self.send(error_msg)
 			await self.close()
 			return
 
-		headers = {"Authorization": f"{token}"}
-
-		response :AsyncGetData = await asyncGet(url, headers)
-
-		if response.status != 200:
-			await self.send(json.dumps({'message': "Not authenticated"}))
-			await self.close()
-			return
-
-		data = response.json()
-		self.send(json.dumps({'message': data}))
-		self.user_id = data['payload']['user_id']
 		self.room_name = create_local_room(self.user_id)
 
 		await self.channel_layer.group_add(self.room_name, self.channel_name)
 		await self.send(json.dumps({'message': "Welcome to local room!"}))
 
 	async def disconnect(self, close_code):
-		if not hasattr(self, 'user_id'):
-			return
+		pass
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
@@ -57,28 +41,12 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		await self.accept()
 
-		scope = self.scope
-
-		url = 'http://auth:8000/validate'
-
-		token = scope.get('token')
-		if not token:
-			await self.send(json.dumps({'message': "Not authenticated"}))
+		self.user_id, error_msg = await validate_user_token(self.scope)
+		if error_msg:
+			await self.send(error_msg)
 			await self.close()
 			return
-
-		headers = {"Authorization": f"{token}"}
-
-		response :AsyncGetData = await asyncGet(url, headers)
-
-		if response.status != 200:
-			await self.send(json.dumps({'message': "Not authenticated"}))
-			await self.close()
-			return
-
-		data = response.json()
-		self.send(json.dumps({'message': data}))
-		self.user_id = data['payload']['user_id']
+		
 		self.room_name = None
 
 		if not get_user_mode(self.user_id):

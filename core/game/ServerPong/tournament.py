@@ -9,7 +9,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 from ServerPong.constants import REDIS_URL, TIMEOUT
 from ServerPong.redis_utils import *
-from ServerPong.utils import asyncGet, AsyncGetData
+from ServerPong.utils import asyncGet, AsyncGetData, validate_user_token
 
 
 class TournamentConsumer(AsyncWebsocketConsumer):
@@ -17,28 +17,12 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		await self.accept()
 
-		scope = self.scope
-
-		url = 'http://auth:8000/validate'
-
-		token = scope.get('token')
-		if not token:
-			await self.send(json.dumps({'message': "Not authenticated"}))
+		self.user_id, error_msg = await validate_user_token(self.scope)
+		if error_msg:
+			await self.send(error_msg)
 			await self.close()
 			return
-
-		headers = {"Authorization": f"{token}"}
-
-		response :AsyncGetData = await asyncGet(url, headers)
-
-		if response.status != 200:
-			await self.send(json.dumps({'message': "Not authenticated"}))
-			await self.close()
-			return
-
-		data = response.json()
-		self.send(json.dumps({'message': data}))
-		self.user_id = data['payload']['user_id']
+		
 		self.lobby_name = None
 
 		if not get_user_mode(self.user_id):
