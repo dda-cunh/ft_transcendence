@@ -76,13 +76,15 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 			if peer_id and peer_id != self.user_id:
 				self.room_name = create_room(self.user_id, peer_id)
 
-				await self.channel_layer.group_add(self.room_name, self.channel_name)
 				await self.channel_layer.group_add(self.room_name, r.get(f"user_channel_{peer_id}"))
+				await self.channel_layer.group_add(self.room_name, self.channel_name)
 				r.delete(f"user_channel_{peer_id}")
 
 				set_room_by_user(self.user_id, self.room_name)
 				set_room_by_user(peer_id, self.room_name)
 				
+				userName = r.get(f"name_{self.user_id}")
+				opponentName = r.get(f"name_{peer_id}")
 				await self.channel_layer.group_send(
 					self.room_name,
 					{
@@ -92,9 +94,6 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 						'task': True,
 					}
 				)
-
-				opponentName = r.get(f"name_{peer_id}")
-				await self.send(text_data=json.dumps({"message": f"Playing against {opponentName}"}))
 
 				return
 		

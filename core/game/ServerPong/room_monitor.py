@@ -8,6 +8,23 @@ room_tasks = {}
 
 async def monitor_room(room_name, channel_layer):
     try:
+        if not room_name:
+            return
+        users_raw = r.get(room_name)
+        if not users_raw:
+            return
+        users = json.loads(users_raw)
+        userName = r.get(f"name_{users[0]}")
+        opponentName = r.get(f"name_{users[-1]}")
+        await channel_layer.group_send(
+            room_name,
+            {
+                'type': 'room_message',
+                'message': f'Match: {opponentName} vs {userName}!',
+                'close': False,
+                'task': False,
+            }
+        )
         while True:
             await asyncio.sleep(1)
             if not room_name:
