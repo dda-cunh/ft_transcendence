@@ -169,11 +169,7 @@ export async function renderFriendsList()
 export function	renderProfile(histLoad)	//	ADD id PARAMETER
 {
 	localStorage.setItem("currentView", "profile");
-	if (!histLoad)
-	{
-		history.pushState("profile", null);
-		alert(history.state);
-	}
+
 
 	renderPage();
 	renderFriendsList();

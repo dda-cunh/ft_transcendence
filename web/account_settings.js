@@ -173,6 +173,7 @@ async function	chgMotto(event)
 
 	try
 	{
+
 		if (!newMottoField.value)
 			throw new Error("This field cannot be empty.");
 
@@ -323,11 +324,7 @@ function	setupEventHandlers()
 export function	renderAcctSettings(histLoad)
 {
 	localStorage.setItem("currentView", "accountSettings");
-	if (!histLoad)
-	{
-		history.pushState("accountSettings", null);
-		alert(history.state);
-	}
+
 
 	renderPage();
 	setupEventHandlers();

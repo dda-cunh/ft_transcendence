@@ -18,7 +18,7 @@ function	renderPage()
 						</div>
 					</div>
 					<div class="row py-3 my-5 justify-content-center">
-						<div class="col-8 col-lg-6 d-grid gap-3 my-5">
+						<div class="col-8 col-lg-6 d-grid gap-3 my-4">
 							<button id="btnFriendlyMatch" type="button" class="btn btn-lg btn-primary fw-bolder">FRIENDLY MATCH</button>
 							<button id="btnTournament" type="button" class="btn btn-lg btn-danger fw-bolder">TOURNAMENT</button>
 						</div>
@@ -35,13 +35,6 @@ function	renderPage()
 									<option value="Single Player">Single Player</option>
 									<option value="Local Multiplayer">Local Multiplayer</option>
 									<option value="Online Multiplayer">Online Multiplayer</option>
-								</select>
-							</div>
-							<div class="input-group py-1">
-								<label class="input-group-text bg-dark text-light w-50 text-wrap">Game Type</label>
-								<select id="gameType" class="form-select bg-dark text-light text-center">
-									<option>Original</option>
-									<option>Enhanced</option>
 								</select>
 							</div>
 						</div>
@@ -96,7 +89,6 @@ function	setupEventHandlers()
 	document.getElementById("btnTournament").addEventListener("click", ()=> alert("This feature has not been implemented yet.") ) ;
 
 	document.getElementById("matchType").addEventListener("click", function() { localStorage.setItem("matchType", document.getElementById("matchType").value) });
-	document.getElementById("gameType").addEventListener("click", function() { localStorage.setItem("gameType", document.getElementById("gameType").value) });
 	document.getElementById("ballColor").addEventListener("click", function() { localStorage.setItem("ballColor", document.getElementById("ballColor").value) });
 	document.getElementById("paddleColor").addEventListener("click", function() { localStorage.setItem("paddleColor", document.getElementById("paddleColor").value) });
 	document.getElementById("backgroundColor").addEventListener("click", function() { localStorage.setItem("backgroundColor", document.getElementById("backgroundColor").value) });
@@ -107,11 +99,6 @@ function	setupEventHandlers()
 export function	renderHome(histLoad)
 {
 	localStorage.setItem("currentView", "home");
-	if (!histLoad)
-	{
-		history.pushState("home", null);
-		alert(history.state);
-	}
 
 	renderPage();
 	selectSettings();

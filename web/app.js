@@ -26,7 +26,7 @@ function renderNavbar()
 	let	transcendenceApp = document.getElementById("mainContainer");
 
 	transcendenceApp.innerHTML = `
-				<nav class="navbar navbar-dark shadow">
+		<nav class="navbar navbar-dark shadow">
 			<button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
 				<span class="navbar-toggler-icon"></span>
 			</button>
@@ -36,6 +36,7 @@ function renderNavbar()
 					<!--ADD HOME BTN-->
 					<a id="homeBtn" href="#" class="nav-item nav-link">Home</a>
 					<a id="profileBtn" href="#" class="nav-item nav-link">Profile</a>
+					<a id="friendRequestsBtn" href="#" class="nav-item nav-link">Friend Requests</a>
 					<a id="logoutBtn" href="#" class="nav-item nav-link text-light">Logout</a>
 				</div>
 			</div>
@@ -131,33 +132,17 @@ function	setupEventHandlers()
 }
 
 
-function setupHistory()
-{
-	//	if HISTORY IS EMPTY:
-	if (localStorage.getItem("currentView"))
-	{
-//		alert(history.state);
-		window.history.replaceState(localStorage.getItem("currentView"), null);
-	}
-}
-
-
-window.addEventListener("popstate", (event) => {
-//	alert(window.history.state);
-	alert(history.state);
-	if (history.state)
-	{
-		localStorage.setItem("currentView", history.state);
-		App(true);
-	}
-});
-
+let loaded = false;
 
 export async function	App(histLoad)
 {
 	await renderPage();
-	setupEventHandlers();
-	setupHistory();
+
+	if (!loaded)
+	{
+		loaded = true;
+		setupEventHandlers();
+	}
 
 	switch (localStorage.getItem("currentView") )
 	{
@@ -172,3 +157,10 @@ export async function	App(histLoad)
 			break ;
 	}
 }
+
+/*
+	1 - load views from HTML files
+	2 - replace event listeners with onclick
+	3 - load text from json files
+	4 - redo history from scratch
+*/
