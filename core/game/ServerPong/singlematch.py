@@ -8,41 +8,47 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 from ServerPong.constants import REDIS_URL, TIMEOUT
 from ServerPong.redis_utils import *
-from ServerPong.utils import asyncGet, AsyncGetData
+from ServerPong.utils import asyncGet, AsyncGetData, validate_user_token, validate_mode
+from ServerPong.room_monitor import start_monitor
 
-class ServerPongConsumer(AsyncWebsocketConsumer):
+
+class LocalPongConsumer(AsyncWebsocketConsumer):
 
 	async def connect(self):
 		await self.accept()
 
-		scope = self.scope
-
-		url = 'http://auth:8000/validate'
-
-		token = scope.get('token')
-		if not token:
-			await self.send(json.dumps({'message': "Not authenticated"}))
+		self.user_id, error_msg = await validate_user_token(self.scope)
+		if error_msg:
+			await self.send(error_msg)
 			await self.close()
 			return
 
-		headers = {"Authorization": f"{token}"}
+		self.room_name = create_local_room(self.user_id)
 
-		response :AsyncGetData = await asyncGet(url, headers)
+		await self.send(json.dumps({'message': "Welcome to local room!"}))
 
-		if response.status != 200:
-			await self.send(json.dumps({'message': "Not authenticated"}))
+	async def disconnect(self, close_code):
+		pass
+
+	async def receive(self, text_data):
+		data = json.loads(text_data)
+
+
+
+class RemotePongConsumer(AsyncWebsocketConsumer):
+
+	async def connect(self):
+		await self.accept()
+
+		self.user_id, error_msg = await validate_user_token(self.scope)
+		if self.user_id:
+			error_msg = await validate_mode(self.user_id, MATCH_MODE, "tournament")
+		if error_msg:
+			await self.send(error_msg)
 			await self.close()
 			return
-
-		data = response.json()
-		self.send(json.dumps({'message': data}))
-		self.user_id = data['payload']['user_id']
+		
 		self.room_name = None
-
-		if is_user_in_queue(self.user_id):
-			await self.send(text_data=json.dumps({"message": "already in queue"}))
-			await self.close()
-			return
 
 		user_room = get_room_by_user(self.user_id)
 		if user_room:
@@ -59,21 +65,25 @@ class ServerPongConsumer(AsyncWebsocketConsumer):
 				}
 			)
 			cancel_expiry(self.user_id)
+			start_monitor(user_room, self.channel_layer)
 			return
 		elif r.exists(f"user_room_{self.user_id}"):
 			r.delete(f"user_room_{self.user_id}")
 
-		if get_queue_size() > 0:
-			peer_id = dequeue_user()
+		if get_queue_size(MATCH_MODE) > 0:
+			peer_id = dequeue_user(MATCH_MODE)
 			if peer_id and peer_id != self.user_id:
 				self.room_name = create_room(self.user_id, peer_id)
 
-				await self.channel_layer.group_add(self.room_name, self.channel_name)
 				await self.channel_layer.group_add(self.room_name, r.get(f"user_channel_{peer_id}"))
+				await self.channel_layer.group_add(self.room_name, self.channel_name)
 				r.delete(f"user_channel_{peer_id}")
 
 				set_room_by_user(self.user_id, self.room_name)
 				set_room_by_user(peer_id, self.room_name)
+				
+				userName = r.get(f"name_{self.user_id}")
+				opponentName = r.get(f"name_{peer_id}")
 				await self.channel_layer.group_send(
 					self.room_name,
 					{
@@ -82,20 +92,21 @@ class ServerPongConsumer(AsyncWebsocketConsumer):
 						'close': False,
 					}
 				)
-				asyncio.create_task(self.periodic_check_for_room())
+				start_monitor(self.room_name, self.channel_layer)
+
 				return
 		
-		enqueue_user(self.user_id)
+		enqueue_user(self.user_id, MATCH_MODE)
 		r.set(f"user_channel_{self.user_id}", self.channel_name)
 		await self.send(text_data=json.dumps({"message": "queued"}))
 
 
 	async def disconnect(self, close_code):
-		if not hasattr(self, 'user_id'):
+		if not hasattr(self, 'user_id') or get_user_mode(self.user_id) != MATCH_MODE:
 			return
 		user_room = get_room_by_user(self.user_id)
 		if user_room:
-			r.setex(f"user_room_{self.user_id}", TIMEOUT, user_room)
+			expire_user_info(self.user_id)
 			await self.channel_layer.group_send(
 				user_room,
 				{
@@ -104,12 +115,18 @@ class ServerPongConsumer(AsyncWebsocketConsumer):
 					'close': False,
 				}
 			)
+		elif is_user_in_queue(self.user_id, MATCH_MODE):
+			remove_user_from_queue(self.user_id, MATCH_MODE)
+			delete_user_info(self.user_id)
 		else:
-			remove_user_from_queue(self.user_id)
+			delete_user_info(self.user_id)
 
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
+		if data.get('tname') and not r.exists(f"name_{self.user_id}"):
+			r.set(f"name_{self.user_id}", data['tname'])
+
 
 	async def room_message(self, event):
 		message = event['message']
@@ -118,29 +135,4 @@ class ServerPongConsumer(AsyncWebsocketConsumer):
 		}))
 		if event['close']:
 			await self.close()
-
-	async def periodic_check_for_room(self):
-		try:
-			while True:
-				await asyncio.sleep(30)
-				users = json.loads(r.get(self.room_name))
-				if not users:
-					break
-				still_active = []
-				for u in users:
-					if r.exists(f"user_room_{u}"):
-						still_active.append(u)
-				if len(still_active) != len(users):
-					await self.channel_layer.group_send(
-						self.room_name,
-						{
-							'type': 'room_message',
-							'message': 'Opponent player has not returned. Ending game',
-							'close': True,
-						}
-					)
-					r.delete(f"user_room_{self.user_id}")
-					r.delete(self.room_name)
-					break
-		except asyncio.CancelledError:
-			return
+		

@@ -1,13 +1,23 @@
-let socket;
+let socket = null;
 
-export function connectWebSocket() {
+export function connectWebSocket(mode) {
+  // mode depends on the clicked button; send 'local', 'remote' or 'tournament'
+
+  if (socket) socket.close();
+
   document.cookie = "access=" + localStorage.getItem("access") + "; path=/; Secure";
-  let wsUrl = `wss://${window.location.hostname}/ws/`;
+  let wsUrl = `wss://${window.location.hostname}/${mode}pong/`;
   socket = new WebSocket(wsUrl);
   
   socket.onopen = function(event) {
     console.log('WebSocket connection established');
     document.cookie = "access=; path=/; Secure; SameSite=None; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+   
+    // substitute temp for username
+    if (mode === "remote") socket.send(JSON.stringify({ tname: "username" }));
+
+    // substitute temp for the name chosen by the user for this tournament
+    if (mode === "tournament") socket.send(JSON.stringify({ tname: "temp" }));
   };
 
   socket.onmessage = function(event) {

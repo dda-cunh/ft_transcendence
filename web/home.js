@@ -1,6 +1,7 @@
 import {renderAuth} from './auth.js'
 import {renderProfile} from './profile.js'
 import {renderPongGame} from './pong_game.js'
+import {connectWebSocket} from './socket.js'
 
 "use strict";
 
@@ -95,8 +96,8 @@ function	setupEventHandlers()
 
 
 
-	document.getElementById("btnFriendlyMatch").addEventListener("click", ()=> renderPongGame() );
-	document.getElementById("btnTournament").addEventListener("click", ()=> alert("This feature has not been implemented yet.") ) ;
+	document.getElementById("btnFriendlyMatch").addEventListener("click", ()=> {renderPongGame(); connectWebSocket('remote')} );
+	document.getElementById("btnTournament").addEventListener("click", ()=> connectWebSocket('tournament') ) ;
 
 	document.getElementById("matchType").addEventListener("click", function() { localStorage.setItem("matchType", document.getElementById("matchType").value) });
 	document.getElementById("gameType").addEventListener("click", function() { localStorage.setItem("gameType", document.getElementById("gameType").value) });
