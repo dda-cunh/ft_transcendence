@@ -29,8 +29,8 @@ async def monitor_room(room_name, channel_layer):
 		}
 	)
 	mode = get_user_mode(users[0])
-	r.set(f"keystate_{users[0]}", 0)
-	r.set(f"keystate_{users[-1]}", 0)
+	r.set(f"keystate_{users[0]}", "0")
+	r.set(f"keystate_{users[-1]}", "0")
 	still_active = [u for u in users if r.exists(f"user_room_{u}")]
 
 	await asyncio.sleep(1)
