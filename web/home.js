@@ -96,8 +96,8 @@ function	setupEventHandlers()
 
 
 
-	document.getElementById("btnFriendlyMatch").addEventListener("click", ()=> {renderPongGame(); connectWebSocket('remote')} );
-	document.getElementById("btnTournament").addEventListener("click", ()=> connectWebSocket('tournament') ) ;
+	document.getElementById("btnFriendlyMatch").addEventListener("click", ()=> { renderPongGame(); connectWebSocket('remote')} );
+	document.getElementById("btnTournament").addEventListener("click", ()=> { renderPongGame(); connectWebSocket('tournament')} );
 
 	document.getElementById("matchType").addEventListener("click", function() { localStorage.setItem("matchType", document.getElementById("matchType").value) });
 	document.getElementById("gameType").addEventListener("click", function() { localStorage.setItem("gameType", document.getElementById("gameType").value) });
