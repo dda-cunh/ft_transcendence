@@ -51,13 +51,13 @@ async def monitor_room(room_name, channel_layer):
 		}
 	)
 
+	await asyncio.sleep(1)
 	while True:
-		await asyncio.sleep(1)
-		if not room_name:
-			break
-		users_raw = r.get(room_name)
-		if not users_raw:
-			break
+		#if not room_name:
+		#	break
+		#users_raw = r.get(room_name)
+		#if not users_raw:
+		#	break
 
 		# Insert gameloop logic here:
 		# Get the current gamestate from redis
@@ -79,7 +79,8 @@ async def monitor_room(room_name, channel_layer):
 		)
 		# save the new gamestate to redis
 		# delay loop by FRAME_RATE
-		await asyncio.sleep(1 / 60)
+		await asyncio.sleep(0.016)
+		continue
 		# Check if the game is still active by way of scores
 		if state.p1_score >= SCORE_TO_WIN or state.p2_score >= SCORE_TO_WIN:
 			if state.p1_score >= SCORE_TO_WIN:

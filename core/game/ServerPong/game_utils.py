@@ -69,15 +69,13 @@ class GameState:
 
 	def to_dict(self):
 		return {
-			'p1_pos': self.p1_pos.to_dict(),
-			'p2_pos': self.p2_pos.to_dict(),
+			'p1_pos_y': self.p1_pos.y,
+			'p2_pos_y': self.p2_pos.y,
 			'p1_score': self.p1_score,
 			'p2_score': self.p2_score,
 			'ball': {
 				'x': self.ball_pos.x,
 				'y': self.ball_pos.y,
-				'vx': self.ball_vec.x,
-				'vy': self.ball_vec.y
 			}
 		}
 
