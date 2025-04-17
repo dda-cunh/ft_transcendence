@@ -3,6 +3,7 @@ import asyncio
 import json
 from collections import defaultdict
 from ServerPong.redis_utils import *
+from ServerPong.game_logic import *
 
 room_tasks = {}
 
@@ -30,6 +31,26 @@ async def monitor_room(room_name, channel_layer):
 	r.set(f"keystate_{users[0]}", 0)
 	r.set(f"keystate_{users[-1]}", 0)
 	still_active = [u for u in users if r.exists(f"user_room_{u}")]
+
+	state = GameState(
+		p1_pos   = Point2D(P1_START_X, P1_START_Y),
+		p2_pos   = Point2D(P2_START_X, P2_START_Y),
+		p1_score = 0,
+		p2_score = 0,
+		ball_pos = Point2D(0, 0),
+		ball_vec = Vec2D(0, 0),
+	)
+
+	await channel_layer.group_send(
+		room_name,
+		{
+			'type': 'room_message',
+			'message': False,
+			'gamestate': state.to_dict(),
+			'close': False,
+		}
+	)
+
 	while True:
 		await asyncio.sleep(1)
 		if not room_name:
@@ -40,11 +61,32 @@ async def monitor_room(room_name, channel_layer):
 
 		# Insert gameloop logic here:
 		# Get the current gamestate from redis
+		actions = PlayersActions(
+			p1_key_scale = KeyState(r.get(f"keystate_{users[0]}")),
+			p2_key_scale = KeyState(r.get(f"keystate_{users[-1]}")),
+		)
 		# call get_next_frame with gamestate and redis keystates
+		state = get_next_frame(state, actions)
 		# send the gamestate to the players
+		await channel_layer.group_send(
+			room_name,
+			{
+				'type': 'room_message',
+				'message': False,
+				'gamestate': state.to_dict(),
+				'close': False,
+			}
+		)
 		# save the new gamestate to redis
 		# delay loop by FRAME_RATE
+		await asyncio.sleep(1 / 60)
 		# Check if the game is still active by way of scores
+		if state.p1_score >= SCORE_TO_WIN or state.p2_score >= SCORE_TO_WIN:
+			if state.p1_score >= SCORE_TO_WIN:
+				delete_user_info(users[-1])
+			else:
+				delete_user_info(users[0])
+			break
 
 		users = json.loads(users_raw)
 		still_active = [u for u in users if r.exists(f"user_room_{u}")]
@@ -58,6 +100,7 @@ async def monitor_room(room_name, channel_layer):
 				{
 					'type': 'room_message',
 					'message': f'{opponentName} has not returned. Ending game',
+					'gamestate': False,
 					'close': close,
 				}
 			)

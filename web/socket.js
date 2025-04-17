@@ -18,10 +18,13 @@ gameConstants = {
   canvas_h: 600,
   paddle_w: 40,
   paddle_h: 600 / 4.5,
-  ball_rad: 125,
+  ball_rad: 10,
   p1_name: "p1",
   p2_name: "p2",
 };
+
+let half_w = gameConstants.canvas_w / 2;
+let half_h = gameConstants.canvas_h / 2;
 
 
 export function connectWebSocket(mode) {
@@ -65,6 +68,7 @@ export function connectWebSocket(mode) {
       gameState = data.gamestate;
       drawFrame();
     }
+    console.log(data);
   };
 
   socket.onclose = function(event) {
@@ -84,29 +88,29 @@ export function connectWebSocket(mode) {
 
 function drawFrame() {
   const canvas = document.querySelectorAll('canvas')[0];
-  if (!canvas || !gameState || !gameConstants) return;
+  //if (!canvas || !gameState || !gameConstants) return;
   
   const ctx = canvas.getContext('2d');
-  canvas.width = gameConstants.cabvas_w;
+  canvas.width = gameConstants.canvas_w;
   canvas.height = gameConstants.canvas_h;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   ctx.fillStyle = 'white';
   ctx.beginPath();
-  ctx.arc(gameState.ball.x, gameState.ball.y, gameConstants.ball_rad, 0, Math.PI * 2);
+  ctx.arc(gameState.ball_pos.x + half_w, gameState.ball_pos.y + half_h, gameConstants.ball_rad, 0, Math.PI * 2);
   ctx.fillStyle = 'white';
   ctx.fill();
   ctx.closePath();
 
-  ctx.fillRect(gameState.p1_pos.x, gameState.p1_pos.y, gameConstants.paddle_w, gameConstants.paddle_h);
-  ctx.fillRect(gameState.p2_pos.x, gameState.p2_pos.y, gameConstants.paddle_w, gameConstants.paddle_h);
+  ctx.fillRect(0, gameState.p1_pos.y + half_h, gameConstants.paddle_w, gameConstants.paddle_h);
+  ctx.fillRect(gameConstants.canvas_w - gameConstants.paddle_w, gameState.p2_pos.y + half_h, gameConstants.paddle_w, gameConstants.paddle_h);
 
   ctx.font = '20px Arial';
   ctx.fillText(`${gameConstants.p1_name}   ${gameState.p1_score} : ${gameState.p2_score}   ${gameConstants.p2_name}`, canvas.width / 2 - 20, 30);
 }
 
 function emitIfChanged(key, isPressed) {
-  if (!gameState) return;
+  //if (!gameState) return;
   if (keyState[key] !== isPressed) {
     keyState[key] = isPressed;
 
@@ -125,7 +129,7 @@ function emitIfChanged(key, isPressed) {
 }
 
 function emitIfChangedLocal(key, isPressed) {
-  if (!gameState) return;
+  //if (!gameState) return;
   if (keyState[key] !== isPressed) {
     keyState[key] = isPressed;
 

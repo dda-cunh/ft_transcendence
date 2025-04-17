@@ -61,6 +61,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 				{
 					'type': 'room_message',
 					'message': 'Reconnected to peer!',
+					'gamestate': False,
 					'close': False,
 				}
 			)
@@ -89,6 +90,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 					{
 						'type': 'room_message',
 						'message': 'Connected to peer!',
+						'gamestate': False,
 						'close': False,
 					}
 				)
@@ -112,6 +114,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 				{
 					'type': 'room_message',
 					'message': 'Player disconnected',
+					'gamestate': False,
 					'close': False,
 				}
 			)
@@ -131,10 +134,14 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 
 
 	async def room_message(self, event):
-		message = event['message']
-		await self.send(text_data=json.dumps({
-			'message': message
-		}))
+		if event['message']:
+			message = event['message']
+			await self.send(text_data=json.dumps({
+				'message': message
+			}))
+		gamestate = event.get('gamestate')
+		if gamestate is not False:
+			await self.send(text_data=json.dumps({ 'gamestate': gamestate }))
 		if event['close']:
 			await self.close()
 		

@@ -41,6 +41,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				{
 					'type': 'room_message',
 					'message': 'Reconnected to peer!',
+					'gamestate': False,
 					'close': False,
 				}
 			)
@@ -71,6 +72,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				{
 					'type': 'room_message',
 					'message': 'Tournament is starting!',
+					'gamestate': False,
 					'close': False,
 				}
 			)
@@ -96,6 +98,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				{
 					'type': 'room_message',
 					'message': 'Player disconnected',
+					'gamestate': False,
 					'close': False,
 				}
 			)
@@ -115,10 +118,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 
 	async def room_message(self, event):
-		message = event['message']
-		await self.send(text_data=json.dumps({
-			'message': message
-		}))
+		if event['message']:
+			message = event['message']
+			await self.send(text_data=json.dumps({
+				'message': message
+			}))
+		gamestate = event.get('gamestate')
+		if gamestate is not False:
+			await self.send(text_data=json.dumps({ 'gamestate': gamestate }))
 		if event['close']:
 			await self.close()
 
@@ -174,6 +181,7 @@ async def generate_round(channel, lobby_name):
 			{
 				'type': 'room_message',
 				'message': "You won the match!",
+				'gamestate': False,
 				'close': False,
 			}
 		)
@@ -196,6 +204,7 @@ async def check_tournament_end(channel, lobby_name):
 			{
 				'type': 'room_message',
 				'message': 'You won the tournament! CONGRATS!!! Closing lobby...',
+				'gamestate': False,
 				'close': True,
 			}
 		)
