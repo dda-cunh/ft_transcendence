@@ -1,6 +1,7 @@
 
 let socket = null;
 let gameConstants = {};
+let gameState = null;
 
 let keyState = {
   w: false,
@@ -57,7 +58,8 @@ export function connectWebSocket(mode) {
       };
     }
     if (data && data.gamestate) {
-      drawFrame(data.gamestate);
+      gameState = data.gamestate;
+      drawFrame();
     }
   };
 
@@ -73,7 +75,7 @@ export function connectWebSocket(mode) {
 
 
 
-function drawFrame(gameState) {
+function drawFrame() {
   const canvas = document.querySelectorAll('canvas')[0];
   if (!canvas || !gameState || !gameConstants) return;
   
