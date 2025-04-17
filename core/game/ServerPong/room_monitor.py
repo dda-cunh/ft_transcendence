@@ -80,8 +80,8 @@ async def monitor_room(room_name, channel_layer):
 		)
 		# save the new gamestate to redis
 		# delay loop by FRAME_RATE
-		await asyncio.sleep(0.016)
-		
+		await asyncio.sleep(0.05)
+
 		# Check if the game is still active by way of scores
 		if state.p1_score >= SCORE_TO_WIN or state.p2_score >= SCORE_TO_WIN:
 			if state.p1_score >= SCORE_TO_WIN:
