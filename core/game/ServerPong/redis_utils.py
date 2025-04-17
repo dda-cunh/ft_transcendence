@@ -113,6 +113,8 @@ def expire_user_info(user_id):
 		r.expire(f"name_{user_id}", TIMEOUT)
 	if r.exists(f"user_lobby_{user_id}"):
 		r.expire(f"user_lobby_{user_id}", TIMEOUT)
+	if r.exists(f"keystate_{user_id}"):
+		r.set(f"keystate_{user_id}", 0)
 
 def delete_user_info(user_id):
 	if r.exists(f"user_mode_{user_id}"):

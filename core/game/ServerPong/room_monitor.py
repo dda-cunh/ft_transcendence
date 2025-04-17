@@ -27,6 +27,8 @@ async def monitor_room(room_name, channel_layer):
         }
     )
     mode = get_user_mode(users[0])
+    r.set(f"keystate_{users[0]}", 0)
+    r.set(f"keystate_{users[-1]}", 0)
     still_active = [u for u in users if r.exists(f"user_room_{u}")]
     while True:
         await asyncio.sleep(1)
@@ -35,6 +37,14 @@ async def monitor_room(room_name, channel_layer):
         users_raw = r.get(room_name)
         if not users_raw:
             break
+
+        # Insert gameloop logic here:
+        # Get the current gamestate from redis
+        # call get_next_frame with gamestate and redis keystates
+        # send the gamestate to the players
+        # save the new gamestate to redis
+        # delay loop by FRAME_RATE
+        # Check if the game is still active by way of scores
 
         users = json.loads(users_raw)
         still_active = [u for u in users if r.exists(f"user_room_{u}")]
@@ -52,10 +62,14 @@ async def monitor_room(room_name, channel_layer):
                 }
             )
             break
+	if r.exists(f"keystate_{users[0]}"):
+		r.delete(f"keystate_{users[0]}")
+    if r.exists(f"keystate_{users[-1]}"):
+        r.delete(f"keystate_{users[-1]}")
     still_active = [u for u in users if r.exists(f"user_room_{u}")]
     if mode == TOURN_MODE:
         for u in still_active:
-            r.delete(f"user_room_{u}") 
+            r.delete(f"user_room_{u}")
     r.delete(room_name)
     room_tasks.pop(room_name, None)
 

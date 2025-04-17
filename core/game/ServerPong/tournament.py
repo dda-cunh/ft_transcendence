@@ -110,6 +110,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		data = json.loads(text_data)
 		if data.get('tname') and not r.exists(f"name_{self.user_id}"):
 			r.set(f"name_{self.user_id}", data['tname'])
+		if data.get('keystate'):
+			r.set(f"keystate_{self.user_id}", data.get['keystate'])
 
 
 	async def room_message(self, event):
