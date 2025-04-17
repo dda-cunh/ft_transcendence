@@ -33,6 +33,7 @@ async def monitor_room(room_name, channel_layer):
 	r.set(f"keystate_{users[-1]}", "0")
 	still_active = [u for u in users if r.exists(f"user_room_{u}")]
 
+
 	await asyncio.sleep(1)
 	state = GameState(
 		p1_pos   = Point2D(P1_START_X, P1_START_Y),
@@ -57,15 +58,16 @@ async def monitor_room(room_name, channel_layer):
 
 	while True:
 		# Insert gameloop logic here:
+		raw_state = r.hgetall(f"gamestate_{room_name}")
+		old_state = from_redis(raw_state)
 
 		# Get the current gamestate from redis
 		actions = PlayersActions(
-			p1_key_scale = int(r.get(f"keystate_{users[0]}")),
-			p2_key_scale = int(r.get(f"keystate_{users[-1]}")),
+			p1_key_scale = KeyState(int(r.get(f"keystate_{users[0]}"))),
+			p2_key_scale = KeyState(int(r.get(f"keystate_{users[-1]}"))),
 		)
 		# call get_next_frame with gamestate and redis keystates
-		raw_state = r.hgetall(f"gamestate_{room_name}")
-		state = get_next_frame(from_redis(raw_state), actions)
+		state = get_next_frame(old_state, actions)
 
 		# send the gamestate to the players
 		await channel_layer.group_send(
@@ -81,7 +83,7 @@ async def monitor_room(room_name, channel_layer):
 		r.hset(f"gamestate_{room_name}", mapping=state.to_redis())
 
 		# delay loop by FRAME_RATE
-		await asyncio.sleep(0.05)
+		await asyncio.sleep(1.0/TICKS_PER_SECOND)
 
 		# Check if the game is still active by way of scores
 		if state.p1_score >= SCORE_TO_WIN or state.p2_score >= SCORE_TO_WIN:

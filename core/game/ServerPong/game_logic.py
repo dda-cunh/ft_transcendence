@@ -72,7 +72,8 @@ def do_ball_move(ball_pos: Point2D,
         ball_vec.y += rel * 0.5
 
     # 5) keep speed constant
-    ball_vec.normalize().scale(FRAME_MOVE_PX)
+    pixels_per_tick = BASE_SPEED_PPS / TICKS_PER_SECOND
+    ball_vec.normalize().scale(pixels_per_tick)
     return next_pos
 
 
@@ -90,10 +91,11 @@ def get_next_frame(old: GameState,
 
     # serve if stationary
     if new.ball_vec.x == 0 and new.ball_vec.y == 0:
-        angle = random.uniform(0, 2 * math.pi)
+        angle = random.uniform(-1, 1)
         new.ball_vec = Vec2D(math.cos(angle), math.sin(angle))
 
-    new.ball_vec.normalize().scale(FRAME_MOVE_PX)
+    pixels_per_tick = BASE_SPEED_PPS / TICKS_PER_SECOND
+    new.ball_vec.normalize().scale(pixels_per_tick)
 
     # move & collide
     new.ball_pos = do_ball_move(old.ball_pos,
