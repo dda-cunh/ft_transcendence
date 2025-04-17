@@ -68,7 +68,6 @@ export function connectWebSocket(mode) {
       gameState = data.gamestate;
       drawFrame();
     }
-    console.log(data);
   };
 
   socket.onclose = function(event) {

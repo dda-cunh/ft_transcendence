@@ -4,6 +4,7 @@ import json
 from collections import defaultdict
 from ServerPong.redis_utils import *
 from ServerPong.game_logic import *
+from ServerPong.game_utils import *
 
 room_tasks = {}
 
@@ -32,6 +33,7 @@ async def monitor_room(room_name, channel_layer):
 	r.set(f"keystate_{users[-1]}", 0)
 	still_active = [u for u in users if r.exists(f"user_room_{u}")]
 
+	await asyncio.sleep(1)
 	state = GameState(
 		p1_pos   = Point2D(P1_START_X, P1_START_Y),
 		p2_pos   = Point2D(P2_START_X, P2_START_Y),
@@ -51,19 +53,18 @@ async def monitor_room(room_name, channel_layer):
 		}
 	)
 
-	await asyncio.sleep(1)
 	while True:
-		#if not room_name:
-		#	break
-		#users_raw = r.get(room_name)
-		#if not users_raw:
-		#	break
+		if not room_name:
+			break
+		users_raw = r.get(room_name)
+		if not users_raw:
+			break
 
 		# Insert gameloop logic here:
 		# Get the current gamestate from redis
 		actions = PlayersActions(
-			p1_key_scale = KeyState(r.get(f"keystate_{users[0]}")),
-			p2_key_scale = KeyState(r.get(f"keystate_{users[-1]}")),
+			p1_key_scale = r.get(f"keystate_{users[0]}"),
+			p2_key_scale = r.get(f"keystate_{users[-1]}"),
 		)
 		# call get_next_frame with gamestate and redis keystates
 		state = get_next_frame(state, actions)
@@ -80,7 +81,7 @@ async def monitor_room(room_name, channel_layer):
 		# save the new gamestate to redis
 		# delay loop by FRAME_RATE
 		await asyncio.sleep(0.016)
-		continue
+		
 		# Check if the game is still active by way of scores
 		if state.p1_score >= SCORE_TO_WIN or state.p2_score >= SCORE_TO_WIN:
 			if state.p1_score >= SCORE_TO_WIN:
