@@ -127,7 +127,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 		if data.get('tname') and not r.exists(f"name_{self.user_id}"):
 			r.set(f"name_{self.user_id}", data['tname'])
 		if data.get('keystate'):
-			r.set(f"keystate_{self.user_id}", data.get['keystate'])
+			r.set(f"keystate_{self.user_id}", data['keystate'])
 
 
 	async def room_message(self, event):

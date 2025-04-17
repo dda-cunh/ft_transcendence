@@ -110,13 +110,16 @@ function emitIfChanged(key, isPressed) {
   if (keyState[key] !== isPressed) {
     keyState[key] = isPressed;
 
-    if (keyState.w && keyState.s)
-      keyState.move = 0;
-    else if (keyState.w)
+    let changed = keyState.move
+    if (keyState.w && !keyState.s)
       keyState.move = -1;
-    else if (keyState.s)
+    else if (keyState.s && !keyState.w)
       keyState.move = 1;
+    else
+      keyState.move = 0;
 
+    if (changed === keyState.move)
+      return;
     socket.send(JSON.stringify({ keystate: keyState.move }));
   }
 }
@@ -126,20 +129,24 @@ function emitIfChangedLocal(key, isPressed) {
   if (keyState[key] !== isPressed) {
     keyState[key] = isPressed;
 
-    if (keyState.w && keyState.s)
-      keyState.move = 0;
-    else if (keyState.w)
+    let changed = keyState.move
+    let changedLocal = keyState.moveLocal
+    if (keyState.w && !keyState.s)
       keyState.move = -1;
-    else if (keyState.s)
+    else if (keyState.s && !keyState.w)
       keyState.move = 1;
+    else
+      keyState.move = 0;
 
-    if (keyState.ArrowUp && keyState.ArrowDown)
-      keyState.moveLocal = 0;
-    else if (keyState.ArrowUp)
+    if (keyState.ArrowUp && !keyState.ArrowDown)
       keyState.moveLocal = -1;
-    else if (keyState.ArrowDown)
+    else if (keyState.ArrowDown && !keyState.ArrowUp)
       keyState.moveLocal = 1;
+    else
+      keyState.moveLocal = 0;
 
+    if (changed === keyState.move && changedLocal === keyState.moveLocal)
+      return;
     socket.send(JSON.stringify({ keystate_p1: keyState.move }, { keystate_p2: keyState.moveLocal }));
   }
 }
