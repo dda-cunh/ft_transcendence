@@ -2,28 +2,31 @@
 let socket = null;
 let gameConstants = {};
 let gameState = null;
-
+let gmode = null;
 let keyState = {
   w: false,
   s: false,
+  ArrowUp: false,
+  ArrowDown: false,
   move: 0,
+  moveLocal: 0, // p2 in local mode
 };
 
 // Temporarily hardcoded values for testing until initial function is done
 gameConstants = {
-  canvasWidth: 800,
-  canvasHeight: 600,
-  paddleWidth: 40,
-  paddleHeight: 600 / 4.5,
-  ballRadius: 125,
-  player1Name: "p1",
-  player2Name: "p2",
+  canvas_w: 800,
+  canvas_h: 600,
+  paddle_w: 40,
+  paddle_h: 600 / 4.5,
+  ball_rad: 125,
+  p1_name: "p1",
+  p2_name: "p2",
 };
 
 
 export function connectWebSocket(mode) {
   // mode depends on the clicked button; send 'local', 'remote' or 'tournament'
-
+  gmode = mode;
   if (socket) socket.close();
 
   document.cookie = "access=" + localStorage.getItem("access") + "; path=/; Secure";
@@ -39,6 +42,7 @@ export function connectWebSocket(mode) {
 
     // substitute temp for the name chosen by the user for this tournament
     if (mode === "tournament") socket.send(JSON.stringify({ tname: "temp" }));
+    loadControls();
   };
 
   socket.onmessage = function(event) {
@@ -48,13 +52,13 @@ export function connectWebSocket(mode) {
     }
     if (data && data.initial) {
       gameConstants = {
-        canvasWidth: data.canvasWidth,
-        canvasHeight: data.canvasHeight,
-        paddleWidth: data.paddleWidth,
-        paddleHeight: data.paddleHeight,
-        ballRadius: data.ballRadius,
-        player1Name: data.p1Name,
-        player2Name: data.p2Name,
+        canvas_w: data.canvas_w,
+        canvas_h: data.canvas_h,
+        paddle_w: data.paddle_w,
+        paddle_h: data.paddle_h,
+        ball_rad: data.ball_radius,
+        p1_name: data.p1_name,
+        p2_name: data.p2_name,
       };
     }
     if (data && data.gamestate) {
@@ -65,14 +69,17 @@ export function connectWebSocket(mode) {
 
   socket.onclose = function(event) {
     console.log('WebSocket connection closed');
+    gameState = null;
+    unloadControls();
   };
 
   socket.onerror = function(event) {
     console.log('WebSocket error:', event);
     document.cookie = "access=; path=/; Secure; SameSite=None; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    gameState = null;
+    unloadControls();
   };
 }
-
 
 
 function drawFrame() {
@@ -80,22 +87,22 @@ function drawFrame() {
   if (!canvas || !gameState || !gameConstants) return;
   
   const ctx = canvas.getContext('2d');
-  canvas.width = gameConstants.canvasWidth;
-  canvas.height = gameConstants.canvasHeight;
+  canvas.width = gameConstants.cabvas_w;
+  canvas.height = gameConstants.canvas_h;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   ctx.fillStyle = 'white';
   ctx.beginPath();
-  ctx.arc(gameState.ball.x, gameState.ball.y, gameConstants.ballRadius, 0, Math.PI * 2);
+  ctx.arc(gameState.ball.x, gameState.ball.y, gameConstants.ball_rad, 0, Math.PI * 2);
   ctx.fillStyle = 'white';
   ctx.fill();
   ctx.closePath();
 
-  ctx.fillRect(gameState.player1.x, gameState.player1.y, gameConstants.paddleWidth, gameConstants.paddleHeight);
-  ctx.fillRect(gameState.player2.x, gameState.player2.y, gameConstants.paddleWidth, gameConstants.paddleHeight);
+  ctx.fillRect(gameState.p1_pos.x, gameState.p1_pos.y, gameConstants.paddle_w, gameConstants.paddle_h);
+  ctx.fillRect(gameState.p2_pos.x, gameState.p2_pos.y, gameConstants.paddle_w, gameConstants.paddle_h);
 
   ctx.font = '20px Arial';
-  ctx.fillText(`${gameConstants.p1Name}   ${gameState.score.p1} : ${gameState.score.p2}   ${gameConstants.p2Name}`, canvas.width / 2 - 20, 30);
+  ctx.fillText(`${gameConstants.p1_name}   ${gameState.p1_score} : ${gameState.p2_score}   ${gameConstants.p2_name}`, canvas.width / 2 - 20, 30);
 }
 
 function emitIfChanged(key, isPressed) {
@@ -114,14 +121,53 @@ function emitIfChanged(key, isPressed) {
   }
 }
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'w' || e.key === 's') {
+function emitIfChangedLocal(key, isPressed) {
+  if (!gameState) return;
+  if (keyState[key] !== isPressed) {
+    keyState[key] = isPressed;
+
+    if (keyState.w && keyState.s)
+      keyState.move = 0;
+    else if (keyState.w)
+      keyState.move = -1;
+    else if (keyState.s)
+      keyState.move = 1;
+
+    if (keyState.ArrowUp && keyState.ArrowDown)
+      keyState.moveLocal = 0;
+    else if (keyState.ArrowUp)
+      keyState.moveLocal = -1;
+    else if (keyState.ArrowDown)
+      keyState.moveLocal = 1;
+
+    socket.send(JSON.stringify({ keystate_p1: keyState.move }, { keystate_p2: keyState.moveLocal }));
+  }
+}
+
+function handleKeyDown(e) {
+  if (gmode && gmode !== "local" && (e.key === 'w' || e.key === 's')) {
     emitIfChanged(e.key, true);
   }
-});
+  if (gmode === "local" && (['w', 's', 'ArrowUp', 'ArrowDown'].includes(e.key))) {
+    emitIfChangedLocal(e.key, true);
+  }
+}
 
-document.addEventListener('keyup', (e) => {
-  if (e.key === 'w' || e.key === 's') {
+function handleKeyUp(e) {
+  if (gmode && gmode !== "local" && (e.key === 'w' || e.key === 's')) {
     emitIfChanged(e.key, false);
   }
-});
+  if (gmode === "local" && (['w', 's', 'ArrowUp', 'ArrowDown'].includes(e.key))) {
+    emitIfChangedLocal(e.key, false);
+  }
+}
+
+function loadControls() {
+  document.addEventListener('keydown', handleKeyDown);
+  document.addEventListener('keyup', handleKeyUp);
+}
+
+function unloadControls() {
+  document.removeEventListener('keydown', handleKeyDown);
+  document.removeEventListener('keyup', handleKeyUp);
+}
