@@ -27,6 +27,7 @@ async def monitor_room(room_name, channel_layer):
         }
     )
     mode = get_user_mode(users[0])
+    still_active = [u for u in users if r.exists(f"user_room_{u}")]
     while True:
         await asyncio.sleep(1)
         if not room_name:
@@ -39,9 +40,6 @@ async def monitor_room(room_name, channel_layer):
         still_active = [u for u in users if r.exists(f"user_room_{u}")]
         if len(still_active) != 2:
             # One or both players missing
-            opponent_id = next((u for u in users if not r.exists(f"user_room_{u}")), None)
-            opponent_name = r.get(f"name_{opponent_id}") if opponent_id else "Opponent"
-
             close = True
             if mode == TOURN_MODE:
                 close = False
@@ -49,23 +47,16 @@ async def monitor_room(room_name, channel_layer):
                 room_name,
                 {
                     'type': 'room_message',
-                    'message': f'{opponent_name} has not returned. Ending game',
+                    'message': f'{opponentName} has not returned. Ending game',
                     'close': close,
                 }
             )
-
-            for u in users:
-                if r.exists(f"user_mode_{u}") and get_user_mode(u) == TOURN_MODE:
-                    continue
-                if r.exists(f"user_mode_{u}"):
-                    r.delete(f"user_mode_{u}")
-                if r.exists(f"user_room_{u}"):
-                    r.delete(f"user_room_{u}")
-                if r.exists(f"name_{u}"):
-                    r.delete(f"name_{u}")
-
-            r.delete(room_name)
             break
+    still_active = [u for u in users if r.exists(f"user_room_{u}")]
+    if mode == TOURN_MODE:
+        for u in still_active:
+            r.delete(f"user_room_{u}") 
+    r.delete(room_name)
     room_tasks.pop(room_name, None)
 
 def start_monitor(room_name, channel_layer):

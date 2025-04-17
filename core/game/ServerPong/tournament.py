@@ -88,13 +88,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		lobby = get_lobby_by_user(self.user_id)
 		if lobby:
 			warnChannel = lobby
-			r.setex(f"user_lobby_{self.user_id}", TIMEOUT, get_lobby_by_user(self.user_id))
-			r.setex(f"user_mode_{self.user_id}", TIMEOUT, TOURN_MODE)
 			if get_room_by_user(self.user_id):
-				r.setex(f"user_room_{self.user_id}", TIMEOUT, get_room_by_user(self.user_id))
 				warnChannel = get_room_by_user(self.user_id)
-			r.setex(f"user_channel_{self.user_id}", TIMEOUT, self.channel_name)
-			r.expire(f"name_{self.user_id}", TIMEOUT)
+			expire_user_info(self.user_id)
 			await self.channel_layer.group_send(
 				warnChannel,
 				{
@@ -105,10 +101,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			)
 		elif is_user_in_queue(self.user_id, TOURN_MODE):
 			remove_user_from_queue(self.user_id, TOURN_MODE)
-			r.delete(f"user_mode_{self.user_id}")
-			if (r.exists(f"user_channel_{self.user_id}")):
-				r.delete(f"user_channel_{self.user_id}")
-			r.delete(f"name_{self.user_id}")
+			delete_user_info(self.user_id)
+		else:
+			delete_user_info(self.user_id)
 
 
 	async def receive(self, text_data):
@@ -169,8 +164,6 @@ async def generate_round(channel, lobby_name):
 			if r.exists(f"user_channel_{p}"):
 				user_channel = r.get(f"user_channel_{p}")
 				await channel.group_add(lobby_name, user_channel)
-				if not r.sismember(lobby_name, p):
-					r.sadd(lobby_name, p)
 			else:
 				r.srem(lobby_name, p)
 
@@ -192,9 +185,10 @@ async def check_tournament_end(channel, lobby_name):
 	for p in nextplayers:
 		if not r.exists(f"user_channel_{p}"):
 			r.srem(lobby_name, p)
-			nextplayers.remove(p)
 
-	if len(nextplayers) == 1:
+	nextplayers = [p for p in r.smembers(lobby_name)]
+
+	if len(nextplayers) <= 1:
 		await channel.group_send(
 			lobby_name,
 			{
@@ -203,9 +197,6 @@ async def check_tournament_end(channel, lobby_name):
 				'close': True,
 			}
 		)
-		for player in nextplayers:
-			r.delete(f"user_lobby_{player}")
-			r.delete(f"user_mode_{player}")
 		r.delete(lobby_name)
 		return True
 	return False

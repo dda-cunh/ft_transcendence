@@ -2,7 +2,7 @@ import redis
 import json
 import uuid
 
-from ServerPong.constants import REDIS_URL
+from ServerPong.constants import REDIS_URL, TIMEOUT
 
 r = redis.Redis.from_url(REDIS_URL, decode_responses=True)
 
@@ -71,23 +71,16 @@ def get_lobby_by_user(user_id):
 	return None
 
 def cancel_expiry(user_id):
-	r.persist(f"user_room_{user_id}")
-	r.persist(f"user_mode_{user_id}")
+	if r.exists(f"user_mode_{user_id}"):
+		r.persist(f"user_mode_{user_id}")
+	if r.exists(f"user_room_{user_id}"):
+		r.persist(f"user_room_{user_id}")
 	if r.exists(f"user_channel_{user_id}"):
 		r.persist(f"user_channel_{user_id}")
-	if r.exists(f"user_lobby_{user_id}"):
-		r.persist(f"user_lobby_{user_id}")
 	if r.exists(f"name_{user_id}"):
 		r.persist(f"name_{user_id}")
-	room_name = get_room_by_user(user_id)
-	if not room_name:
-		return
-	room_data = r.get(room_name)
-	if not room_data:
-		return
-	users = json.loads(room_data)
-	if len(users) == 2:
-		r.persist(room_name)
+	if r.exists(f"user_lobby_{user_id}"):
+		r.persist(f"user_lobby_{user_id}")
 
 def get_queue_size(mode):
 	if mode == "remote":
@@ -108,3 +101,27 @@ def remove_user_from_queue(user_id, mode):
 		r.lrem(QUEUE_KEY, 0, user_id)
 	elif mode == "tournament":
 		r.lrem(TOURNM_KEY, 0, user_id)
+
+def expire_user_info(user_id):
+	if r.exists(f"user_mode_{user_id}"):
+		r.expire(f"user_mode_{user_id}", TIMEOUT)
+	if r.exists(f"user_room_{user_id}"):
+		r.expire(f"user_room_{user_id}", TIMEOUT)
+	if r.exists(f"user_channel_{user_id}"):
+		r.expire(f"user_channel_{user_id}", TIMEOUT)
+	if r.exists(f"name_{user_id}"):
+		r.expire(f"name_{user_id}", TIMEOUT)
+	if r.exists(f"user_lobby_{user_id}"):
+		r.expire(f"user_lobby_{user_id}", TIMEOUT)
+
+def delete_user_info(user_id):
+	if r.exists(f"user_mode_{user_id}"):
+		r.delete(f"user_mode_{user_id}")
+	if r.exists(f"user_room_{user_id}"):
+		r.delete(f"user_room_{user_id}")
+	if r.exists(f"user_channel_{user_id}"):
+		r.delete(f"user_channel_{user_id}")
+	if r.exists(f"name_{user_id}"):
+		r.delete(f"name_{user_id}")
+	if r.exists(f"user_lobby_{user_id}"):
+		r.delete(f"user_lobby_{user_id}")

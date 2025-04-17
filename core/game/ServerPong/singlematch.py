@@ -106,8 +106,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 			return
 		user_room = get_room_by_user(self.user_id)
 		if user_room:
-			r.setex(f"user_room_{self.user_id}", TIMEOUT, user_room)
-			r.setex(f"user_mode_{self.user_id}", TIMEOUT, MATCH_MODE)
+			expire_user_info(self.user_id)
 			await self.channel_layer.group_send(
 				user_room,
 				{
@@ -118,10 +117,9 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 			)
 		elif is_user_in_queue(self.user_id, MATCH_MODE):
 			remove_user_from_queue(self.user_id, MATCH_MODE)
-			r.delete(f"user_mode_{self.user_id}")
-			if (r.exists(f"user_channel_{self.user_id}")):
-				r.delete(f"user_channel_{self.user_id}")
-			r.delete(f"name_{self.user_id}")
+			delete_user_info(self.user_id)
+		else:
+			delete_user_info(self.user_id)
 
 
 	async def receive(self, text_data):
