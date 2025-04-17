@@ -87,7 +87,7 @@ export function connectWebSocket(mode) {
 
 function drawFrame() {
   const canvas = document.querySelectorAll('canvas')[0];
-  //if (!canvas || !gameState || !gameConstants) return;
+  if (!canvas || !gameState || !gameConstants) return;
   
   const ctx = canvas.getContext('2d');
   canvas.width = gameConstants.canvas_w;

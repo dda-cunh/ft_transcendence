@@ -53,21 +53,20 @@ async def monitor_room(room_name, channel_layer):
 		}
 	)
 
-	while True:
-		if not room_name:
-			break
-		users_raw = r.get(room_name)
-		if not users_raw:
-			break
+	r.hset(f"gamestate_{room_name}", mapping=state.to_redis())
 
+	while True:
 		# Insert gameloop logic here:
+
 		# Get the current gamestate from redis
 		actions = PlayersActions(
 			p1_key_scale = r.get(f"keystate_{users[0]}"),
 			p2_key_scale = r.get(f"keystate_{users[-1]}"),
 		)
 		# call get_next_frame with gamestate and redis keystates
-		state = get_next_frame(state, actions)
+		raw_state = r.hgetall(f"gamestate_{room_name}")
+		state = get_next_frame(from_redis(raw_state), actions)
+
 		# send the gamestate to the players
 		await channel_layer.group_send(
 			room_name,
@@ -79,8 +78,10 @@ async def monitor_room(room_name, channel_layer):
 			}
 		)
 		# save the new gamestate to redis
+		r.hset(f"gamestate_{room_name}", mapping=state.to_redis())
+
 		# delay loop by FRAME_RATE
-		await asyncio.sleep(0.05)
+		await asyncio.sleep(1 / 30)
 
 		# Check if the game is still active by way of scores
 		if state.p1_score >= SCORE_TO_WIN or state.p2_score >= SCORE_TO_WIN:
@@ -90,7 +91,6 @@ async def monitor_room(room_name, channel_layer):
 				delete_user_info(users[0])
 			break
 
-		users = json.loads(users_raw)
 		still_active = [u for u in users if r.exists(f"user_room_{u}")]
 		if len(still_active) != 2:
 			# One or both players missing
@@ -107,6 +107,7 @@ async def monitor_room(room_name, channel_layer):
 				}
 			)
 			break
+	r.delete(f"gamestate_{room_name}")
 	if r.exists(f"keystate_{users[0]}"):
 		r.delete(f"keystate_{users[0]}")
 	if r.exists(f"keystate_{users[-1]}"):

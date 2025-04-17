@@ -79,6 +79,32 @@ class GameState:
 			}
 		}
 
+	def to_redis(self):
+		return {
+			'p1_x': self.p1_pos.x,
+			'p1_y': self.p1_pos.y,
+			'p2_x': self.p2_pos.x,
+			'p2_y': self.p2_pos.y,
+			'p1_score': self.p1_score,
+			'p2_score': self.p2_score,
+			'ball_x': self.ball_pos.x,
+			'ball_y': self.ball_pos.y,
+			'vec_x': self.ball_vec.x,
+			'vec_y': self.ball_vec.y,
+		}
+
+@staticmethod
+def from_redis(data):
+	return GameState(
+		p1_pos = Point2D(float(data['p1_x']), float(data['p1_y'])),
+		p2_pos = Point2D(float(data['p2_x']), float(data['p2_y'])),
+		p1_score = int(data['p1_score']),
+		p2_score = int(data['p2_score']),
+		ball_pos = Point2D(float(data['ball_x']), float(data['ball_y'])),
+		ball_vec = Vec2D(float(data['vec_x']), float(data['vec_y'])),
+	)
+
+
 class KeyState(Enum):
 	UP   =  1
 	IDLE =  0
