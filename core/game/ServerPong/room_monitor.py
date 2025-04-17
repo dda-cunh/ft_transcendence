@@ -60,8 +60,8 @@ async def monitor_room(room_name, channel_layer):
 
 		# Get the current gamestate from redis
 		actions = PlayersActions(
-			p1_key_scale = r.get(f"keystate_{users[0]}"),
-			p2_key_scale = r.get(f"keystate_{users[-1]}"),
+			p1_key_scale = int(r.get(f"keystate_{users[0]}")),
+			p2_key_scale = int(r.get(f"keystate_{users[-1]}")),
 		)
 		# call get_next_frame with gamestate and redis keystates
 		raw_state = r.hgetall(f"gamestate_{room_name}")
@@ -81,7 +81,7 @@ async def monitor_room(room_name, channel_layer):
 		r.hset(f"gamestate_{room_name}", mapping=state.to_redis())
 
 		# delay loop by FRAME_RATE
-		await asyncio.sleep(1 / 30)
+		await asyncio.sleep(0.05)
 
 		# Check if the game is still active by way of scores
 		if state.p1_score >= SCORE_TO_WIN or state.p2_score >= SCORE_TO_WIN:
