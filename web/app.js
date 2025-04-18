@@ -73,30 +73,48 @@ async function renderPlayerCard()
 					<div class="flex-row flex-fill align-middle">
 						<div class="col py-auto d-flex justify-content-center">
 							<!--USERNAME-->
-							<h1 class="display-1"><a href="#" id="userNameDisplay" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover"></a></h1>
+							<h1 class="display-1"><a href="#" id="userNameDisplay" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">${userName}</a></h1>
 						</div>
 					</div>
 					<div class="row d-flex">
 						<div class="col">
 							<!--MOTTO-->
-							<p id="mottoDisplay" class="fst-italic"></p>
+							<p class="fst-italic">"${motto}"</p>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div id="ctrlsRow" class="row mt-4 text-center d-flex justify-content-center">
+			<div id="viewRow" class="row mt-4 text-center d-flex justify-content-center">
 			</div>
 	`
-
-	document.getElementById("userNameDisplay").innerText = userName;
-	document.getElementById("mottoDisplay").innerText = '"' + motto + '"';
 }
 
+async function	renderView()
+{
+	let viewName;
+	viewName = localStorage.getItem("currentView");
+
+	try
+	{
+		let	response = await fetch(`views/${viewName}.html`);
+
+		if (!response.ok)
+			throw new Error(`Error loading view: ${viewName}`);
+
+		let viewHtml = await response.text();
+		document.getElementById("viewRow").innerHTML = viewHtml;
+	}
+	catch(error)
+	{
+		document.getElementById("viewRow").innerHTML = `<p>${error}</p>`
+	}
+}
 
 async function renderPage() 
 {
 	renderNavbar();
 	await renderPlayerCard();
+	await renderView();
 }
 
 
@@ -109,53 +127,79 @@ function	logoutUser()
 	renderAuth();
 }
 
-
-function	setupEventHandlers()
+async function	changeView()
 {
-	document.getElementById("titleHeader").addEventListener("click", () => renderHome(false));
-
-	document.getElementById("acctSettingsBtn").addEventListener("click", ()=> renderAcctSettings(false) );
-	document.getElementById("userPfp").addEventListener("click", ()=> renderProfile(false) );
-	document.getElementById("userNameDisplay").addEventListener("click", ()=> renderProfile(false) );
-
-	document.getElementById("homeBtn").addEventListener("click", () => renderHome(false) );
-	document.getElementById("profileBtn").addEventListener("click", () => renderProfile(false) );
-	document.getElementById("logoutBtn").addEventListener("click", () => logoutUser(false));
-
-	const	navLinks = document.querySelectorAll(".nav-item");
-	const	menuToggle = document.getElementById("navbarCollapse");
-	const	bsCollapse = new bootstrap.Collapse(menuToggle, {toggle: false});
-	navLinks.forEach((link) => {
-			link.addEventListener("click", () => { bsCollapse.toggle() });
-		}
-	);
-}
-
-
-let loaded = false;
-
-export async function	App()
-{
-	await renderPage();
-
-	if (!loaded)
-	{
-		loaded = true;
-		setupEventHandlers();
-	}
+	await renderView();
 
 	switch (localStorage.getItem("currentView") )
 	{
 		case ("home"):
 			renderHome();
 			break ;
-		case("profile"):
+		case ("profile"):
 			renderProfile();
 			break ;
-		case ("accountSettings"):
+		case ("friend_requests"):
+			
+			break ;
+		case ("account_settings"):
 			renderAcctSettings();
 			break ;
 	}
+}
+
+
+function	setupEventHandlers()
+{
+
+	document.getElementById("titleHeader").onclick = function() {
+			localStorage.setItem("currentView", "home");
+			changeView();
+	};
+
+	document.getElementById("acctSettingsBtn").onclick = function() {
+			localStorage.setItem("currentView", "account_settings");
+			changeView();			
+	};
+	document.getElementById("userPfp").onclick = function() {
+			localStorage.setItem("currentView", "profile");
+			changeView();
+	};
+	document.getElementById("userNameDisplay").onclick = function() {
+			localStorage.setItem("currentView", "profile");
+			changeView();
+	};
+
+	document.getElementById("homeBtn").onclick = function() {
+			localStorage.setItem("currentView", "home");
+			changeView();
+	};
+	document.getElementById("profileBtn").onclick = function() {
+			localStorage.setItem("currentView", "profile");
+			changeView();
+	};
+	document.getElementById("friendRequestsBtn").onclick = function() {
+			localStorage.setItem("currentView", "friend_requests");
+			changeView();
+	};
+	document.getElementById("logoutBtn").onclick = () => logoutUser();
+
+/*
+	const	navLinks = document.querySelectorAll(".nav-item");
+	const	menuToggle = document.getElementById("navbarCollapse");
+	const	bsCollapse = new bootstrap.Collapse(menuToggle, { toggle: false });
+	navLinks.forEach((link) => {
+			link.onclick = () => bsCollapse.toggle();
+		}
+	);
+*/
+}
+
+export async function	App()
+{
+	await renderPage();
+
+	setupEventHandlers();
 }
 
 /*
