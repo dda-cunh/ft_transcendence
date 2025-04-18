@@ -74,7 +74,6 @@ async function	chgMotto(event)
 
 	try
 	{
-
 		if (!newMottoField.value)
 			throw new Error("This field cannot be empty.");
 
@@ -110,7 +109,11 @@ async function	chgMotto(event)
 
 async function	chgPfp(event)
 {
-	let errField;
+/*
+	TODO:
+		RESIZE + CROP PICS
+		ERROR HANDLING (EX IMG TOO LARGE)
+*/
 	let errMsg = document.getElementById("errMsg");
 	if (errMsg !== null)
 		errMsg.remove();
@@ -118,6 +121,9 @@ async function	chgPfp(event)
 	updateAccessTkn();
 
 	let uploadBtn = document.getElementById("pfpUploadBtn");
+	let newPfp = new FormData();
+
+	newPfp.append("avatar", uploadBtn.files[0]);
 
 	try
 	{
@@ -126,20 +132,22 @@ async function	chgPfp(event)
 							headers: {
 								"Authorization": "Bearer " + localStorage.getItem("access"),
 							},
-							body: uploadBtn.files[0],
+							body: newPfp,
 			});
 
 		let responseData = await response.json();
 
 		if (!response.ok)
+		{
+			//	SWITCH/CASE HERE
 			throw new Error(responseData[Object.keys(responseData)[0]]);
+		}
 
 		location.reload();
 	}
 	catch (error)
 	{
-		console.log(error);
-		uploadBtn.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>");
+		uploadBtn.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback d-block\">"+error+"</div>");
 		event.stopPropagation();
 	}
 

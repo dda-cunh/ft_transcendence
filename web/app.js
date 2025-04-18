@@ -49,7 +49,6 @@ function renderNavbar()
 	const	menuToggle = document.getElementById("navbarCollapse");
 	const	bsCollapse = new bootstrap.Collapse(menuToggle, { toggle: false });
 	navLinks.forEach((link) => {
-//			link.onclick = () => bsCollapse.toggle();
 			link.addEventListener("click", () => bsCollapse.toggle());
 		}
 	);
@@ -65,6 +64,7 @@ async function renderPlayerCard()
 	let imgSrc = userData.avatar;
 	let userName = userData.username;
 	let motto = userData.motto;
+
 
 	transcendenceApp.innerHTML = `
 			<div class="row text-center d-flex justify-content-center">
@@ -194,16 +194,6 @@ function	setupEventHandlers()
 			localStorage.setItem("currentView", "profile");
 			changeView();
 	};
-
-/*
-	const	navLinks = document.querySelectorAll(".nav-item");
-	const	menuToggle = document.getElementById("navbarCollapse");
-	const	bsCollapse = new bootstrap.Collapse(menuToggle, { toggle: false });
-	navLinks.forEach((link) => {
-			link.onclick = () => bsCollapse.toggle();
-		}
-	);
-*/
 }
 
 export async function	App()
