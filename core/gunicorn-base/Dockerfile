@@ -1,13 +1,18 @@
-FROM	python:3.11-slim
+FROM	debian:bullseye
 
 WORKDIR	/service
 
-RUN		apt-get update -y \
-		&& apt-get upgrade -y \
-		&& apt-get install -y \
+RUN 	set -eux; \
+		apt-get update -y \
+    	&& apt-get upgrade -y \
+    	&& apt-get install -y \
+			python3.10 \
+			python3.10-pip \
+			python3.10-dev \
+			python3.10-wheel \
 			build-essential \
 			libpq-dev
 		# && rm -rf /var/lib/apt/lists/*
 
-RUN		pip install --no-cache-dir --upgrade pip \
-		&& pip install --no-cache-dir gunicorn
+RUN		pip3 install --no-cache-dir --upgrade pip \
+		&& pip3 install --no-cache-dir gunicorn
