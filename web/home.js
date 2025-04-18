@@ -96,7 +96,7 @@ function	setupEventHandlers()
 
 
 	/*	MAIN FUNCTION	*/
-export function	renderHome(histLoad)
+export function	renderHome()
 {
 	localStorage.setItem("currentView", "home");
 

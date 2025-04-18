@@ -166,7 +166,7 @@ export async function renderFriendsList()
 
 
 	/*	MAIN FUNCTION	*/
-export function	renderProfile(histLoad)	//	ADD id PARAMETER
+export function	renderProfile()	//	ADD id PARAMETER
 {
 	localStorage.setItem("currentView", "profile");
 

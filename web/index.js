@@ -77,7 +77,7 @@ async function	main()
 	if (!(await userIsLoggedIn() ) )
 		renderAuth();
 	else
-		App(false);
+		App();
 }
 
 

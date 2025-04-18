@@ -321,7 +321,7 @@ function	setupEventHandlers()
 }
 
 
-export function	renderAcctSettings(histLoad)
+export function	renderAcctSettings()
 {
 	localStorage.setItem("currentView", "accountSettings");
 

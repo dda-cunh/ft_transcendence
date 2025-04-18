@@ -134,7 +134,7 @@ function	setupEventHandlers()
 
 let loaded = false;
 
-export async function	App(histLoad)
+export async function	App()
 {
 	await renderPage();
 
@@ -147,13 +147,13 @@ export async function	App(histLoad)
 	switch (localStorage.getItem("currentView") )
 	{
 		case ("home"):
-			renderHome(histLoad);
+			renderHome();
 			break ;
 		case("profile"):
-			renderProfile(histLoad);
+			renderProfile();
 			break ;
 		case ("accountSettings"):
-			renderAcctSettings(histLoad);
+			renderAcctSettings();
 			break ;
 	}
 }

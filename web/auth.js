@@ -140,7 +140,7 @@ async function	registerUser(event)
 		{
 			localStorage.setItem("access", responseData.tokens.access);
 			localStorage.setItem("refresh", responseData.tokens.refresh);
-			App(false);
+			App();
 		}
 	}
 	catch (error)
