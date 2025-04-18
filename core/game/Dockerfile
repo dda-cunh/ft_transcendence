@@ -11,6 +11,6 @@ RUN 	set -eux; \
 			libjpeg-dev \ 
 		&& rm -rf /var/lib/apt/lists/*
 
-RUN		pip3 install --no-cache-dir --upgrade daphne channels
+RUN		pip install --no-cache-dir --upgrade daphne channels
 
 CMD 	["bash", "docker_exec.sh"]

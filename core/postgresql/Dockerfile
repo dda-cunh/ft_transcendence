@@ -1,4 +1,4 @@
-FROM	debian:bullseye
+FROM	debian:bullseye-slim
 
 ENV		PG_VERSION	13
 ENV		PG_MAJOR	13

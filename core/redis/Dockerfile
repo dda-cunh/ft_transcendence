@@ -1,4 +1,4 @@
-FROM	debian:bullseye
+FROM	debian:bookworm-slim
 
 RUN		set -eux; \
 		apt-get update -y; \

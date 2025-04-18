@@ -1,5 +1,5 @@
 # nginx/Dockerfile
-FROM    debian:bullseye
+FROM	debian:bookworm-slim
 
 # # Update the package list and install openssl and nginx
 RUN apt-get update && \
