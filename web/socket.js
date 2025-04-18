@@ -105,7 +105,7 @@ function drawFrame() {
   ctx.fillRect(gameConstants.canvas_w - gameConstants.paddle_w, gameState.p2_pos_y + half_h - gameConstants.paddle_h / 2, gameConstants.paddle_w, gameConstants.paddle_h);
 
   ctx.font = '20px Arial';
-  ctx.fillText(`${gameConstants.p1_name}   ${gameState.p1_score} : ${gameState.p2_score}   ${gameConstants.p2_name}`, canvas.width / 2 - 20, 30);
+  ctx.fillText(`${gameConstants.p1_name}   ${gameState.p1_score} : ${gameState.p2_score}   ${gameConstants.p2_name}`, canvas.width / 2 - 40, 30);
 }
 
 function emitIfChanged(key, isPressed) {
