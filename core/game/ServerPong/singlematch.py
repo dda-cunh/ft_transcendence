@@ -63,6 +63,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 					'message': 'Reconnected to peer!',
 					'gamestate': False,
 					'close': False,
+					'initial': False,
 				}
 			)
 			cancel_expiry(self.user_id)
@@ -92,6 +93,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 						'message': 'Connected to peer!',
 						'gamestate': False,
 						'close': False,
+						'initial': False,
 					}
 				)
 				start_monitor(self.room_name, self.channel_layer)
@@ -116,6 +118,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 					'message': 'Player disconnected',
 					'gamestate': False,
 					'close': False,
+					'initial': False,
 				}
 			)
 		elif is_user_in_queue(self.user_id, MATCH_MODE):
@@ -139,6 +142,9 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 			await self.send(text_data=json.dumps({
 				'message': message
 			}))
+		initial = event.get('initial')
+		if initial is not False:
+			await self.send(text_data=json.dumps({ 'initial': initial }))
 		gamestate = event.get('gamestate')
 		if gamestate is not False:
 			await self.send(text_data=json.dumps({ 'gamestate': gamestate }))

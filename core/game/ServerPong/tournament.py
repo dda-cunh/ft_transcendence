@@ -43,6 +43,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					'message': 'Reconnected to peer!',
 					'gamestate': False,
 					'close': False,
+					'initial': False,
 				}
 			)
 			cancel_expiry(self.user_id)
@@ -74,6 +75,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					'message': 'Tournament is starting!',
 					'gamestate': False,
 					'close': False,
+					'initial': False,
 				}
 			)
 			asyncio.create_task(generate_round(self.channel_layer, lobby_name))
@@ -100,6 +102,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					'message': 'Player disconnected',
 					'gamestate': False,
 					'close': False,
+					'initial': False,
 				}
 			)
 		elif is_user_in_queue(self.user_id, TOURN_MODE):
@@ -123,6 +126,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			await self.send(text_data=json.dumps({
 				'message': message
 			}))
+		initial = event.get('initial')
+		if initial is not False:
+			await self.send(text_data=json.dumps({ 'initial': initial }))
 		gamestate = event.get('gamestate')
 		if gamestate is not False:
 			await self.send(text_data=json.dumps({ 'gamestate': gamestate }))
@@ -183,6 +189,7 @@ async def generate_round(channel, lobby_name):
 				'message': "You won the match!",
 				'gamestate': False,
 				'close': False,
+				'initial': False,
 			}
 		)
 
@@ -206,6 +213,7 @@ async def check_tournament_end(channel, lobby_name):
 				'message': 'You won the tournament! CONGRATS!!! Closing lobby...',
 				'gamestate': False,
 				'close': True,
+				'initial': False,
 			}
 		)
 		r.delete(lobby_name)

@@ -20,17 +20,28 @@ async def monitor_room(room_name, channel_layer):
 	users = json.loads(users_raw)
 	userName = r.get(f"name_{users[0]}")
 	opponentName = r.get(f"name_{users[-1]}")
+	initial = {
+		'canvas_w': CANVAS_W,
+		'canvas_h': CANVAS_H,
+		'paddle_w': PADDLE_WIDTH,
+		'paddle_h': int(PADDLE_HEIGHT),
+		'ball_rad': int(BALL_SIZE * 0.5),
+		'p1_name': userName,
+		'p2_name': opponentName,
+	}
 	await channel_layer.group_send(
 		room_name,
 		{
 			'type': 'room_message',
 			'message': f'Match: {opponentName} vs {userName}!',
 			'close': False,
+			'initial': False,
+			'gamestate': False,
 		}
 	)
 	mode = get_user_mode(users[0])
-	r.set(f"keystate_{users[0]}", "0")
-	r.set(f"keystate_{users[-1]}", "0")
+	r.set(f"keystate_{users[0]}", "IDLE")
+	r.set(f"keystate_{users[-1]}", "IDLE")
 	still_active = [u for u in users if r.exists(f"user_room_{u}")]
 
 
@@ -51,6 +62,7 @@ async def monitor_room(room_name, channel_layer):
 			'message': False,
 			'gamestate': state.to_dict(),
 			'close': False,
+			'initial': initial,
 		}
 	)
 
@@ -63,8 +75,8 @@ async def monitor_room(room_name, channel_layer):
 
 		# Get the current gamestate from redis
 		actions = PlayersActions(
-			p1_key_scale = KeyState(int(r.get(f"keystate_{users[0]}"))),
-			p2_key_scale = KeyState(int(r.get(f"keystate_{users[-1]}"))),
+			p1_key_scale = KeyState[r.get(f"keystate_{users[0]}")],
+			p2_key_scale = KeyState[r.get(f"keystate_{users[-1]}")],
 		)
 		# call get_next_frame with gamestate and redis keystates
 		state = get_next_frame(old_state, actions)
@@ -77,6 +89,7 @@ async def monitor_room(room_name, channel_layer):
 				'message': False,
 				'gamestate': state.to_dict(),
 				'close': False,
+				'initial': False,
 			}
 		)
 		# save the new gamestate to redis
@@ -106,6 +119,7 @@ async def monitor_room(room_name, channel_layer):
 					'message': f'{opponentName} has not returned. Ending game',
 					'gamestate': False,
 					'close': close,
+					'initial': False,
 				}
 			)
 			break
