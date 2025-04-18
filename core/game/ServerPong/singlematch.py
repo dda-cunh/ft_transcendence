@@ -27,7 +27,9 @@ class LocalPongConsumer(AsyncWebsocketConsumer):
 		self.task = asyncio.create_task(local_monitor_room(self))
 
 	async def disconnect(self, close_code):
-		self.task.cancel()
+		if hasattr(self, 'task'):
+			self.task.cancel()
+			del self.task
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
@@ -113,7 +115,6 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 			return
 		user_room = get_room_by_user(self.user_id)
 		if user_room:
-			expire_user_info(self.user_id)
 			await self.channel_layer.group_send(
 				user_room,
 				{
@@ -124,6 +125,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 					'initial': False,
 				}
 			)
+			expire_user_info(self.user_id)
 		elif is_user_in_queue(self.user_id, MATCH_MODE):
 			remove_user_from_queue(self.user_id, MATCH_MODE)
 			delete_user_info(self.user_id)

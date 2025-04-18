@@ -62,6 +62,7 @@ async def local_monitor_room(self):
 	await self.send(text_data=json.dumps({
 		'message': 'Game ended. Leaving room...',
 	}))
+	del self.task
 	await self.close()
 
 
@@ -124,7 +125,7 @@ async def monitor_room(room_name, channel_layer):
 	)
 
 	r.hset(f"gamestate_{room_name}", mapping=state.to_redis())
-
+	winner = None
 	while True:
 		# Insert gameloop logic here:
 		raw_state = r.hgetall(f"gamestate_{room_name}")
@@ -158,39 +159,79 @@ async def monitor_room(room_name, channel_layer):
 		# Check if the game is still active by way of scores
 		if state.p1_score >= SCORE_TO_WIN or state.p2_score >= SCORE_TO_WIN:
 			if state.p1_score >= SCORE_TO_WIN:
-				delete_user_info(users[-1])
+				winner = userName
 			else:
-				delete_user_info(users[0])
+				winner = opponentName
 			break
 
 		still_active = [u for u in users if r.exists(f"user_room_{u}")]
 		if len(still_active) != 2:
 			# One or both players missing
-			close = True
-			if mode == TOURN_MODE:
-				close = False
+			winner = userName
 			await channel_layer.group_send(
 				room_name,
 				{
 					'type': 'room_message',
 					'message': f'{opponentName} has not returned. Ending game',
 					'gamestate': False,
-					'close': close,
+					'close': False,
 					'initial': False,
 				}
 			)
 			break
+
 	r.delete(f"gamestate_{room_name}")
 	if r.exists(f"keystate_{users[0]}"):
 		r.delete(f"keystate_{users[0]}")
 	if r.exists(f"keystate_{users[-1]}"):
 		r.delete(f"keystate_{users[-1]}")
+	
 	still_active = [u for u in users if r.exists(f"user_room_{u}")]
-	if mode == TOURN_MODE:
-		for u in still_active:
-			r.delete(f"user_room_{u}")
+	for u in still_active:
+		r.delete(f"user_room_{u}")
+	if mode != TOURN_MODE:
+		await channel_layer.group_send(
+			room_name,
+			{
+				'type': 'room_message',
+				'message': f'Winner: {winner}!. Game ended. Leaving room...',
+				'close': True,
+				'gamestate': False,
+				'initial': False,
+			}
+		)
+		delete_user_info(users[0])
+		delete_user_info(users[-1])
+		r.delete(room_name)
+		room_tasks.pop(room_name, None)
+		return
+
+	winningplayer = None
+	losingplayer = None
+	if winner == userName:
+		winningplayer = users[0]
+		losingplayer = users[-1]
+	else:
+		winningplayer = users[-1]
+		losingplayer = users[0]
+	
+	await channel_layer.group_discard(room_name, r.get(f"user_channel_{winningplayer}"))
+	r.delete(f"user_room_{winningplayer}")
+	r.delete(f"user_lobby_{losingplayer}")
+	await channel_layer.group_send(
+		room_name,
+		{
+			'type': 'room_message',
+			'message': f'Winner: {winner}!. Game ended. Leaving room...',
+			'close': True,
+			'gamestate': False,
+			'initial': False,
+		}
+	)
+	delete_user_info(losingplayer)
 	r.delete(room_name)
 	room_tasks.pop(room_name, None)
+
 
 def start_monitor(room_name, channel_layer):
 	if room_name not in room_tasks:
