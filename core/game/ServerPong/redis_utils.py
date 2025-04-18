@@ -23,11 +23,6 @@ def dequeue_user(mode):
 	elif mode == "tournament":
 		return r.lpop(TOURNM_KEY)
 
-def create_local_room(user_id):
-	room_name = f"local_{uuid.uuid4().hex[:24]}"
-	r.set(room_name, json.dumps([user_id]))
-	return room_name
-
 def create_room(user1, user2):
 	room_name = f"room_{uuid.uuid4().hex[:24]}"
 	r.set(room_name, json.dumps([user1, user2]))

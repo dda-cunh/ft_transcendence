@@ -8,6 +8,63 @@ from ServerPong.game_utils import *
 
 room_tasks = {}
 
+async def local_monitor_room(self):
+	userName = "p1"
+	opponentName = "p2"
+	initial = {
+	'canvas_w': CANVAS_W,
+	'canvas_h': CANVAS_H,
+	'paddle_w': PADDLE_WIDTH,
+	'paddle_h': int(PADDLE_HEIGHT),
+	'ball_rad': int(BALL_SIZE * 0.5),
+	'p1_name': userName,
+	'p2_name': opponentName,
+	}
+	state = GameState(
+		p1_pos   = Point2D(P1_START_X, P1_START_Y),
+		p2_pos   = Point2D(P2_START_X, P2_START_Y),
+		p1_score = 0,
+		p2_score = 0,
+		ball_pos = Point2D(0, 0),
+		ball_vec = Vec2D(0, 0),
+	)
+	r.set(f"keystate_p1_{self.user_id}", "IDLE")
+	r.set(f"keystate_p2_{self.user_id}", "IDLE")
+	r.hset(f"gamestate_{self.user_id}", mapping=state.to_redis())
+	await self.send(text_data=json.dumps({
+		'initial': initial,
+		'gamestate': state.to_dict()
+	}))
+
+	while True:
+		raw_state = r.hgetall(f"gamestate_{self.user_id}")
+		old_state = from_redis(raw_state)
+
+		actions = PlayersActions(
+			p1_key_scale = KeyState[r.get(f"keystate_p1_{self.user_id}")],
+			p2_key_scale = KeyState[r.get(f"keystate_p2_{self.user_id}")],
+		)
+		
+		state = get_next_frame(old_state, actions)
+		await self.send(text_data=json.dumps({
+			'gamestate': state.to_dict()
+		}))
+		
+		r.hset(f"gamestate_{self.user_id}", mapping=state.to_redis())
+		await asyncio.sleep(1.0/TICKS_PER_SECOND)
+		if state.p1_score >= SCORE_TO_WIN or state.p2_score >= SCORE_TO_WIN:
+			break
+	r.delete(f"gamestate_{self.user_id}")
+	if r.exists(f"keystate_p1_{self.user_id}"):
+		r.delete(f"keystate_p1_{self.user_id}")
+	if r.exists(f"keystate_p2_{self.user_id}"):
+		r.delete(f"keystate_p2_{self.user_id}")
+	await self.send(text_data=json.dumps({
+		'message': 'Game ended. Leaving room...',
+	}))
+	await self.close()
+
+
 async def monitor_room(room_name, channel_layer):
 	await asyncio.sleep(1)
 	if not room_name:

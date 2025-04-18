@@ -106,24 +106,25 @@ function emitIfChanged(key, isPressed) {
 
 function emitIfChangedLocal(key, isPressed) {
   if (!gameState) return;
-  if (keyState[key] !== isPressed) {
-    keyState[key] = isPressed;
+  keyState[key] = isPressed;
 
-    const newMove =
-    keyState.w && !keyState.s ? "DOWN" :
-    keyState.s && !keyState.w ? "UP" :
-    "IDLE";
+  const newMove =
+  keyState.w && !keyState.s ? "DOWN" :
+  keyState.s && !keyState.w ? "UP" :
+  "IDLE";
 
-    const newLocalMove =
-    keyState.w && !keyState.s ? "DOWN" :
-    keyState.s && !keyState.w ? "UP" :
-    "IDLE";
+  const newLocalMove =
+  keyState.ArrowUp && !keyState.ArrowDown ? "DOWN" :
+  keyState.ArrowDown && !keyState.ArrowUp ? "UP" :
+  "IDLE";
 
-    if (newMove !== keyState.move && newLocalMove !== keyState.moveLocal) {
-      keyState.move = newMove;
-      keyState.moveLocal = newLocalMove;
-      socket.send(JSON.stringify({ keystate_p1: keyState.move }, { keystate_p2: keyState.moveLocal }));
-    }
+  if (newMove !== keyState.move) {
+    keyState.move = newMove;
+    socket.send(JSON.stringify({ keystate_p1: keyState.move }));
+  }
+  if (newLocalMove !== keyState.moveLocal) {
+    keyState.moveLocal = newLocalMove;
+    socket.send(JSON.stringify({ keystate_p2: keyState.moveLocal }));
   }
 }
 
