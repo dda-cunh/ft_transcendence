@@ -185,11 +185,17 @@ async def monitor_room(room_name, channel_layer):
 		r.delete(f"keystate_{users[0]}")
 	if r.exists(f"keystate_{users[-1]}"):
 		r.delete(f"keystate_{users[-1]}")
-	
+
+
+	# create match_history db entry + save its id to redis
+	# r.set(f"match_history_{room_name}", match_history_id)
+
 	still_active = [u for u in users if r.exists(f"user_room_{u}")]
 	for u in still_active:
 		r.delete(f"user_room_{u}")
 	if mode != TOURN_MODE:
+		
+
 		await channel_layer.group_send(
 			room_name,
 			{

@@ -15,7 +15,7 @@ TOP_BOUND    =  HALF_H
 BOTTOM_BOUND = -HALF_H
 
 # ─── Paddle & ball sizes/speeds ─────────────────────────────────────────────
-PADDLE_WIDTH   = 40
+PADDLE_WIDTH   = 20
 PADDLE_HEIGHT  = CANVAS_H / 4.5
 PADDLE_SPEED   = 10
 
