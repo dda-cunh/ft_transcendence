@@ -32,12 +32,9 @@ async function	chgUserName(event)
 
 	try
 	{
-		if (!newUserField.value)
-			throw new Error("This field cannot be empty.");
-
 		updateAccessTkn();
 
-		await fetch("management/profile/username/", 
+		let response = await fetch("management/profile/username/", 
 					{
 						method: "PATCH",
 						headers: {
@@ -218,10 +215,10 @@ async function	chgPassword(event)
 
 function	setupEventHandlers()
 {
-	document.getElementById("changeUsernameForm").addEventListener("submit", (event) => chgUserName(event) );
-	document.getElementById("changeMottoForm").addEventListener("submit", (event) => chgMotto(event) );
-	document.getElementById("changePfpForm").addEventListener("submit", (event) => chgPfp(event) );
-	document.getElementById("chgPasswdForm").addEventListener("submit", (event) => chgPassword(event) );
+	document.getElementById("changeUsernameForm").onsubmit = (event) => chgUserName(event);
+	document.getElementById("changeMottoForm").onsubmit = (event) => chgMotto(event);
+	document.getElementById("changePfpForm").onsubmit = (event) => chgPfp(event);
+	document.getElementById("chgPasswdForm").onsubmit = (event) => chgPassword(event);
 }
 
 

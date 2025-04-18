@@ -44,6 +44,16 @@ function renderNavbar()
 		<div id="appContainer" class="container mt-4">
 		</div>
 	`;
+
+	const	navLinks = document.querySelectorAll(".nav-item");
+	const	menuToggle = document.getElementById("navbarCollapse");
+	const	bsCollapse = new bootstrap.Collapse(menuToggle, { toggle: false });
+	navLinks.forEach((link) => {
+//			link.onclick = () => bsCollapse.toggle();
+			link.addEventListener("click", () => bsCollapse.toggle());
+		}
+	);
+
 }
 
 async function renderPlayerCard()
@@ -114,7 +124,6 @@ async function renderPage()
 {
 	renderNavbar();
 	await renderPlayerCard();
-	await renderView();
 }
 
 
@@ -140,7 +149,7 @@ async function	changeView()
 			renderProfile();
 			break ;
 		case ("friend_requests"):
-			
+
 			break ;
 		case ("account_settings"):
 			renderAcctSettings();
@@ -151,22 +160,9 @@ async function	changeView()
 
 function	setupEventHandlers()
 {
-
+		/*	NAVBAR	*/
 	document.getElementById("titleHeader").onclick = function() {
 			localStorage.setItem("currentView", "home");
-			changeView();
-	};
-
-	document.getElementById("acctSettingsBtn").onclick = function() {
-			localStorage.setItem("currentView", "account_settings");
-			changeView();			
-	};
-	document.getElementById("userPfp").onclick = function() {
-			localStorage.setItem("currentView", "profile");
-			changeView();
-	};
-	document.getElementById("userNameDisplay").onclick = function() {
-			localStorage.setItem("currentView", "profile");
 			changeView();
 	};
 
@@ -184,6 +180,21 @@ function	setupEventHandlers()
 	};
 	document.getElementById("logoutBtn").onclick = () => logoutUser();
 
+
+		/*	PLAYER CARD	*/
+	document.getElementById("acctSettingsBtn").onclick = function() {
+			localStorage.setItem("currentView", "account_settings");
+			changeView();			
+	};
+	document.getElementById("userPfp").onclick = function() {
+			localStorage.setItem("currentView", "profile");
+			changeView();
+	};
+	document.getElementById("userNameDisplay").onclick = function() {
+			localStorage.setItem("currentView", "profile");
+			changeView();
+	};
+
 /*
 	const	navLinks = document.querySelectorAll(".nav-item");
 	const	menuToggle = document.getElementById("navbarCollapse");
@@ -198,13 +209,12 @@ function	setupEventHandlers()
 export async function	App()
 {
 	await renderPage();
-
 	setupEventHandlers();
+
+	changeView();
 }
 
 /*
-	1 - load views from HTML files
-	2 - replace event listeners with onclick
 	3 - load text from json files
 	4 - redo history from scratch
 */

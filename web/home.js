@@ -9,7 +9,6 @@ import {renderPongGame} from './pong_game.js'
 function	selectSettings()
 {
 	document.querySelector("#matchType").value = localStorage.getItem("matchType");
-	document.querySelector("#gameType").value = localStorage.getItem("gameType");
 	document.querySelector("#ballColor").value = localStorage.getItem("ballColor");
 	document.querySelector("#paddleColor").value = localStorage.getItem("paddleColor");
 	document.querySelector("#backgroundColor").value = localStorage.getItem("backgroundColor");
@@ -19,13 +18,13 @@ function	selectSettings()
 
 function	setupEventHandlers()
 {
-	document.getElementById("btnFriendlyMatch").addEventListener("click", ()=> renderPongGame() );
-	document.getElementById("btnTournament").addEventListener("click", ()=> alert("This feature has not been implemented yet.") ) ;
+	document.getElementById("btnFriendlyMatch").onclick = () => renderPongGame();
+	document.getElementById("btnTournament").onclick = () => alert("This feature has not been implemented yet.");
 
-	document.getElementById("matchType").addEventListener("click", function() { localStorage.setItem("matchType", document.getElementById("matchType").value) });
-	document.getElementById("ballColor").addEventListener("click", function() { localStorage.setItem("ballColor", document.getElementById("ballColor").value) });
-	document.getElementById("paddleColor").addEventListener("click", function() { localStorage.setItem("paddleColor", document.getElementById("paddleColor").value) });
-	document.getElementById("backgroundColor").addEventListener("click", function() { localStorage.setItem("backgroundColor", document.getElementById("backgroundColor").value) });
+	document.getElementById("matchType").onclick = () => localStorage.setItem("matchType", document.getElementById("matchType").value);
+	document.getElementById("ballColor").onclick = () => localStorage.setItem("ballColor", document.getElementById("ballColor").value);
+	document.getElementById("paddleColor").onclick = () => localStorage.setItem("paddleColor", document.getElementById("paddleColor").value);
+	document.getElementById("backgroundColor").onclick = () => localStorage.setItem("backgroundColor", document.getElementById("backgroundColor").value);
 }
 
 
