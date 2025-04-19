@@ -1,4 +1,5 @@
 import {renderAuth} from './auth.js'
+import {renderPlayerCard} from './app.js'
 import {updateAccessTkn} from './utils.js'
 
 "use strict";
@@ -29,7 +30,7 @@ async function	chgUserName(event)
 			throw new Error(responseData[Object.keys(responseData)[0]]);
 		}
 
-		location.reload();	//	REFRESH PLAYER CARD ONLY
+		renderPlayerCard();
 	}
 	catch(error)
 	{
@@ -72,7 +73,7 @@ async function	chgMotto(event)
 			throw new Error(responseData[Object.keys(responseData)[0]]);
 		}
 
-		location.reload();	//	REFRESH PLAYER CARD ONLY
+		renderPlayerCard();
 	}
 	catch (error)
 	{
@@ -121,7 +122,7 @@ async function	chgPfp(event)
 			throw new Error(responseData[Object.keys(responseData)[0]]);
 		}
 
-		location.reload();	//	REFRESH PLAYER CARD ONLY
+		renderPlayerCard();
 	}
 	catch (error)
 	{
@@ -182,8 +183,8 @@ async function	chgPassword(event)
 			throw new Error(responseData[errKey]);
 		}
 
-		alert("Password updated successfully");
-		location.reload();	//	CLEAR FORM
+		document.getElementById("chgPasswdForm").reset();
+		document.getElementById("confirmPasswordField").insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"valid-feedback d-block\">Password updated successfully</div>")
 	}
 	catch(error)
 	{

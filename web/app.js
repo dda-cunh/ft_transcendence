@@ -56,7 +56,7 @@ function renderNavbar()
 
 }
 
-async function renderPlayerCard()
+export async function renderPlayerCard()
 {
 	let	transcendenceApp = document.getElementById("appContainer");
 
