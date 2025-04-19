@@ -1,4 +1,5 @@
 import {App} from './app.js'
+import {clearErrFields} from './utils.js'
 
 "use strict";
 
@@ -145,11 +146,9 @@ async function	registerUser(event)
 	}
 	catch (error)
 	{
+		clearErrFields();
 		if (errField !== undefined)
 		{
-			let errMsg = document.getElementById("errMsg");
-			if (errMsg !== null)
-				errMsg.remove();
 
 			let	errElem = document.getElementById(errField);
 			errElem.classList.add("is-invalid");
@@ -202,12 +201,9 @@ async function	loginUser(event)
 	}
 	catch(error)
 	{
+		clearErrFields();
 		if (errField !== undefined)
 		{
-			let errMsg = document.getElementById("errMsg");
-			if (errMsg !== null)
-				errMsg.remove();
-
 			let	errElem = document.getElementById(errField);
 			errElem.classList.add("is-invalid");
 			errElem.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">" + error + "</div>");

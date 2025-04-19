@@ -1,6 +1,7 @@
 import {renderAuth} from './auth.js'
 import {renderPlayerCard} from './app.js'
 import {updateAccessTkn} from './utils.js'
+import {clearErrFields} from './utils.js'
 
 "use strict";
 
@@ -8,6 +9,8 @@ import {updateAccessTkn} from './utils.js'
 async function	chgUserName(event)
 {
 	let newUserField = document.getElementById("newUserField");
+
+	clearErrFields();
 
 	try
 	{
@@ -45,9 +48,7 @@ async function	chgUserName(event)
 
 async function	chgMotto(event)
 {
-	let errMsg = document.getElementById("errMsg");
-	if (errMsg !== null)
-		errMsg.remove();
+	clearErrFields();
 
 	let newMottoField = document.getElementById("newMottoField");
 
@@ -93,11 +94,7 @@ async function	chgPfp(event)
 		RESIZE + CROP PICS
 		ERROR HANDLING (EX IMG TOO LARGE)
 */
-	let errMsg = document.getElementById("errMsg");
-	if (errMsg !== null)
-		errMsg.remove();
-
-	updateAccessTkn();
+	clearErrFields();
 
 	let uploadBtn = document.getElementById("pfpUploadBtn");
 	let newPfp = new FormData();
@@ -106,6 +103,8 @@ async function	chgPfp(event)
 
 	try
 	{
+		updateAccessTkn();
+
 		let response = await fetch("management/profile/avatar", {
 							method: "PATCH",
 							headers: {
@@ -135,9 +134,6 @@ async function	chgPfp(event)
 async function	chgPassword(event)
 {
 	let errField;
-	let errMsg = document.getElementById("errMsg");
-	if (errMsg !== null)
-		errMsg.remove();
 
 	updateAccessTkn();
 

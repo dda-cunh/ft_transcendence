@@ -51,8 +51,7 @@ function renderNavbar()
 	const	bsCollapse = new bootstrap.Collapse(menuToggle, { toggle: false });
 	navLinks.forEach((link) => {
 			link.addEventListener("click", () => bsCollapse.toggle());
-		}
-	);
+	} );
 
 }
 

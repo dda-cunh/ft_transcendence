@@ -22,3 +22,14 @@ export async function	updateAccessTkn()
 			renderAuth();
 		}
 }
+
+export function	clearErrFields()
+{
+	let errMsg = document.getElementById("errMsg");
+	if (errMsg !== null)
+		errMsg.remove();
+	const	markedFields = document.querySelectorAll(".is-invalid");
+	markedFields.forEach((field) => {
+		field.classList.remove("is-invalid");
+	} );
+}
