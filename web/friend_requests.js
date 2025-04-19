@@ -31,7 +31,6 @@ async function	renderList()
 		else
 		{
 			responseData.forEach(entry => {
-				console.log(entry);
 				let row = `
 					<tr class="m-0 p-0 w-100 d-flex flex-row align-items-center justify-content-around">
 						<td class=""><img height="75px" class="rounded-circle" src="/management/media/${entry.sender_avatar}" alt="${entry.sender_username}'s avatar" /></td>
@@ -121,10 +120,3 @@ export async function	renderFriendRequests()
 	await renderList();
 	setupEventHandlers();
 }
-
-/*
-{"id":"f4bc100d-0d42-4bba-8612-2525ef66a325","username":"fmouronh","motto":"git gud","avatar":"avatars/ballspin_ExpHtQF.png","last_activity":"2025-04-19T03:44:56.279307Z"}
-
-{"id":1,"sender":"a8573cc1-132f-461b-9551-145abec1e569","receiver":"f4bc100d-0d42-4bba-8612-2525ef66a325","sent_at":"2025-04-19T03:49:09.959506Z","accepted_at":null,"rejected_at":null}
-
-*/
