@@ -1,5 +1,3 @@
-import {renderFriends} from './friends.js'
-
 "use strict";
 
 

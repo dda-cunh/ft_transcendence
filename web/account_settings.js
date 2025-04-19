@@ -51,7 +51,7 @@ async function	chgUserName(event)
 			throw new Error(responseData[Object.keys(responseData)[0]]);
 		}
 
-		location.reload();
+		location.reload();	//	REFRESH PLAYER CARD ONLY
 	}
 	catch(error)
 	{
@@ -94,7 +94,7 @@ async function	chgMotto(event)
 			throw new Error(responseData[Object.keys(responseData)[0]]);
 		}
 
-		location.reload();
+		location.reload();	//	REFRESH PLAYER CARD ONLY
 	}
 	catch (error)
 	{
@@ -143,7 +143,7 @@ async function	chgPfp(event)
 			throw new Error(responseData[Object.keys(responseData)[0]]);
 		}
 
-		location.reload();
+		location.reload();	//	REFRESH PLAYER CARD ONLY
 	}
 	catch (error)
 	{
@@ -205,7 +205,7 @@ async function	chgPassword(event)
 		}
 
 		alert("Password updated successfully");
-		location.reload();
+		location.reload();	//	CLEAR FORM
 	}
 	catch(error)
 	{

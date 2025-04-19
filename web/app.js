@@ -1,6 +1,7 @@
 import {renderAuth} from './auth.js'
 import {renderHome} from './home.js'
 import {renderProfile} from './profile.js'
+import {renderFriendRequests} from './friend_requests.js'
 import {renderAcctSettings} from './account_settings.js'
 
 
@@ -83,20 +84,23 @@ async function renderPlayerCard()
 					<div class="flex-row flex-fill align-middle">
 						<div class="col py-auto d-flex justify-content-center">
 							<!--USERNAME-->
-							<h1 class="display-1"><a href="#" id="userNameDisplay" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">${userName}</a></h1>
+							<h1 class="display-1"><a href="#" id="userNameDisplay" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover"></a></h1>
 						</div>
 					</div>
 					<div class="row d-flex">
 						<div class="col">
 							<!--MOTTO-->
-							<p class="fst-italic">"${motto}"</p>
+							<p id="mottoDisplay" class="fst-italic"></p>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div id="viewRow" class="row mt-4 text-center d-flex justify-content-center">
 			</div>
-	`
+	`;
+
+	document.getElementById("userNameDisplay").innerText = userName;
+	document.getElementById("mottoDisplay").innerText = `"` + motto + `"`;
 }
 
 async function	renderView()
@@ -149,7 +153,7 @@ async function	changeView()
 			renderProfile();
 			break ;
 		case ("friend_requests"):
-
+			renderFriendRequests();
 			break ;
 		case ("account_settings"):
 			renderAcctSettings();
