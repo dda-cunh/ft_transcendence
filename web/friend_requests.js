@@ -2,6 +2,11 @@ import {updateAccessTkn} from './utils.js'
 
 "use strict";
 
+function	doTheThing()
+{
+	alert("doing the thing")
+}
+
 async function	renderList()
 {
 	try
@@ -33,9 +38,17 @@ async function	renderList()
 			responseData.forEach(entry => {
 				let row = `
 					<tr>
-						<td class=""><img style="object-fit: cover; height: 75px; width: 75px;" class="img-fluid rounded-circle" src="/management/media/avatars/${entry.sender_avatar.split("/").pop()}" alt="${entry.sender_username}'s avatar" /></td>
-						<td class="">${entry.sender_username}</td>
-						<td class="">
+						<td>
+							<a href="#">
+								<img style="object-fit: cover; height: 75px; width: 75px;" class="img-fluid rounded-circle" src="/management/media/avatars/${entry.sender_avatar.split("/").pop()}" alt="${entry.sender_username}'s avatar" />
+							</a>
+						</td>
+						<td>
+							<a class="display-6 link-light link-underline link-underline-opacity-0 link-opacity-75-hover" href="#">
+								${entry.sender_username}
+							</a>
+						</td>
+						<td>
 							<button class="btn btn-outline-success accept-btn" data-id="${entry.id}">ACCEPT</button>
 							<button class="btn btn-outline-danger deny-btn" data-id="${entry.id}">DENY</button>
 						</td>
