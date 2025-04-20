@@ -131,7 +131,7 @@ async function	changeView()
 
 	if (history.state?.view !== currentView)
 		history.pushState({view: currentView}, document.title, location.href);
-	console.log(localStorage.getItem("currentView"));
+//	console.log(localStorage.getItem(history.state));
 
 	switch (currentView)
 	{
@@ -158,7 +158,7 @@ window.addEventListener("popstate", function(event) {
 		initialLoad = false;
 		return ;
 	}
-	console.log(event.state);
+//	console.log(event.state);
 	if (event.state?.view && history.state?.view !== localStorage.getItem("currentView") )
 	{
 		localStorage.setItem("currentView", event.state.view);
@@ -168,7 +168,7 @@ window.addEventListener("popstate", function(event) {
 
 document.addEventListener("DOMContentLoaded", () => {
 	history.replaceState({view: localStorage.getItem("currentView")}, document.title, location.href);
-	console.log(history.state);
+//	console.log(history.state);
 } );
 
 function	setupEventHandlers()
