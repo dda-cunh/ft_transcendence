@@ -16,8 +16,8 @@ RUN mkdir -p /var/www/html && \
 
 RUN wget https://github.com/twbs/bootstrap/releases/download/v5.3.3/bootstrap-5.3.3-dist.zip -O /tmp/bootstrap.zip && \
     unzip /tmp/bootstrap.zip -d /tmp/bootstrap && \
-    cp /tmp/bootstrap/bootstrap-*/css/bootstrap.min.css /var/www/html/css/ && \
-    cp /tmp/bootstrap/bootstrap-*/js/bootstrap.bundle.min.js /var/www/html/js/ && \
+    cp /tmp/bootstrap/bootstrap-*/css/* /var/www/html/css/ && \
+    cp /tmp/bootstrap/bootstrap-*/js/* /var/www/html/js/ && \
     rm -rf /tmp/bootstrap*
 
 # Download Bootstrap Icons (fixed)
