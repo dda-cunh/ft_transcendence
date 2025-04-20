@@ -33,7 +33,7 @@ async function	renderList()
 			responseData.forEach(entry => {
 				let row = `
 					<tr>
-						<td class=""><img style="object-fit: cover; height: 75px;" class="rounded-circle" src="/management/media/avatars/${entry.sender_avatar.split("/").pop()}" alt="${entry.sender_username}'s avatar" /></td>
+						<td class=""><img style="object-fit: cover; height: 75px; width: 75px;" class="img-fluid rounded-circle" src="/management/media/avatars/${entry.sender_avatar.split("/").pop()}" alt="${entry.sender_username}'s avatar" /></td>
 						<td class="">${entry.sender_username}</td>
 						<td class="">
 							<button class="btn btn-outline-success accept-btn" data-id="${entry.id}">ACCEPT</button>
