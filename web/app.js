@@ -22,90 +22,68 @@ async function	get_userData()
 }
 
 	/*	PAGE RENDERING	*/
-function renderNavbar()
+async function renderNavbar()
 {
-	let	transcendenceApp = document.getElementById("mainContainer");
+	let	navbarContainer = document.getElementById("mainContainer");
 
-	transcendenceApp.innerHTML = `
-		<nav class="navbar navbar-dark shadow">
-			<button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			<h1 id="titleHeader" class="mx-auto"><a href="#" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">TRANSCENDENCE</a></h1>
-			<div id="navbarCollapse" class="collapse navbar-collapse">
-				<div class="navbar-nav ps-4">
-					<!--ADD HOME BTN-->
-					<a id="homeBtn" href="#" class="nav-item nav-link">Home</a>
-					<a id="profileBtn" href="#" class="nav-item nav-link">Profile</a>
-					<a id="friendRequestsBtn" href="#" class="nav-item nav-link">Friend Requests</a>
-					<a id="logoutBtn" href="#" class="nav-item nav-link text-light">Logout</a>
-				</div>
-			</div>
-		</nav>
-		<div id="appContainer" class="container mt-4">
-		</div>
-	`;
+	try
+	{
+		let response = await fetch("views/navbar.html");
 
-	const	navLinks = document.querySelectorAll(".nav-item");
-	const	menuToggle = document.getElementById("navbarCollapse");
-	const	bsCollapse = new bootstrap.Collapse(menuToggle, { toggle: false });
-	navLinks.forEach((link) => {
-			link.addEventListener("click", () => bsCollapse.toggle());
-	} );
+		if (!response.ok)
+			throw new Error("Error loading navbar");
 
+		let navbarHtml = await response.text();
+
+		navbarContainer.innerHTML = navbarHtml;
+
+		const	navLinks = document.querySelectorAll(".nav-item");
+		const	menuToggle = document.getElementById("navbarCollapse");
+		const	bsCollapse = new bootstrap.Collapse(menuToggle, { toggle: false });
+		navLinks.forEach((link) => {
+				link.addEventListener("click", () => bsCollapse.toggle());
+		} );
+	}
+	catch (error)
+	{
+		navbarContainer.innerHTML = `<p>${error}</p>`;
+	}
 }
 
 export async function renderPlayerCard()
 {
-	let	transcendenceApp = document.getElementById("appContainer");
+	let	playerCardContainer = document.getElementById("appContainer");
 
-	let userData = await get_userData();
+	try
+	{
+		let response = await fetch("views/player_card.html");
 
-	let imgSrc = userData.avatar;
-	let userName = userData.username;
-	let motto = userData.motto;
+		if (!response.ok)
+			throw new Error("Error loading player card");
 
+		let playerCardHtml = await response.text();
+		playerCardContainer.innerHTML = playerCardHtml;
 
-	transcendenceApp.innerHTML = `
-			<div class="row text-center d-flex justify-content-center">
-				<div class="col-12 col-lg-2 my-3 mt-lg-0">
-					<!--PROFILE PIC-->
+		let userData = await get_userData();
 
-					<a href="#"><img id="userPfp" src="management/media/${imgSrc}" class="img-fluid rounded-circle" alt="User Profile Picture"></a>
+		let imgSrc = userData.avatar;
+		let userName = userData.username;
+		let motto = userData.motto;
 
-				</div>
-				<div class="col-12 col-lg-8 d-grid border rounded">
-					<div class="row h-auto">
-						<div class="col d-flex justify-content-end align-items-start">
-							<button id="acctSettingsBtn" type="button" class="btn btn-sm btn-outline-light my-2"><i class="bi-gear-fill"></i></button>
-						</div>
-					</div>
-					<div class="flex-row flex-fill align-middle">
-						<div class="col py-auto d-flex justify-content-center">
-							<!--USERNAME-->
-							<h1 class="display-1"><a href="#" id="userNameDisplay" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover"></a></h1>
-						</div>
-					</div>
-					<div class="row d-flex">
-						<div class="col">
-							<!--MOTTO-->
-							<p id="mottoDisplay" class="fst-italic"></p>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div id="viewRow" class="row mt-4 text-center d-flex justify-content-center">
-			</div>
-	`;
-
-	document.getElementById("userNameDisplay").innerText = userName;
-	document.getElementById("mottoDisplay").innerText = `"` + motto + `"`;
+		document.getElementById("userPfp").src = `management/media/${imgSrc}`;
+		document.getElementById("userNameDisplay").innerText = userName;
+		document.getElementById("mottoDisplay").innerText = `"` + motto + `"`;
+	}
+	catch (error)
+	{
+		playerCardContainer.innerHTML = `<p>${error}</p>`;
+	}
 }
 
 async function	renderView()
 {
-	let viewName;
-	viewName = localStorage.getItem("currentView");
+	let viewName = localStorage.getItem("currentView");
+	let viewRow = document.getElementById("viewRow");
 
 	try
 	{
@@ -115,17 +93,17 @@ async function	renderView()
 			throw new Error(`Error loading view: ${viewName}`);
 
 		let viewHtml = await response.text();
-		document.getElementById("viewRow").innerHTML = viewHtml;
+		viewRow.innerHTML = viewHtml;
 	}
 	catch(error)
 	{
-		document.getElementById("viewRow").innerHTML = `<p>${error}</p>`
+		viewRow.innerHTML = `<p>${error}</p>`;
 	}
 }
 
 async function renderPage() 
 {
-	renderNavbar();
+	await renderNavbar();
 	await renderPlayerCard();
 }
 
