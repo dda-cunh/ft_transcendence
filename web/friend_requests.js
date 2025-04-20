@@ -33,7 +33,7 @@ async function	renderList()
 			responseData.forEach(entry => {
 				let row = `
 					<tr>
-						<td class=""><img height="75px" class="rounded-circle" src="/management/media/${entry.sender_avatar}" alt="${entry.sender_username}'s avatar" /></td>
+						<td class=""><img style="object-fit: cover; height: 75px;" class="rounded-circle" src="/management/media/avatars/${entry.sender_avatar.split("/").pop()}" alt="${entry.sender_username}'s avatar" /></td>
 						<td class="">${entry.sender_username}</td>
 						<td class="">
 							<button class="btn btn-outline-success accept-btn" data-id="${entry.id}">ACCEPT</button>
@@ -85,7 +85,7 @@ async function	denyFriendRequest(event)
 
 	try
 	{
-		let	response = await fetch(`management/management/friends/request/${id}/deny`,{	//	IS THIS CORRECT?
+		let	response = await fetch(`management/management/friends/request/${id}/reject`,{	//	IS THIS CORRECT?
 									method: "POST",
 									headers: {
 										"Authorization": "Bearer " + sessionStorage.getItem("access"),
