@@ -50,7 +50,7 @@ async function renderNavbar()
 	}
 }
 
-export async function renderPlayerCard()
+async function renderPlayerCard()
 {
 	let	playerCardContainer = document.getElementById("appContainer");
 
@@ -70,9 +70,15 @@ export async function renderPlayerCard()
 		let userName = userData.username;
 		let motto = userData.motto;
 
-		document.getElementById("userPfp").src = `management/media/${imgSrc}`;
+		let pfp = document.getElementById("userPfp");
+
+		pfp.src = `management/media/${imgSrc}`;
 		document.getElementById("userNameDisplay").innerText = userName;
 		document.getElementById("mottoDisplay").innerText = `"` + motto + `"`;
+
+		let pfpHeight = document.getElementById("pfpContainer").offsetHeight;
+		pfp.style.height = `${pfpHeight}px`;
+		pfp.style.width = `${pfpHeight}px`;
 	}
 	catch (error)
 	{

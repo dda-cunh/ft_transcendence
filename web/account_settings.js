@@ -1,5 +1,5 @@
 import {renderAuth} from './auth.js'
-import {renderPlayerCard} from './app.js'
+import {App} from './app.js'
 import {updateAccessTkn} from './utils.js'
 import {clearErrFields} from './utils.js'
 
@@ -14,7 +14,7 @@ async function	chgUserName(event)
 
 	try
 	{
-		updateAccessTkn();
+		await updateAccessTkn();
 
 		let response = await fetch("management/profile/username/", 
 					{
@@ -33,7 +33,7 @@ async function	chgUserName(event)
 			throw new Error(responseData[Object.keys(responseData)[0]]);
 		}
 
-		renderPlayerCard();
+		App();
 	}
 	catch(error)
 	{
@@ -57,7 +57,7 @@ async function	chgMotto(event)
 		if (!newMottoField.value)
 			throw new Error("This field cannot be empty.");
 
-		updateAccessTkn();
+		await updateAccessTkn();
 
 		let response = await fetch("management/profile/motto/", {
 									method: "PATCH",
@@ -74,7 +74,7 @@ async function	chgMotto(event)
 			throw new Error(responseData[Object.keys(responseData)[0]]);
 		}
 
-		renderPlayerCard();
+		App();
 	}
 	catch (error)
 	{
@@ -91,7 +91,6 @@ async function	chgPfp(event)
 {
 /*
 	TODO:
-		RESIZE + CROP PICS
 		ERROR HANDLING (EX IMG TOO LARGE)
 */
 	clearErrFields();
@@ -103,7 +102,7 @@ async function	chgPfp(event)
 
 	try
 	{
-		updateAccessTkn();
+		await updateAccessTkn();
 
 		let response = await fetch("management/profile/avatar", {
 							method: "PATCH",
@@ -121,7 +120,7 @@ async function	chgPfp(event)
 			throw new Error(responseData[Object.keys(responseData)[0]]);
 		}
 
-		renderPlayerCard();
+		App();
 	}
 	catch (error)
 	{
