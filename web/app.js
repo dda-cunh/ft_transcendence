@@ -127,7 +127,13 @@ async function	changeView()
 {
 	await renderView();
 
-	switch (localStorage.getItem("currentView") )
+	let currentView = localStorage.getItem("currentView");
+
+	if (history.state?.view !== currentView)
+		history.pushState({view: currentView}, document.title, location.href);
+	console.log(localStorage.getItem("currentView"));
+
+	switch (currentView)
 	{
 		case ("home"):
 			renderHome();
@@ -144,6 +150,26 @@ async function	changeView()
 	}
 }
 
+let initialLoad = true;
+
+window.addEventListener("popstate", function(event) {
+	if (initialLoad)
+	{
+		initialLoad = false;
+		return ;
+	}
+	console.log(event.state);
+	if (event.state?.view && history.state?.view !== localStorage.getItem("currentView") )
+	{
+		localStorage.setItem("currentView", event.state.view);
+		changeView();
+	}
+} );
+
+document.addEventListener("DOMContentLoaded", () => {
+	history.replaceState({view: localStorage.getItem("currentView")}, document.title, location.href);
+	console.log(history.state);
+} );
 
 function	setupEventHandlers()
 {
@@ -190,7 +216,3 @@ export async function	App()
 
 	changeView();
 }
-
-/*
-	4 - redo history from scratch
-*/
