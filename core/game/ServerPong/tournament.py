@@ -181,7 +181,7 @@ async def generate_round(channel, lobby_name):
 
 		players = [p for p in r.smembers(lobby_name)]
 		for p in players:
-			if r.exists(f"user_channel_{p}"):
+			if r.exists(f"user_lobby_{p}"):
 				user_channel = r.get(f"user_channel_{p}")
 				await channel.group_add(lobby_name, user_channel)
 			else:

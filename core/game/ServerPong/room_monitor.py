@@ -168,7 +168,7 @@ async def monitor_room(room_name, channel_layer):
 		still_active = [u for u in users if r.exists(f"user_room_{u}")]
 		if len(still_active) != 2:
 			# One or both players missing
-			winner = userName
+			winner = r.get(f"name_{still_active[0]}")
 			await channel_layer.group_send(
 				room_name,
 				{
