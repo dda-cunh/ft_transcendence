@@ -32,7 +32,7 @@ async function	renderList()
 		{
 			responseData.forEach(entry => {
 				let row = `
-					<tr class="m-0 p-0 w-100 d-flex flex-row align-items-center justify-content-around">
+					<tr>
 						<td class=""><img height="75px" class="rounded-circle" src="/management/media/${entry.sender_avatar}" alt="${entry.sender_username}'s avatar" /></td>
 						<td class="">${entry.sender_username}</td>
 						<td class="">
