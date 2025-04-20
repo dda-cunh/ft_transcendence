@@ -1,20 +1,27 @@
+from channels.db import database_sync_to_async
 from .serializers import (
 	TournamentHistorySerializer,
 	MatchHistorySerializer,
 	TournamentMatchHistorySerializer
 )
 
-def	save_tournament_history(data):
+@database_sync_to_async
+def save_tournament_history(data):
 	serializer = TournamentHistorySerializer(data=data)
-	if serializer.is_valid(raise_exception=True):
-		return serializer.save().to_dict()
+	serializer.is_valid(raise_exception=True)
+	instance = serializer.save()
+	return serializer.data
 
-def	save_match_history(data):
+@database_sync_to_async
+def save_match_history(data):
 	serializer = MatchHistorySerializer(data=data)
-	if serializer.is_valid(raise_exception=True):
-		return serializer.save().to_dict()
+	serializer.is_valid(raise_exception=True)
+	instance = serializer.save()
+	return serializer.data
 
-def	save_tournament_match_history(data):
+@database_sync_to_async
+def save_tournament_match_history(data):
 	serializer = TournamentMatchHistorySerializer(data=data)
-	if serializer.is_valid(raise_exception=True):
-		return serializer.save().to_dict()
+	serializer.is_valid(raise_exception=True)
+	instance = serializer.save()
+	return serializer.data

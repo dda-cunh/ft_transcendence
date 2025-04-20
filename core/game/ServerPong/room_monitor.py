@@ -67,6 +67,7 @@ async def local_monitor_room(self):
 
 
 async def monitor_room(room_name, channel_layer):
+	from tracker.create import save_match_history
 	await asyncio.sleep(1)
 	if not room_name:
 		room_tasks.pop(room_name, None)
@@ -186,9 +187,27 @@ async def monitor_room(room_name, channel_layer):
 	if r.exists(f"keystate_{users[-1]}"):
 		r.delete(f"keystate_{users[-1]}")
 
+	winningplayer = None
+	losingplayer = None
+	if winner == userName:
+		winningplayer = users[0]
+		losingplayer = users[-1]
+	else:
+		winningplayer = users[-1]
+		losingplayer = users[0]
+	
+	# save match to db
+	save_match = {
+		"player1": users[0],
+		"player2": users[-1],
+		"winner": winningplayer,
+	}
+	
+	match_info = await save_match_history(save_match)
+	
+	if mode == TOURN_MODE:
+		r.set(f"match_id_{room_name}", match_info['id'])
 
-	# create match_history db entry + save its id to redis
-	# r.set(f"match_history_{room_name}", match_history_id)
 
 	still_active = [u for u in users if r.exists(f"user_room_{u}")]
 	for u in still_active:
@@ -211,15 +230,6 @@ async def monitor_room(room_name, channel_layer):
 		r.delete(room_name)
 		room_tasks.pop(room_name, None)
 		return
-
-	winningplayer = None
-	losingplayer = None
-	if winner == userName:
-		winningplayer = users[0]
-		losingplayer = users[-1]
-	else:
-		winningplayer = users[-1]
-		losingplayer = users[0]
 	
 	await channel_layer.group_discard(room_name, r.get(f"user_channel_{winningplayer}"))
 	r.delete(f"user_room_{winningplayer}")
