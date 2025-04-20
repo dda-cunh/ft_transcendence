@@ -89,10 +89,6 @@ async function	chgMotto(event)
 
 async function	chgPfp(event)
 {
-/*
-	TODO:
-		ERROR HANDLING (EX IMG TOO LARGE)
-*/
 	clearErrFields();
 
 	let uploadBtn = document.getElementById("pfpUploadBtn");

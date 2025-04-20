@@ -192,6 +192,5 @@ export async function	App()
 }
 
 /*
-	3 - load text from json files
 	4 - redo history from scratch
 */
