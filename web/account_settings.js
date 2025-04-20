@@ -112,12 +112,24 @@ async function	chgPfp(event)
 							body: newPfp,
 			});
 
-		let responseData = await response.json();
 
 		if (!response.ok)
 		{
-			//	SWITCH/CASE HERE
-			throw new Error(responseData[Object.keys(responseData)[0]]);
+			let errorMsg;
+
+			switch (response.status)
+			{
+				case (400):
+					let responseData = await response.json();
+					errorMsg = responseData[Object.keys(responseData)[0]];
+					break ;
+				case (413):
+					errorMsg = "Filesize too large";
+					break ;
+				default:
+					errorMsg = "Unhandled exception";
+			}
+			throw new Error(errorMsg);
 		}
 
 		App();
