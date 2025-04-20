@@ -92,7 +92,7 @@ async def monitor_room(room_name, channel_layer):
 		room_name,
 		{
 			'type': 'room_message',
-			'message': f'Match: {opponentName} vs {userName}!',
+			'message': f'Match: {userName} vs {opponentName}!',
 			'close': False,
 			'initial': False,
 			'gamestate': False,
@@ -160,20 +160,26 @@ async def monitor_room(room_name, channel_layer):
 		# Check if the game is still active by way of scores
 		if state.p1_score >= SCORE_TO_WIN or state.p2_score >= SCORE_TO_WIN:
 			if state.p1_score >= SCORE_TO_WIN:
-				winner = userName
+				winner = "p1"
 			else:
-				winner = opponentName
+				winner = "p2"
 			break
 
 		still_active = [u for u in users if r.exists(f"user_room_{u}")]
 		if len(still_active) != 2:
 			# One or both players missing
-			winner = r.get(f"name_{still_active[0]}")
+			loser = None
+			if still_active[0] == users[0]:
+				winner = "p1"
+				loser = opponentName
+			else:
+				winner = "p2"
+				loser = userName
 			await channel_layer.group_send(
 				room_name,
 				{
 					'type': 'room_message',
-					'message': f'{opponentName} has not returned. Ending game',
+					'message': f'{loser} has not returned. Ending game',
 					'gamestate': False,
 					'close': False,
 					'initial': False,
@@ -189,12 +195,14 @@ async def monitor_room(room_name, channel_layer):
 
 	winningplayer = None
 	losingplayer = None
-	if winner == userName:
+	if winner == "p1":
 		winningplayer = users[0]
 		losingplayer = users[-1]
+		winner = userName
 	else:
 		winningplayer = users[-1]
 		losingplayer = users[0]
+		winner = opponentName
 	
 	# save match to db
 	save_match = {
