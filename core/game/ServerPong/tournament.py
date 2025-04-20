@@ -41,7 +41,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				{
 					'type': 'room_message',
 					'message': 'Reconnected to peer!',
+					'gamestate': False,
 					'close': False,
+					'initial': False,
 				}
 			)
 			cancel_expiry(self.user_id)
@@ -71,9 +73,12 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				{
 					'type': 'room_message',
 					'message': 'Tournament is starting!',
+					'gamestate': False,
 					'close': False,
+					'initial': False,
 				}
 			)
+
 			asyncio.create_task(generate_round(self.channel_layer, lobby_name))
 			return
 		
@@ -96,7 +101,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				{
 					'type': 'room_message',
 					'message': 'Player disconnected',
+					'gamestate': False,
 					'close': False,
+					'initial': False,
 				}
 			)
 		elif is_user_in_queue(self.user_id, TOURN_MODE):
@@ -110,13 +117,22 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		data = json.loads(text_data)
 		if data.get('tname') and not r.exists(f"name_{self.user_id}"):
 			r.set(f"name_{self.user_id}", data['tname'])
+		if data.get('keystate'):
+			r.set(f"keystate_{self.user_id}", data['keystate'])
 
 
 	async def room_message(self, event):
-		message = event['message']
-		await self.send(text_data=json.dumps({
-			'message': message
-		}))
+		if event['message']:
+			message = event['message']
+			await self.send(text_data=json.dumps({
+				'message': message
+			}))
+		initial = event.get('initial')
+		if initial is not False:
+			await self.send(text_data=json.dumps({ 'initial': initial }))
+		gamestate = event.get('gamestate')
+		if gamestate is not False:
+			await self.send(text_data=json.dumps({ 'gamestate': gamestate }))
 		if event['close']:
 			await self.close()
 
@@ -140,7 +156,10 @@ async def generate_match(channel_layer, lobby_name, player_id, opponent_id):
 
 
 async def generate_round(channel, lobby_name):
+	from tracker.create import save_tournament_history, save_tournament_match_history
 
+	copy_matches = []
+	winner = None
 	while True:
 		players = [p for p in r.smembers(lobby_name)]
 		matches = []
@@ -153,6 +172,7 @@ async def generate_round(channel, lobby_name):
 				continue
 			match = await generate_match(channel, lobby_name, lastp, p)
 			matches.append(match)
+			copy_matches.append(match)
 			i += 1
 
 		while matches:
@@ -172,12 +192,30 @@ async def generate_round(channel, lobby_name):
 			{
 				'type': 'room_message',
 				'message': "You won the match!",
+				'gamestate': False,
 				'close': False,
+				'initial': False,
 			}
 		)
 
-		if await check_tournament_end(channel, lobby_name):
+		winner = await check_tournament_end(channel, lobby_name)
+		if winner:
 			break
+
+	tournament = await save_tournament_history({"winner": winner})
+
+	for m in copy_matches:
+		singlematch = r.get(f"match_id_{m}")
+		stage = "semifinal"
+		if m == copy_matches[-1]:
+			stage = "final"
+		tmatch = {
+			"tournament": tournament['id'],
+			"match": singlematch,
+			"stage": stage,
+		}
+		r.delete(f"match_id_{m}")
+		await save_tournament_match_history(tmatch)
 
 
 async def check_tournament_end(channel, lobby_name):
@@ -188,15 +226,17 @@ async def check_tournament_end(channel, lobby_name):
 
 	nextplayers = [p for p in r.smembers(lobby_name)]
 
-	if len(nextplayers) <= 1:
+	if len(nextplayers) == 1:
 		await channel.group_send(
 			lobby_name,
 			{
 				'type': 'room_message',
 				'message': 'You won the tournament! CONGRATS!!! Closing lobby...',
+				'gamestate': False,
 				'close': True,
+				'initial': False,
 			}
 		)
 		r.delete(lobby_name)
-		return True
+		return nextplayers[0]
 	return False

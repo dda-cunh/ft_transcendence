@@ -82,6 +82,7 @@ services:
       # - web_data:/var/www/html
     depends_on:
       - auth
+      - game
       - management
     networks:
       - transcendence

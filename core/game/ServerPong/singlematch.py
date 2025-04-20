@@ -9,7 +9,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from ServerPong.constants import REDIS_URL, TIMEOUT
 from ServerPong.redis_utils import *
 from ServerPong.utils import asyncGet, AsyncGetData, validate_user_token, validate_mode
-from ServerPong.room_monitor import start_monitor
+from ServerPong.room_monitor import local_monitor_room, start_monitor
 
 
 class LocalPongConsumer(AsyncWebsocketConsumer):
@@ -23,15 +23,20 @@ class LocalPongConsumer(AsyncWebsocketConsumer):
 			await self.close()
 			return
 
-		self.room_name = create_local_room(self.user_id)
-
 		await self.send(json.dumps({'message': "Welcome to local room!"}))
+		self.task = asyncio.create_task(local_monitor_room(self))
 
 	async def disconnect(self, close_code):
-		pass
+		if hasattr(self, 'task'):
+			self.task.cancel()
+			del self.task
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
+		if data.get('keystate_p1'):
+			r.set(f"keystate_p1_{self.user_id}", data['keystate_p1'])
+		if data.get('keystate_p2'):
+			r.set(f"keystate_p2_{self.user_id}", data['keystate_p2'])
 
 
 
@@ -61,7 +66,9 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 				{
 					'type': 'room_message',
 					'message': 'Reconnected to peer!',
+					'gamestate': False,
 					'close': False,
+					'initial': False,
 				}
 			)
 			cancel_expiry(self.user_id)
@@ -89,7 +96,9 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 					{
 						'type': 'room_message',
 						'message': 'Connected to peer!',
+						'gamestate': False,
 						'close': False,
+						'initial': False,
 					}
 				)
 				start_monitor(self.room_name, self.channel_layer)
@@ -106,15 +115,17 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 			return
 		user_room = get_room_by_user(self.user_id)
 		if user_room:
-			expire_user_info(self.user_id)
 			await self.channel_layer.group_send(
 				user_room,
 				{
 					'type': 'room_message',
 					'message': 'Player disconnected',
+					'gamestate': False,
 					'close': False,
+					'initial': False,
 				}
 			)
+			expire_user_info(self.user_id)
 		elif is_user_in_queue(self.user_id, MATCH_MODE):
 			remove_user_from_queue(self.user_id, MATCH_MODE)
 			delete_user_info(self.user_id)
@@ -126,13 +137,22 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 		data = json.loads(text_data)
 		if data.get('tname') and not r.exists(f"name_{self.user_id}"):
 			r.set(f"name_{self.user_id}", data['tname'])
+		if data.get('keystate'):
+			r.set(f"keystate_{self.user_id}", data['keystate'])
 
 
 	async def room_message(self, event):
-		message = event['message']
-		await self.send(text_data=json.dumps({
-			'message': message
-		}))
+		if event['message']:
+			message = event['message']
+			await self.send(text_data=json.dumps({
+				'message': message
+			}))
+		initial = event.get('initial')
+		if initial is not False:
+			await self.send(text_data=json.dumps({ 'initial': initial }))
+		gamestate = event.get('gamestate')
+		if gamestate is not False:
+			await self.send(text_data=json.dumps({ 'gamestate': gamestate }))
 		if event['close']:
 			await self.close()
 		

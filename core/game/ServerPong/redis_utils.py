@@ -23,11 +23,6 @@ def dequeue_user(mode):
 	elif mode == "tournament":
 		return r.lpop(TOURNM_KEY)
 
-def create_local_room(user_id):
-	room_name = f"local_{uuid.uuid4().hex[:24]}"
-	r.set(room_name, json.dumps([user_id]))
-	return room_name
-
 def create_room(user1, user2):
 	room_name = f"room_{uuid.uuid4().hex[:24]}"
 	r.set(room_name, json.dumps([user1, user2]))
@@ -113,6 +108,8 @@ def expire_user_info(user_id):
 		r.expire(f"name_{user_id}", TIMEOUT)
 	if r.exists(f"user_lobby_{user_id}"):
 		r.expire(f"user_lobby_{user_id}", TIMEOUT)
+	if r.exists(f"keystate_{user_id}"):
+		r.set(f"keystate_{user_id}", "IDLE")
 
 def delete_user_info(user_id):
 	if r.exists(f"user_mode_{user_id}"):
