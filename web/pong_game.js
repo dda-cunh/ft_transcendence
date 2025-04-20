@@ -71,7 +71,7 @@ export async function renderPongEndpoint()
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
-				"Authorization": "Bearer " + localStorage.getItem("access"),
+				"Authorization": "Bearer " + sessionStorage.getItem("access"),
 			},
 		} );
 

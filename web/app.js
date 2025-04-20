@@ -14,7 +14,7 @@ async function	get_userData()
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": "Bearer " + localStorage.getItem("access"),
+			"Authorization": "Bearer " + sessionStorage.getItem("access"),
 		}
 	});
 
@@ -117,8 +117,8 @@ async function renderPage()
 	/*	EVENT HANDLERS	*/
 function	logoutUser()
 {
-	localStorage.removeItem("access");
-	localStorage.removeItem("refresh");
+	sessionStorage.removeItem("access");
+	sessionStorage.removeItem("refresh");
 	localStorage.setItem("currentView", "home");
 	renderAuth();
 }
@@ -131,7 +131,6 @@ async function	changeView()
 
 	if (history.state?.view !== currentView)
 		history.pushState({view: currentView}, document.title, location.href);
-//	console.log(localStorage.getItem(history.state));
 
 	switch (currentView)
 	{
@@ -158,7 +157,7 @@ window.addEventListener("popstate", function(event) {
 		initialLoad = false;
 		return ;
 	}
-//	console.log(event.state);
+
 	if (event.state?.view && history.state?.view !== localStorage.getItem("currentView") )
 	{
 		localStorage.setItem("currentView", event.state.view);
@@ -168,7 +167,6 @@ window.addEventListener("popstate", function(event) {
 
 document.addEventListener("DOMContentLoaded", () => {
 	history.replaceState({view: localStorage.getItem("currentView")}, document.title, location.href);
-//	console.log(history.state);
 } );
 
 function	setupEventHandlers()

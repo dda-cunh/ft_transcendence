@@ -21,9 +21,6 @@ function	initApp()
 	if (matchType === null)
 		localStorage.setItem("matchType", "Single Player");
 
-	if (gameType === null)
-		localStorage.setItem("gameType", "Original");
-
 	if (paddleColor === null)
 		localStorage.setItem("paddleColor", "White");
 
@@ -36,7 +33,7 @@ function	initApp()
 
 async function	userIsLoggedIn()
 {
-	let	accessToken = localStorage.getItem("access");
+	let	accessToken = sessionStorage.getItem("access");
 
 	if (accessToken !== null)
 	{
@@ -55,12 +52,12 @@ async function	userIsLoggedIn()
 										headers: {
 											"Content-Type": "application/json",
 											},
-										body: JSON.stringify({ refresh: localStorage.getItem("refresh") }),
+										body: JSON.stringify({ refresh: sessionStorage.getItem("refresh") }),
 										} );
 		if (refreshCheck.ok)
 		{
 			let body = await refreshCheck.json();
-			localStorage.setItem("access", body.access);
+			sessionStorage.setItem("access", body.access);
 			return (true);
 		}
 	}

@@ -21,7 +21,7 @@ async function	chgUserName(event)
 						method: "PATCH",
 						headers: {
 							"Content-Type": "application/json",
-							"Authorization": "Bearer " + localStorage.getItem("access"),
+							"Authorization": "Bearer " + sessionStorage.getItem("access"),
 						},
 						body: JSON.stringify({"username": newUserField.value}),
 					}
@@ -63,7 +63,7 @@ async function	chgMotto(event)
 									method: "PATCH",
 									headers: {
 										"Content-Type": "application/json",
-										"Authorization": "Bearer " + localStorage.getItem("access"),
+										"Authorization": "Bearer " + sessionStorage.getItem("access"),
 									},
 									body: JSON.stringify({"motto": newMottoField.value}),
 								}
@@ -103,7 +103,7 @@ async function	chgPfp(event)
 		let response = await fetch("management/profile/avatar", {
 							method: "PATCH",
 							headers: {
-								"Authorization": "Bearer " + localStorage.getItem("access"),
+								"Authorization": "Bearer " + sessionStorage.getItem("access"),
 							},
 							body: newPfp,
 			});
@@ -161,7 +161,7 @@ async function	chgPassword(event)
 									method: "PATCH",
 									headers: {
 										"Content-Type": "application/json",
-										"Authorization": "Bearer " + localStorage.getItem("access"),
+										"Authorization": "Bearer " + sessionStorage.getItem("access"),
 									},
 									body: JSON.stringify(creds),
 		});

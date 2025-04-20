@@ -83,8 +83,8 @@ async function	registerUser(event)
 		}
 		else
 		{
-			localStorage.setItem("access", responseData.tokens.access);
-			localStorage.setItem("refresh", responseData.tokens.refresh);
+			sessionStorage.setItem("access", responseData.tokens.access);
+			sessionStorage.setItem("refresh", responseData.tokens.refresh);
 			App();
 		}
 	}
@@ -138,8 +138,8 @@ async function	loginUser(event)
 		}
 		else
 		{
-			localStorage.setItem("access", responseData.access);
-			localStorage.setItem("refresh", responseData.refresh);
+			sessionStorage.setItem("access", responseData.access);
+			sessionStorage.setItem("refresh", responseData.refresh);
 			App();
 		}
 	}

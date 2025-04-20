@@ -8,17 +8,17 @@ export async function	updateAccessTkn()
 										headers: {
 											"Content-Type": "application/json",
 											},
-										body: JSON.stringify({ refresh: localStorage.getItem("refresh") }),
+										body: JSON.stringify({ refresh: sessionStorage.getItem("refresh") }),
 										} );
 		if (refreshCheck.ok)
 		{
 			let body = await refreshCheck.json();
-			localStorage.setItem("access", body.access);
+			sessionStorage.setItem("access", body.access);
 		}
 		else
 		{
-			localStorage.removeItem("access");
-			localStorage.removeItem("refresh");
+			sessionStorage.removeItem("access");
+			sessionStorage.removeItem("refresh");
 			renderAuth();
 		}
 }

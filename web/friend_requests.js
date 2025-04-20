@@ -10,7 +10,7 @@ async function	renderList()
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
-				"Authorization": "Bearer " + localStorage.getItem("access"),
+				"Authorization": "Bearer " + sessionStorage.getItem("access"),
 			}
 		} );
 
@@ -62,7 +62,7 @@ async function	acceptFriendRequest(event)
 		let	response = await fetch(`management/management/friends/request/${id}/accept`,{
 									method: "POST",
 									headers: {
-										"Authorization": "Bearer " + localStorage.getItem("access"),
+										"Authorization": "Bearer " + sessionStorage.getItem("access"),
 									}
 		} );
 
@@ -88,7 +88,7 @@ async function	denyFriendRequest(event)
 		let	response = await fetch(`management/management/friends/request/${id}/deny`,{	//	IS THIS CORRECT?
 									method: "POST",
 									headers: {
-										"Authorization": "Bearer " + localStorage.getItem("access"),
+										"Authorization": "Bearer " + sessionStorage.getItem("access"),
 									}
 		} );
 

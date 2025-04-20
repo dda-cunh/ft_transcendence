@@ -1,7 +1,7 @@
 let socket;
 
 export function connectWebSocket() {
-  document.cookie = "access=" + localStorage.getItem("access") + "; path=/; Secure";
+  document.cookie = "access=" + sessionStorage.getItem("access") + "; path=/; Secure";
   let wsUrl = `wss://${window.location.hostname}/ws/`;
   socket = new WebSocket(wsUrl);
   
