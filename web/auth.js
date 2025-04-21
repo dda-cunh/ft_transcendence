@@ -167,6 +167,6 @@ export async function	renderAuth()
 
 	await renderPage();
 
-	document.getElementById("loginForm").onsubmit = (event) => { event.preventDefault(), loginUser(event) };
-	document.getElementById("registerForm").onsubmit = (event) => { event.preventDefault(), registerUser(event) };
+	document.getElementById("loginForm").onsubmit = (event) => { loginUser(event) };
+	document.getElementById("registerForm").onsubmit = (event) => { registerUser(event) };
 }
