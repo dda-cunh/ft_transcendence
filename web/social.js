@@ -2,9 +2,7 @@
 
 async function	getUserData(userID)
 {
-	let response = await fetch(`management/management/user/${userID}/`, {
-								method: "GET",
-	});
+	let response = await fetch(`management/management/user/${userID}/`);
 
 	return (await response.json() );
 }
@@ -23,9 +21,11 @@ async function	renderPlayerCard(userID)
 		let playerCardHtml = await response.text();
 		playerCardContainer.innerHTML = playerCardHtml;
 
+
 		//	TO DO: REPLACE WITH "ADD FRIEND" IF NOT ADDED YET
 		document.getElementById("acctSettingsBtn").style.opacity = 0;
 		document.getElementById("acctSettingsBtn").classList.add("disabled");
+
 
 		let userData = await getUserData(userID);
 		console.log(userData);
@@ -50,9 +50,25 @@ async function	renderPlayerCard(userID)
 	}
 }
 
-function	renderPlayerProfile(userID)
+async function	renderPlayerProfile(userID)
 {
+	let viewRow = document.getElementById("viewRow");
 
+	try
+	{
+		let response = await fetch("views/profile.html");
+
+		if (!response.ok)
+			throw new Error(`Error loading user profile`);
+
+		let viewHtml = await response.text();
+		viewRow.innerHTML = viewHtml;
+
+	}
+	catch (error)
+	{
+		viewRow.innerHTML = `<p>${error}</p>`;
+	}
 }
 
 export async function	renderUserProfile(event)
