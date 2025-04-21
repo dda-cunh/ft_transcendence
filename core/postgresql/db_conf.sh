@@ -1,6 +1,6 @@
 #!/bin/bash
 
-db_is_setup="${HOME}/.is_setup"
+db_is_setup=$PGDATA/".is_setup"
 
 if [ ! -f $db_is_setup ]; then
 	initdb -D $PGDATA
@@ -20,4 +20,3 @@ if [ ! -f $db_is_setup ]; then
 fi
 
 postgres -D $PGDATA -p $DB_PORT
-

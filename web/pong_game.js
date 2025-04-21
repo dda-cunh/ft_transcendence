@@ -1,5 +1,7 @@
 "use strict"
 
+import { connectWebSocket } from "./socket.js";
+
 
 function    setupCanvas(canvas, ctx)
 {
@@ -59,7 +61,6 @@ function    renderPage()
     `;
     transcendenceApp.style.height = window.innerHeight;
 }
-
 
 export function renderPongGame()
 {

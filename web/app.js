@@ -1,152 +1,224 @@
 import {renderAuth} from './auth.js'
 import {renderHome} from './home.js'
 import {renderProfile} from './profile.js'
-import {renderFriends} from './friends.js'
-import {renderEditProfile} from './edit_profile.js'
+import {renderFriendRequests} from './friend_requests.js'
 import {renderAcctSettings} from './account_settings.js'
+import {renderUserProfile} from './social.js'
 
 
 "use strict";
 
-/*
-async function	get_userID()
+
+async function	getUserData()
 {
-	let response = await fetch("management/user/", {
+	let response = await fetch("management/management/user/", {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": "Bearer " + localStorage.getItem("access"),
+			"Authorization": "Bearer " + sessionStorage.getItem("access"),
 		}
 	});
-	console.log(await response.body);
+
+	return (await response.json() );
 }
-*/
+
 	/*	PAGE RENDERING	*/
-function renderNavbar()
+async function renderNavbar()
 {
-	let	transcendenceApp = document.getElementById("mainContainer");
+	let	navbarContainer = document.getElementById("mainContainer");
 
-	transcendenceApp.innerHTML = `
-				<nav class="navbar navbar-dark shadow">
-			<button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			<h1 id="titleHeader" class="mx-auto"><a href="#" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">TRANSCENDENCE</a></h1>
-			<div id="navbarCollapse" class="collapse navbar-collapse">
-				<div class="navbar-nav ps-4">
-					<!--ADD HOME BTN-->
-					<a id="homeBtn" href="#" class="nav-item nav-link">Home</a>
-					<a id="profileBtn" href="#" class="nav-item nav-link">Profile</a>
-					<a id="friendsMgmtBtn" href="#" class="nav-item nav-link">Manage Friends</a>
-					<a id="logoutBtn" href="#" class="nav-item nav-link text-light">Logout</a>
-				</div>
-			</div>
-		</nav>
-		<div id="appContainer" class="container mt-4">
-		</div>
-	`;
+	try
+	{
+		let response = await fetch("views/navbar.html");
+
+		if (!response.ok)
+			throw new Error("Error loading navbar");
+
+		let navbarHtml = await response.text();
+
+		navbarContainer.innerHTML = navbarHtml;
+
+		const	navLinks = document.querySelectorAll(".nav-item");
+		const	menuToggle = document.getElementById("navbarCollapse");
+		const	bsCollapse = new bootstrap.Collapse(menuToggle, { toggle: false });
+		navLinks.forEach((link) => {
+				link.addEventListener("click", () => bsCollapse.toggle());
+		} );
+	}
+	catch (error)
+	{
+		navbarContainer.innerHTML = `<p>${error}</p>`;
+	}
 }
 
-function renderPlayerCard()
+async function renderPlayerCard()
 {
-	let	transcendenceApp = document.getElementById("appContainer");
+	let	playerCardContainer = document.getElementById("appContainer");
 
-	let imgSrc = "./img/gyro.png";
-	let userName = "$USER";
-//	get_userID();
+	try
+	{
+		let response = await fetch("views/player_card.html");
 
-	transcendenceApp.innerHTML = `
-			<div class="row text-center d-flex justify-content-center">
-				<div class="col-12 col-lg-2 my-3 mt-lg-0">
-					<!--PROFILE PIC-->
+		if (!response.ok)
+			throw new Error("Error loading player card");
 
-					<a href="#"><img id="userPfp" src="${imgSrc}" class="img-fluid rounded-circle" alt="User Profile Picture"></a>
+		let playerCardHtml = await response.text();
+		playerCardContainer.innerHTML = playerCardHtml;
 
-				</div>
-				<div class="col-12 col-lg-8 d-grid border rounded">
-					<div class="row h-auto">
-						<div class="col d-flex justify-content-end align-items-start">
-							<!--EDIT PROFILE BTN (CHG DISPLAY NAME, CHG MOTTO, CHG PFP)-->
-							<button id="editProfileBtn" type="button" class="btn btn-sm btn-outline-light mx-2 my-2"><i class="bi-pencil-fill"></i></button>
-							<!--SETTINGS BTN (CHG PASSWD, DELETE ACCOUNT)-->
-							<button id="acctSettingsBtn" type="button" class="btn btn-sm btn-outline-light my-2"><i class="bi-gear-fill"></i></button>
-						</div>
-					</div>
-					<div class="flex-row flex-fill align-middle">
-						<div class="col py-auto d-flex justify-content-center">
-							<!--USERNAME-->
-							<h1 id="userNameDisplay" class="display-1"><a href="#" class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">${userName}</a></h1>
-						</div>
-					</div>
-					<div class="row d-flex align-items-end">
-						<div class="col">
-							<!--MOTTO-->
-							<p class="fst-italic">"Some days you are the pidgeon, some days you are the statue. Today it's clearly statue day."</p>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div id="ctrlsRow" class="row mt-4 text-center d-flex justify-content-center">
-			</div>
-	`
+		let userData = await getUserData();
+
+		let imgSrc = userData.avatar;
+		let userName = userData.username;
+		let motto = userData.motto;
+
+		let pfp = document.getElementById("userPfp");
+
+		pfp.src = `management/media/${imgSrc}`;
+		document.getElementById("userNameDisplay").innerText = userName;
+		document.getElementById("mottoDisplay").innerText = `"` + motto + `"`;
+
+		let pfpHeight = document.getElementById("pfpContainer").offsetHeight;
+		pfp.style.height = `${pfpHeight}px`;
+		pfp.style.width = `${pfpHeight}px`;
+	}
+	catch (error)
+	{
+		playerCardContainer.innerHTML = `<p>${error}</p>`;
+	}
 }
 
-
-function renderPage() 
+async function	renderView()
 {
-	renderNavbar();
-	renderPlayerCard();
+	let viewName = localStorage.getItem("currentView");
+	let viewRow = document.getElementById("viewRow");
+
+	try
+	{
+		let	response = await fetch(`views/${viewName}.html`);
+
+		if (!response.ok)
+			throw new Error(`Error loading view: ${viewName}`);
+
+		let viewHtml = await response.text();
+		viewRow.innerHTML = viewHtml;
+	}
+	catch(error)
+	{
+		viewRow.innerHTML = `<p>${error}</p>`;
+	}
+}
+
+async function renderPage() 
+{
+	await renderNavbar();
+	if (!localStorage.getItem("currentView").startsWith("user#"))
+		await renderPlayerCard();
 }
 
 
 	/*	EVENT HANDLERS	*/
 function	logoutUser()
 {
-	localStorage.removeItem("access");
-	localStorage.removeItem("refresh");
+	sessionStorage.removeItem("access");
+	sessionStorage.removeItem("refresh");
 	localStorage.setItem("currentView", "home");
 	renderAuth();
 }
 
-
-function	setupEventHandlers()
+async function	changeView()
 {
-	document.getElementById("titleHeader").addEventListener("click", () => renderHome());
-
-	document.getElementById("editProfileBtn").addEventListener("click", ()=> renderEditProfile() );
-	document.getElementById("acctSettingsBtn").addEventListener("click", ()=> renderAcctSettings() );
-
-	document.getElementById("userPfp").addEventListener("click", ()=> renderProfile() );
-	document.getElementById("userNameDisplay").addEventListener("click", ()=> renderProfile() );
-
-	document.getElementById("homeBtn").addEventListener("click", () => renderHome() );
-	document.getElementById("profileBtn").addEventListener("click", () => renderProfile() );
-	document.getElementById("friendsMgmtBtn").addEventListener("click", () => renderFriends() );
-	document.getElementById("logoutBtn").addEventListener("click", () => logoutUser());
-}
+	let currentView = localStorage.getItem("currentView");
+	if (!currentView.startsWith("user#"))
+		await renderView();
 
 
-export function	App()
-{
-	renderPage();
-	setupEventHandlers();
+	if (history.state?.view !== currentView)
+		history.pushState({view: currentView}, document.title, location.href);
 
-	switch (localStorage.getItem("currentView") )
+	switch (currentView)
 	{
 		case ("home"):
 			renderHome();
 			break ;
-		case("profile"):
+		case ("profile"):
 			renderProfile();
 			break ;
-		case ("friends"):
-			renderFriends();
+		case ("friend_requests"):
+			renderFriendRequests();
 			break ;
-		case ("accountSettings"):
+		case ("account_settings"):
 			renderAcctSettings();
 			break ;
-		case ("editProfile"):
-			renderEditProfile();
-			break ;	
+		default:
+			renderUserProfile(currentView.split("#").pop());
 	}
+}
+
+let initialLoad = true;
+
+window.addEventListener("popstate", function(event) {
+	if (initialLoad)
+	{
+		initialLoad = false;
+		return ;
+	}
+
+	if (event.state?.view && history.state?.view !== localStorage.getItem("currentView") )
+	{
+		localStorage.setItem("currentView", event.state.view);
+		changeView();
+	}
+} );
+
+document.addEventListener("DOMContentLoaded", () => {
+	history.replaceState({view: localStorage.getItem("currentView")}, document.title, location.href);
+} );
+
+function	setupEventHandlers()
+{
+		/*	NAVBAR	*/
+	document.getElementById("titleHeader").onclick = function() {
+			localStorage.setItem("currentView", "home");
+			App();
+	};
+
+	document.getElementById("homeBtn").onclick = function() {
+			localStorage.setItem("currentView", "home");
+			App();
+	};
+	document.getElementById("profileBtn").onclick = function() {
+			localStorage.setItem("currentView", "profile");
+			App();
+	};
+	document.getElementById("friendRequestsBtn").onclick = function() {
+			localStorage.setItem("currentView", "friend_requests");
+			App();
+	};
+	document.getElementById("logoutBtn").onclick = () => logoutUser();
+
+
+		/*	PLAYER CARD	*/
+	if (!localStorage.getItem("currentView").startsWith("user#"))
+	{			
+		document.getElementById("acctSettingsBtn").onclick = function() {
+				localStorage.setItem("currentView", "account_settings");
+				App();
+		};
+		document.getElementById("userPfp").onclick = function() {
+				localStorage.setItem("currentView", "profile");
+				App();
+		};
+		document.getElementById("userNameDisplay").onclick = function() {
+				localStorage.setItem("currentView", "profile");
+				App();
+		};
+	}
+}
+
+export async function	App()
+{
+	await renderPage();
+	setupEventHandlers();
+
+	changeView();
 }
