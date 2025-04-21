@@ -22,7 +22,7 @@ function    renderPage()
                 <h3 id="p1_score">0</h3>
             </div>
             <div class="col text-center mt-lg-5">
-                <h3> - </h3>
+                <h3>-</h3>
             </div>
             <div class="col text-center mt-lg-5">
                 <h3 id="p2_score">0</h3>

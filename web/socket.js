@@ -1,4 +1,5 @@
 import { userIsLoggedIn } from "./index.js";
+import { App } from "./app.js";
 
 let socket = null;
 let gameConstants = {};
@@ -33,12 +34,20 @@ export async function connectWebSocket(mode) {
     if (mode !== "local") socket.send(JSON.stringify({ tname: sessionStorage.getItem("alias") }));
 
     loadControls();
+    if (document.querySelectorAll("#mainContainer")[0]) {
+      let div = document.createElement("div");
+      div.classList.add("w-100");
+      div.classList.add("text-center");
+      div.classList.add("msg-container");
+      document.getElementById("mainContainer").append(div);
+    }
   };
 
   socket.onmessage = function(event) {
     const data = JSON.parse(event.data);
     if (data && data.message) {
-      console.log(data.message);
+      if (document.querySelectorAll(".msg-container")[0])
+        document.querySelectorAll(".msg-container")[0].innerText = data.message;
     }
     if (data && data.initial) {
       gameConstants = data.initial;
@@ -60,6 +69,9 @@ export async function connectWebSocket(mode) {
     console.log('WebSocket connection closed');
     gameState = null;
     unloadControls();
+    setTimeout(() => {
+      App();
+    }, 1000);
   };
 
   socket.onerror = function(event) {
