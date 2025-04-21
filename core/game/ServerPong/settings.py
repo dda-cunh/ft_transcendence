@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'ServerPong',
     'user',
+    'tracker'
 ]
 
 REST_FRAMEWORK = {
