@@ -3,6 +3,7 @@ import {renderHome} from './home.js'
 import {renderProfile} from './profile.js'
 import {renderFriendRequests} from './friend_requests.js'
 import {renderAcctSettings} from './account_settings.js'
+import {renderUserProfile} from './social.js'
 
 
 "use strict";
@@ -110,7 +111,8 @@ async function	renderView()
 async function renderPage() 
 {
 	await renderNavbar();
-	await renderPlayerCard();
+	if (!localStorage.getItem("currentView").startsWith("user#"))
+		await renderPlayerCard();
 }
 
 
@@ -125,9 +127,10 @@ function	logoutUser()
 
 async function	changeView()
 {
-	await renderView();
-
 	let currentView = localStorage.getItem("currentView");
+	if (!currentView.startsWith("user#"))
+		await renderView();
+
 
 	if (history.state?.view !== currentView)
 		history.pushState({view: currentView}, document.title, location.href);
@@ -146,6 +149,8 @@ async function	changeView()
 		case ("account_settings"):
 			renderAcctSettings();
 			break ;
+		default:
+			renderUserProfile(currentView.split("#").pop());
 	}
 }
 
@@ -193,18 +198,21 @@ function	setupEventHandlers()
 
 
 		/*	PLAYER CARD	*/
-	document.getElementById("acctSettingsBtn").onclick = function() {
-			localStorage.setItem("currentView", "account_settings");
-			App();
-	};
-	document.getElementById("userPfp").onclick = function() {
-			localStorage.setItem("currentView", "profile");
-			App();
-	};
-	document.getElementById("userNameDisplay").onclick = function() {
-			localStorage.setItem("currentView", "profile");
-			App();
-	};
+	if (!localStorage.getItem("currentView").startsWith("user#"))
+	{			
+		document.getElementById("acctSettingsBtn").onclick = function() {
+				localStorage.setItem("currentView", "account_settings");
+				App();
+		};
+		document.getElementById("userPfp").onclick = function() {
+				localStorage.setItem("currentView", "profile");
+				App();
+		};
+		document.getElementById("userNameDisplay").onclick = function() {
+				localStorage.setItem("currentView", "profile");
+				App();
+		};
+	}
 }
 
 export async function	App()

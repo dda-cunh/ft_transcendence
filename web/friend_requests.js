@@ -38,8 +38,8 @@ async function	renderList()
 				let row = `
 					<tr>
 						<td>
-							<a data-id="${entry.sender}" class="profile-link" href="#">
-								<img style="object-fit: cover; height: 75px; width: 75px;" class="img-fluid rounded-circle" src="/management/media/avatars/${entry.sender_avatar.split("/").pop()}" alt="${entry.sender_username}'s avatar" />
+							<a class="profile-link" href="#">
+								<img data-id="${entry.sender}" style="object-fit: cover; height: 75px; width: 75px;" class="img-fluid rounded-circle" src="/management/media/avatars/${entry.sender_avatar.split("/").pop()}" alt="${entry.sender_username}'s avatar" />
 							</a>
 						</td>
 						<td>
@@ -118,7 +118,7 @@ async function	denyFriendRequest(event)
 function	setupEventHandlers()
 {
 	document.querySelectorAll(".profile-link").forEach(link => {
-		link.addEventListener("click", (event) => renderUserProfile(event) );
+		link.addEventListener("click", (event) => renderUserProfile(event.target.dataset.id) );
 	})
 
 	document.querySelectorAll(".accept-btn").forEach(button => {

@@ -28,7 +28,6 @@ async function	renderPlayerCard(userID)
 
 
 		let userData = await getUserData(userID);
-		console.log(userData);
 
 		let imgSrc = userData.avatar;
 		let userName = userData.username;
@@ -71,9 +70,13 @@ async function	renderPlayerProfile(userID)
 	}
 }
 
-export async function	renderUserProfile(event)
+export async function	renderUserProfile(userID)
 {
-	let userID = event.target.dataset.id;
+	localStorage.setItem("currentView", "user#"+userID);
+
+	let currentView = localStorage.getItem("currentView");
+	if (history.state?.view !== currentView)
+		history.pushState({view: currentView}, document.title, location.href);
 
 	await renderPlayerCard(userID);
 	renderPlayerProfile(userID);
