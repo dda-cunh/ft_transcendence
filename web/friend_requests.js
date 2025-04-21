@@ -1,9 +1,13 @@
 import {updateAccessTkn} from './utils.js'
+import {renderUserProfile} from './social.js'
 
 "use strict";
 
+
 async function	renderList()
 {
+	updateAccessTkn();
+
 	try
 	{
 		let response = await fetch("management/management/friends/pending", {
@@ -33,9 +37,17 @@ async function	renderList()
 			responseData.forEach(entry => {
 				let row = `
 					<tr>
-						<td class=""><img style="object-fit: cover; height: 75px; width: 75px;" class="img-fluid rounded-circle" src="/management/media/avatars/${entry.sender_avatar.split("/").pop()}" alt="${entry.sender_username}'s avatar" /></td>
-						<td class="">${entry.sender_username}</td>
-						<td class="">
+						<td>
+							<a class="profile-link" href="#">
+								<img data-id="${entry.sender}" style="object-fit: cover; height: 75px; width: 75px;" class="img-fluid rounded-circle" src="/management/media/avatars/${entry.sender_avatar.split("/").pop()}" alt="${entry.sender_username}'s avatar" />
+							</a>
+						</td>
+						<td>
+							<a data-id="${entry.sender}" class="profile-link display-6 link-light link-underline link-underline-opacity-0 link-opacity-75-hover" href="#">
+								${entry.sender_username}
+							</a>
+						</td>
+						<td>
 							<button class="btn btn-outline-success accept-btn" data-id="${entry.id}">ACCEPT</button>
 							<button class="btn btn-outline-danger deny-btn" data-id="${entry.id}">DENY</button>
 						</td>
@@ -105,6 +117,10 @@ async function	denyFriendRequest(event)
 
 function	setupEventHandlers()
 {
+	document.querySelectorAll(".profile-link").forEach(link => {
+		link.addEventListener("click", (event) => renderUserProfile(event.target.dataset.id) );
+	});
+
 	document.querySelectorAll(".accept-btn").forEach(button => {
 		button.addEventListener("click", (event) => acceptFriendRequest(event) );
 	} );
