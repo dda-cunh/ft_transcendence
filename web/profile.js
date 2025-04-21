@@ -26,14 +26,12 @@ export async function renderFriendsList()
 		let data = await response.json();
 		data.forEach(entry => {
 			console.log(entry);
-            let row = `<tr>
-				<td>
-            		<a class="profile-link" href="#">
-						<img data-id="${entry.id}" style="height: 75px; width: 75px; object-fit: cover;" class="rounded-circle" src="/management/media/${entry.avatar}" alt="${entry.username}'s avatar" />
-					</a>
+            let row = `<tr data-id="${entry.id}" class="profile-link cursor-pointer">
+				<td data-id="${entry.id}" class="cursor-pointer">
+					<img data-id="${entry.id}" style="height: 75px; width: 75px; object-fit: cover;" class="cursor-pointer rounded-circle" src="/management/media/${entry.avatar}" alt="${entry.username}'s avatar" />
 				</td>
-				<td>
-            		<a data-id="${entry.id}" class="profile-link display-6 link-light link-underline link-underline-opacity-0 link-opacity-75-hover" href="#">
+				<td data-id="${entry.id}" class="cursor-pointer">
+            		<a data-id="${entry.id}" class="cursor-pointer display-6 link-light link-underline link-underline-opacity-0 link-opacity-75-hover">
 						${entry.username}
             		</a>
 				</td>

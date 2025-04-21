@@ -21,8 +21,11 @@ async function	renderPlayerCard(userID)
 		let playerCardHtml = await response.text();
 		playerCardContainer.innerHTML = playerCardHtml;
 
-
-		//	TO DO: REPLACE WITH "ADD FRIEND" IF NOT ADDED YET
+/*
+		TO DO:
+			ADD "ACCEPT"/"DENY" BUTTONS IF THERE IS A PENDING REQUEST FROM THIS USER
+			OTHERWISE ADD "ADD FRIEND" BUTTON IF USER IS NOT ADDED AS FRIEND
+*/
 		document.getElementById("acctSettingsBtn").style.opacity = 0;
 		document.getElementById("acctSettingsBtn").classList.add("disabled");
 
