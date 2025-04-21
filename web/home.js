@@ -13,6 +13,9 @@ function	selectSettings()
 	document.querySelector("#ballColor").value = sessionStorage.getItem("ballColor");
 	document.querySelector("#paddleColor").value = sessionStorage.getItem("paddleColor");
 	document.querySelector("#backgroundColor").value = sessionStorage.getItem("backgroundColor");
+	if (document.querySelector("#userNameDisplay").innerText !== "")
+		sessionStorage.setItem("alias", document.getElementById("userNameDisplay").innerText);
+	document.querySelector("#tournamentAlias").value = sessionStorage.getItem("alias");
 }
 
 

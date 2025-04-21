@@ -31,13 +31,13 @@ function	initApp()
 		sessionStorage.setItem("backgroundColor", "Black");
 }
 
-async function	userIsLoggedIn()
+export async function	userIsLoggedIn()
 {
 	let	accessToken = sessionStorage.getItem("access");
 
 	if (accessToken !== null)
 	{
-		let accessCheck = await await fetch("auth/validate", {
+		let accessCheck = await fetch("auth/validate", {
 											method: "GET",
 											headers: {
 												"Content-Type": "application/json",

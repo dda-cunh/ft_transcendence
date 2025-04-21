@@ -1,3 +1,5 @@
+import { userIsLoggedIn } from "./index.js";
+
 let socket = null;
 let gameConstants = {};
 let gameState = null;
@@ -14,11 +16,11 @@ let keyState = {
 let half_w = 0, half_h = 0;
 
 
-export function connectWebSocket(mode) {
+export async function connectWebSocket(mode) {
   // mode depends on the clicked button; send 'local', 'remote' or 'tournament'
   gmode = mode;
   if (socket) socket.close();
-
+  await userIsLoggedIn();
   document.cookie = "access=" + sessionStorage.getItem("access") + "; path=/; Secure";
   let wsUrl = `wss://${window.location.hostname}/ws/${mode}pong/`;
 
@@ -28,11 +30,8 @@ export function connectWebSocket(mode) {
     console.log('WebSocket connection established');
     document.cookie = "access=; path=/; Secure; SameSite=None; expires=Thu, 01 Jan 1970 00:00:00 GMT";
    
-    // substitute temp for username
-    if (mode === "remote") socket.send(JSON.stringify({ tname: "username" }));
+    if (mode !== "local") socket.send(JSON.stringify({ tname: sessionStorage.getItem("alias") }));
 
-    // substitute temp for the name chosen by the user for this tournament
-    if (mode === "tournament") socket.send(JSON.stringify({ tname: "temp" }));
     loadControls();
   };
 
@@ -45,6 +44,11 @@ export function connectWebSocket(mode) {
       gameConstants = data.initial;
       half_w = gameConstants.canvas_w / 2;
       half_h = gameConstants.canvas_h / 2;
+
+      if (document.querySelectorAll("#p1")[0])
+        document.getElementById("p1").innerText = gameConstants.p1_name;
+      if (document.querySelectorAll("#p2")[0])
+        document.getElementById("p2").innerText = gameConstants.p2_name;
     }
     if (data && data.gamestate) {
       gameState = data.gamestate;
@@ -71,22 +75,24 @@ function drawFrame() {
   const canvas = document.querySelectorAll('canvas')[0];
   if (!canvas || !gameState || !gameConstants) return;
   const ctx = canvas.getContext('2d');
-  canvas.width = gameConstants.canvas_w;
-  canvas.height = gameConstants.canvas_h;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = sessionStorage.getItem("backgroundColor");
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ctx.fillStyle = 'white';
+  
+  ctx.fillStyle = sessionStorage.getItem("paddleColor");
+  
+  ctx.fillRect( (canvas.width / 2) - ( (canvas.width / 100) / 2), 0, canvas.width / 100, canvas.height);
+  ctx.fillRect(0, gameState.p1_pos_y + half_h - gameConstants.paddle_h / 2, gameConstants.paddle_w, gameConstants.paddle_h);
+  ctx.fillRect(gameConstants.canvas_w - gameConstants.paddle_w, gameState.p2_pos_y + half_h - gameConstants.paddle_h / 2, gameConstants.paddle_w, gameConstants.paddle_h);
+  
   ctx.beginPath();
   ctx.arc(gameState.ball.x + half_w, gameState.ball.y + half_h, gameConstants.ball_rad, 0, Math.PI * 2);
-  ctx.fillStyle = 'white';
+  ctx.fillStyle = sessionStorage.getItem("ballColor");
   ctx.fill();
   ctx.closePath();
 
-  ctx.fillRect(0, gameState.p1_pos_y + half_h - gameConstants.paddle_h / 2, gameConstants.paddle_w, gameConstants.paddle_h);
-  ctx.fillRect(gameConstants.canvas_w - gameConstants.paddle_w, gameState.p2_pos_y + half_h - gameConstants.paddle_h / 2, gameConstants.paddle_w, gameConstants.paddle_h);
-
-  ctx.font = '20px Arial';
-  ctx.fillText(`${gameConstants.p1_name}   ${gameState.p1_score} : ${gameState.p2_score}   ${gameConstants.p2_name}`, canvas.width / 2 - 100, 30);
+  document.getElementById("p1_score").innerText = gameState.p1_score;
+  document.getElementById("p2_score").innerText = gameState.p2_score;
 }
 
 function emitIfChanged(key, isPressed) {
