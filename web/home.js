@@ -1,6 +1,7 @@
 import {renderAuth} from './auth.js'
 import {renderProfile} from './profile.js'
 import {renderPongGame} from './pong_game.js'
+import {connectWebSocket} from './socket.js'
 
 "use strict";
 
@@ -18,9 +19,8 @@ function	selectSettings()
 
 function	setupEventHandlers()
 {
-	document.getElementById("btnFriendlyMatch").onclick = () => renderPongGame();
-	document.getElementById("btnTournament").onclick = () => alert("This feature has not been implemented yet.");
-
+	document.getElementById("btnFriendlyMatch").onclick = () => { renderPongGame(); connectWebSocket('remote') };
+	document.getElementById("btnTournament").onclick = () => { renderPongGame(); connectWebSocket('tournament')};
 	document.getElementById("matchType").onclick = () => localStorage.setItem("matchType", document.getElementById("matchType").value);
 	document.getElementById("ballColor").onclick = () => localStorage.setItem("ballColor", document.getElementById("ballColor").value);
 	document.getElementById("paddleColor").onclick = () => localStorage.setItem("paddleColor", document.getElementById("paddleColor").value);
