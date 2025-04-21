@@ -1,0 +1,64 @@
+"use strict";
+
+async function	getUserData(userID)
+{
+	let response = await fetch(`management/management/user/${userID}/`, {
+								method: "GET",
+	});
+
+	return (await response.json() );
+}
+
+async function	renderPlayerCard(userID)
+{
+	let	playerCardContainer = document.getElementById("appContainer");
+
+	try
+	{
+		let response = await fetch("views/player_card.html");
+
+		if (!response.ok)
+			throw new Error("Error loading player card");
+
+		let playerCardHtml = await response.text();
+		playerCardContainer.innerHTML = playerCardHtml;
+
+		//	TO DO: REPLACE WITH "ADD FRIEND" IF NOT ADDED YET
+		document.getElementById("acctSettingsBtn").style.opacity = 0;
+		document.getElementById("acctSettingsBtn").classList.add("disabled");
+
+		let userData = await getUserData(userID);
+		console.log(userData);
+
+		let imgSrc = userData.avatar;
+		let userName = userData.username;
+		let motto = userData.motto;
+
+		let pfp = document.getElementById("userPfp");
+
+		pfp.src = `management/media/${imgSrc}`;
+		document.getElementById("userNameDisplay").innerText = userName;
+		document.getElementById("mottoDisplay").innerText = `"` + motto + `"`;
+
+		let pfpHeight = document.getElementById("pfpContainer").offsetHeight;
+		pfp.style.height = `${pfpHeight}px`;
+		pfp.style.width = `${pfpHeight}px`;
+	}
+	catch (error)
+	{
+		playerCardContainer.innerHTML = `<p>${error}</p>`;
+	}
+}
+
+function	renderPlayerProfile(userID)
+{
+
+}
+
+export async function	renderUserProfile(event)
+{
+	let userID = event.target.dataset.id;
+
+	await renderPlayerCard(userID);
+	renderPlayerProfile(userID);
+}

@@ -8,7 +8,7 @@ import {renderAcctSettings} from './account_settings.js'
 "use strict";
 
 
-async function	get_userData()
+async function	getUserData()
 {
 	let response = await fetch("management/management/user/", {
 		method: "GET",
@@ -18,7 +18,7 @@ async function	get_userData()
 		}
 	});
 
-	return (await response.json());
+	return (await response.json() );
 }
 
 	/*	PAGE RENDERING	*/
@@ -64,7 +64,7 @@ async function renderPlayerCard()
 		let playerCardHtml = await response.text();
 		playerCardContainer.innerHTML = playerCardHtml;
 
-		let userData = await get_userData();
+		let userData = await getUserData();
 
 		let imgSrc = userData.avatar;
 		let userName = userData.username;
@@ -174,20 +174,20 @@ function	setupEventHandlers()
 		/*	NAVBAR	*/
 	document.getElementById("titleHeader").onclick = function() {
 			localStorage.setItem("currentView", "home");
-			changeView();
+			App();
 	};
 
 	document.getElementById("homeBtn").onclick = function() {
 			localStorage.setItem("currentView", "home");
-			changeView();
+			App();
 	};
 	document.getElementById("profileBtn").onclick = function() {
 			localStorage.setItem("currentView", "profile");
-			changeView();
+			App();
 	};
 	document.getElementById("friendRequestsBtn").onclick = function() {
 			localStorage.setItem("currentView", "friend_requests");
-			changeView();
+			App();
 	};
 	document.getElementById("logoutBtn").onclick = () => logoutUser();
 
@@ -195,15 +195,15 @@ function	setupEventHandlers()
 		/*	PLAYER CARD	*/
 	document.getElementById("acctSettingsBtn").onclick = function() {
 			localStorage.setItem("currentView", "account_settings");
-			changeView();			
+			App();
 	};
 	document.getElementById("userPfp").onclick = function() {
 			localStorage.setItem("currentView", "profile");
-			changeView();
+			App();
 	};
 	document.getElementById("userNameDisplay").onclick = function() {
 			localStorage.setItem("currentView", "profile");
-			changeView();
+			App();
 	};
 }
 
