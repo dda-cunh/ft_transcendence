@@ -223,9 +223,3 @@ export async function	App()
 
 	changeView();
 }
-
-/*
-	TO DO:
-		FIGURE OUT THAT SHIT WITH THE POINTER
-
-*/
