@@ -20,7 +20,7 @@ export function connectWebSocket(mode) {
   if (socket) socket.close();
 
   document.cookie = "access=" + localStorage.getItem("access") + "; path=/; Secure";
-  let wsUrl = `wss://${window.location.hostname}/${mode}pong/`;
+  let wsUrl = `wss://${window.location.hostname}/ws/${mode}pong/`;
 
   socket = new WebSocket(wsUrl);
   
