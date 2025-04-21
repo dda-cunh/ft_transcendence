@@ -19,12 +19,20 @@ function	selectSettings()
 	document.querySelector("#tournamentAlias").onchange = () => sessionStorage.setItem("alias", document.querySelector("#tournamentAlias").value)
 }
 
-
+function checkAlias() {
+	if (!sessionStorage.getItem("alias"))
+	{
+		if (document.querySelectorAll("#userNameDisplay")[0])
+			sessionStorage.setItem("alias", document.getElementById("userNameDisplay").innerText);
+		else
+			sessionStorage.setItem("alias", "incognito");
+	}
+}
 
 function	setupEventHandlers()
 {
-	document.getElementById("btnFriendlyMatch").onclick = () => { renderPongGame(); connectWebSocket('remote') };
-	document.getElementById("btnTournament").onclick = () => { renderPongGame(); connectWebSocket('tournament')};
+	document.getElementById("btnFriendlyMatch").onclick = () => { checkAlias(), renderPongGame(); connectWebSocket('remote') };
+	document.getElementById("btnTournament").onclick = () => { checkAlias(), renderPongGame(); connectWebSocket('tournament')};
 	document.getElementById("matchType").onclick = () => sessionStorage.setItem("matchType", document.getElementById("matchType").value);
 	document.getElementById("ballColor").onclick = () => sessionStorage.setItem("ballColor", document.getElementById("ballColor").value);
 	document.getElementById("paddleColor").onclick = () => sessionStorage.setItem("paddleColor", document.getElementById("paddleColor").value);
