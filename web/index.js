@@ -7,28 +7,28 @@ import {App} from './app.js'
 
 function	initApp()
 {
-	let	currentView = localStorage.getItem("currentView");
+	let	currentView = sessionStorage.getItem("currentView");
 
-	let matchType = localStorage.getItem("matchType");
-	let gameType = localStorage.getItem("gameType");
-	let paddleColor = localStorage.getItem("paddleColor");
-	let ballColor = localStorage.getItem("ballColor");
-	let backgroundColor = localStorage.getItem("backgroundColor");
+	let matchType = sessionStorage.getItem("matchType");
+	let gameType = sessionStorage.getItem("gameType");
+	let paddleColor = sessionStorage.getItem("paddleColor");
+	let ballColor = sessionStorage.getItem("ballColor");
+	let backgroundColor = sessionStorage.getItem("backgroundColor");
 
 	if (currentView === null)
-		localStorage.setItem("currentView", "home");
+		sessionStorage.setItem("currentView", "home");
 
 	if (matchType === null)
-		localStorage.setItem("matchType", "Single Player");
+		sessionStorage.setItem("matchType", "Single Player");
 
 	if (paddleColor === null)
-		localStorage.setItem("paddleColor", "White");
+		sessionStorage.setItem("paddleColor", "White");
 
 	if (ballColor === null)
-		localStorage.setItem("ballColor", "White");
+		sessionStorage.setItem("ballColor", "White");
 
 	if (backgroundColor === null)
-		localStorage.setItem("backgroundColor", "Black");
+		sessionStorage.setItem("backgroundColor", "Black");
 }
 
 async function	userIsLoggedIn()

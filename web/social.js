@@ -72,9 +72,9 @@ async function	renderPlayerProfile(userID)
 
 export async function	renderUserProfile(userID)
 {
-	localStorage.setItem("currentView", "user#"+userID);
+	sessionStorage.setItem("currentView", "user#"+userID);
 
-	let currentView = localStorage.getItem("currentView");
+	let currentView = sessionStorage.getItem("currentView");
 	if (history.state?.view !== currentView)
 		history.pushState({view: currentView}, document.title, location.href);
 

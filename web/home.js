@@ -9,10 +9,10 @@ import {connectWebSocket} from './socket.js'
 
 function	selectSettings()
 {
-	document.querySelector("#matchType").value = localStorage.getItem("matchType");
-	document.querySelector("#ballColor").value = localStorage.getItem("ballColor");
-	document.querySelector("#paddleColor").value = localStorage.getItem("paddleColor");
-	document.querySelector("#backgroundColor").value = localStorage.getItem("backgroundColor");
+	document.querySelector("#matchType").value = sessionStorage.getItem("matchType");
+	document.querySelector("#ballColor").value = sessionStorage.getItem("ballColor");
+	document.querySelector("#paddleColor").value = sessionStorage.getItem("paddleColor");
+	document.querySelector("#backgroundColor").value = sessionStorage.getItem("backgroundColor");
 }
 
 
@@ -21,10 +21,10 @@ function	setupEventHandlers()
 {
 	document.getElementById("btnFriendlyMatch").onclick = () => { renderPongGame(); connectWebSocket('remote') };
 	document.getElementById("btnTournament").onclick = () => { renderPongGame(); connectWebSocket('tournament')};
-	document.getElementById("matchType").onclick = () => localStorage.setItem("matchType", document.getElementById("matchType").value);
-	document.getElementById("ballColor").onclick = () => localStorage.setItem("ballColor", document.getElementById("ballColor").value);
-	document.getElementById("paddleColor").onclick = () => localStorage.setItem("paddleColor", document.getElementById("paddleColor").value);
-	document.getElementById("backgroundColor").onclick = () => localStorage.setItem("backgroundColor", document.getElementById("backgroundColor").value);
+	document.getElementById("matchType").onclick = () => sessionStorage.setItem("matchType", document.getElementById("matchType").value);
+	document.getElementById("ballColor").onclick = () => sessionStorage.setItem("ballColor", document.getElementById("ballColor").value);
+	document.getElementById("paddleColor").onclick = () => sessionStorage.setItem("paddleColor", document.getElementById("paddleColor").value);
+	document.getElementById("backgroundColor").onclick = () => sessionStorage.setItem("backgroundColor", document.getElementById("backgroundColor").value);
 }
 
 

@@ -162,7 +162,7 @@ async function	loginUser(event)
 	/*	MAIN FUNCTION	*/
 export async function	renderAuth()
 {
-	localStorage.setItem("currentView", "home");
+	sessionStorage.setItem("currentView", "home");
 
 	await renderPage();
 
