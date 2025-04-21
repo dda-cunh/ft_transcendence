@@ -16,6 +16,7 @@ function	selectSettings()
 	if (document.querySelector("#userNameDisplay").innerText !== "")
 		sessionStorage.setItem("alias", document.getElementById("userNameDisplay").innerText);
 	document.querySelector("#tournamentAlias").value = sessionStorage.getItem("alias");
+	document.querySelector("#tournamentAlias").onchange = () => sessionStorage.setItem("alias", document.querySelector("#tournamentAlias").value)
 }
 
 
