@@ -1,4 +1,5 @@
 import {App} from './app.js'
+import { main } from "./index.js";
 import {clearErrFields} from './utils.js'
 
 "use strict";
@@ -85,7 +86,7 @@ async function	registerUser(event)
 		{
 			sessionStorage.setItem("access", responseData.tokens.access);
 			sessionStorage.setItem("refresh", responseData.tokens.refresh);
-			App();
+			main();
 		}
 	}
 	catch (error)
@@ -140,7 +141,7 @@ async function	loginUser(event)
 		{
 			sessionStorage.setItem("access", responseData.access);
 			sessionStorage.setItem("refresh", responseData.refresh);
-			App();
+			main();
 		}
 	}
 	catch(error)
@@ -162,10 +163,10 @@ async function	loginUser(event)
 	/*	MAIN FUNCTION	*/
 export async function	renderAuth()
 {
-	localStorage.setItem("currentView", "home");
+	sessionStorage.setItem("currentView", "home");
 
 	await renderPage();
 
-	document.getElementById("loginForm").addEventListener("submit", (event) => loginUser(event) );
-	document.getElementById("registerForm").addEventListener("submit", (event) => registerUser(event) );
+	document.getElementById("loginForm").onsubmit = (event) => { loginUser(event) };
+	document.getElementById("registerForm").onsubmit = (event) => { registerUser(event) };
 }

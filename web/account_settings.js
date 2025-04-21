@@ -1,5 +1,6 @@
 import {renderAuth} from './auth.js'
 import {App} from './app.js'
+import { main } from "./index.js";
 import {updateAccessTkn} from './utils.js'
 import {clearErrFields} from './utils.js'
 
@@ -33,7 +34,7 @@ async function	chgUserName(event)
 			throw new Error(responseData[Object.keys(responseData)[0]]);
 		}
 
-		App();
+		main();
 	}
 	catch(error)
 	{
@@ -74,7 +75,7 @@ async function	chgMotto(event)
 			throw new Error(responseData[Object.keys(responseData)[0]]);
 		}
 
-		App();
+		main();
 	}
 	catch (error)
 	{
@@ -128,7 +129,7 @@ async function	chgPfp(event)
 			throw new Error(errorMsg);
 		}
 
-		App();
+		main();
 	}
 	catch (error)
 	{
@@ -205,10 +206,10 @@ async function	chgPassword(event)
 
 function	setupEventHandlers()
 {
-	document.getElementById("changeUsernameForm").onsubmit = (event) => chgUserName(event);
-	document.getElementById("changeMottoForm").onsubmit = (event) => chgMotto(event);
-	document.getElementById("changePfpForm").onsubmit = (event) => chgPfp(event);
-	document.getElementById("chgPasswdForm").onsubmit = (event) => chgPassword(event);
+	document.getElementById("changeUsernameForm").onsubmit = (event) => { event.preventDefault(), chgUserName(event) };
+	document.getElementById("changeMottoForm").onsubmit = (event) => { event.preventDefault(), chgMotto(event) };
+	document.getElementById("changePfpForm").onsubmit = (event) => { event.preventDefault(), chgPfp(event) };
+	document.getElementById("chgPasswdForm").onsubmit = (event) => { event.preventDefault(), chgPassword(event) };
 }
 
 

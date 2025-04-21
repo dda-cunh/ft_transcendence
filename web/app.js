@@ -1,3 +1,4 @@
+import { main } from "./index.js";
 import {renderAuth} from './auth.js'
 import {renderHome} from './home.js'
 import {renderProfile} from './profile.js'
@@ -89,7 +90,7 @@ async function renderPlayerCard()
 
 async function	renderView()
 {
-	let viewName = localStorage.getItem("currentView");
+	let viewName = sessionStorage.getItem("currentView");
 	let viewRow = document.getElementById("viewRow");
 
 	try
@@ -111,7 +112,7 @@ async function	renderView()
 async function renderPage() 
 {
 	await renderNavbar();
-	if (!localStorage.getItem("currentView").startsWith("user#"))
+	if (!sessionStorage.getItem("currentView").startsWith("user#"))
 		await renderPlayerCard();
 }
 
@@ -121,13 +122,13 @@ function	logoutUser()
 {
 	sessionStorage.removeItem("access");
 	sessionStorage.removeItem("refresh");
-	localStorage.setItem("currentView", "home");
+	sessionStorage.setItem("currentView", "home");
 	renderAuth();
 }
 
 async function	changeView()
 {
-	let currentView = localStorage.getItem("currentView");
+	let currentView = sessionStorage.getItem("currentView");
 	if (!currentView.startsWith("user#"))
 		await renderView();
 
@@ -163,54 +164,54 @@ window.addEventListener("popstate", function(event) {
 		return ;
 	}
 
-	if (event.state?.view && history.state?.view !== localStorage.getItem("currentView") )
+	if (event.state?.view && history.state?.view !== sessionStorage.getItem("currentView") )
 	{
-		localStorage.setItem("currentView", event.state.view);
+		sessionStorage.setItem("currentView", event.state.view);
 		changeView();
 	}
 } );
 
 document.addEventListener("DOMContentLoaded", () => {
-	history.replaceState({view: localStorage.getItem("currentView")}, document.title, location.href);
+	history.replaceState({view: sessionStorage.getItem("currentView")}, document.title, location.href);
 } );
 
 function	setupEventHandlers()
 {
 		/*	NAVBAR	*/
 	document.getElementById("titleHeader").onclick = function() {
-			localStorage.setItem("currentView", "home");
-			App();
+			sessionStorage.setItem("currentView", "home");
+			main();
 	};
 
 	document.getElementById("homeBtn").onclick = function() {
-			localStorage.setItem("currentView", "home");
-			App();
+			sessionStorage.setItem("currentView", "home");
+			main();
 	};
 	document.getElementById("profileBtn").onclick = function() {
-			localStorage.setItem("currentView", "profile");
-			App();
+			sessionStorage.setItem("currentView", "profile");
+			main();
 	};
 	document.getElementById("friendRequestsBtn").onclick = function() {
-			localStorage.setItem("currentView", "friend_requests");
-			App();
+			sessionStorage.setItem("currentView", "friend_requests");
+			main();
 	};
 	document.getElementById("logoutBtn").onclick = () => logoutUser();
 
 
 		/*	PLAYER CARD	*/
-	if (!localStorage.getItem("currentView").startsWith("user#"))
+	if (!sessionStorage.getItem("currentView").startsWith("user#"))
 	{			
 		document.getElementById("acctSettingsBtn").onclick = function() {
-				localStorage.setItem("currentView", "account_settings");
-				App();
+				sessionStorage.setItem("currentView", "account_settings");
+				main();
 		};
 		document.getElementById("userPfp").onclick = function() {
-				localStorage.setItem("currentView", "profile");
-				App();
+				sessionStorage.setItem("currentView", "profile");
+				main();
 		};
 		document.getElementById("userNameDisplay").onclick = function() {
-				localStorage.setItem("currentView", "profile");
-				App();
+				sessionStorage.setItem("currentView", "profile");
+				main();
 		};
 	}
 }
