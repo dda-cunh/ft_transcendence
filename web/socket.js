@@ -1,5 +1,5 @@
-import { userIsLoggedIn } from "./index.js";
-import { App } from "./app.js";
+import { main } from "./index.js";
+import { updateAccessTkn } from "./utils.js";
 
 let socket = null;
 let gameConstants = {};
@@ -21,7 +21,7 @@ export async function connectWebSocket(mode) {
   // mode depends on the clicked button; send 'local', 'remote' or 'tournament'
   gmode = mode;
   if (socket) socket.close();
-  await userIsLoggedIn();
+  updateAccessTkn();
   document.cookie = "access=" + sessionStorage.getItem("access") + "; path=/; Secure";
   let wsUrl = `wss://${window.location.hostname}/ws/${mode}pong/`;
 
@@ -70,7 +70,7 @@ export async function connectWebSocket(mode) {
     gameState = null;
     unloadControls();
     setTimeout(() => {
-      App();
+      main();
     }, 1000);
   };
 
@@ -87,11 +87,11 @@ function drawFrame() {
   const canvas = document.querySelectorAll('canvas')[0];
   if (!canvas || !gameState || !gameConstants) return;
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = sessionStorage.getItem("backgroundColor");
+  ctx.fillStyle = (sessionStorage.getItem("backgroundColor") ? sessionStorage.getItem("backgroundColor") : "black");
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   
-  ctx.fillStyle = sessionStorage.getItem("paddleColor");
+  ctx.fillStyle = (sessionStorage.getItem("paddleColor") ? sessionStorage.getItem("paddleColor") : "white");
   
   ctx.fillRect( (canvas.width / 2) - ( (canvas.width / 100) / 2), 0, canvas.width / 100, canvas.height);
   ctx.fillRect(0, gameState.p1_pos_y + half_h - gameConstants.paddle_h / 2, gameConstants.paddle_w, gameConstants.paddle_h);
@@ -99,7 +99,7 @@ function drawFrame() {
   
   ctx.beginPath();
   ctx.arc(gameState.ball.x + half_w, gameState.ball.y + half_h, gameConstants.ball_rad, 0, Math.PI * 2);
-  ctx.fillStyle = sessionStorage.getItem("ballColor");
+  ctx.fillStyle = (sessionStorage.getItem("ballColor") ? sessionStorage.getItem("ballColor") : "white");
   ctx.fill();
   ctx.closePath();
 

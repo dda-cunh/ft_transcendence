@@ -1,5 +1,6 @@
 import {renderAuth} from './auth.js'
 import {App} from './app.js'
+import {updateAccessTkn} from './utils.js'
 
 
 "use strict";
@@ -31,6 +32,7 @@ function	initApp()
 
 export async function	userIsLoggedIn()
 {
+	updateAccessTkn();
 	let	accessToken = sessionStorage.getItem("access");
 
 	if (accessToken !== null)
@@ -65,10 +67,10 @@ export async function	userIsLoggedIn()
 
 
 
-async function	main()
+export async function	main()
 {
 	initApp();
-
+	updateAccessTkn();
 	if (!(await userIsLoggedIn() ) )
 		renderAuth();
 	else

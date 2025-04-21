@@ -1,3 +1,4 @@
+import { main } from "./index.js";
 import {renderAuth} from './auth.js'
 import {renderHome} from './home.js'
 import {renderProfile} from './profile.js'
@@ -179,20 +180,20 @@ function	setupEventHandlers()
 		/*	NAVBAR	*/
 	document.getElementById("titleHeader").onclick = function() {
 			sessionStorage.setItem("currentView", "home");
-			App();
+			main();
 	};
 
 	document.getElementById("homeBtn").onclick = function() {
 			sessionStorage.setItem("currentView", "home");
-			App();
+			main();
 	};
 	document.getElementById("profileBtn").onclick = function() {
 			sessionStorage.setItem("currentView", "profile");
-			App();
+			main();
 	};
 	document.getElementById("friendRequestsBtn").onclick = function() {
 			sessionStorage.setItem("currentView", "friend_requests");
-			App();
+			main();
 	};
 	document.getElementById("logoutBtn").onclick = () => logoutUser();
 
@@ -202,15 +203,15 @@ function	setupEventHandlers()
 	{			
 		document.getElementById("acctSettingsBtn").onclick = function() {
 				sessionStorage.setItem("currentView", "account_settings");
-				App();
+				main();
 		};
 		document.getElementById("userPfp").onclick = function() {
 				sessionStorage.setItem("currentView", "profile");
-				App();
+				main();
 		};
 		document.getElementById("userNameDisplay").onclick = function() {
 				sessionStorage.setItem("currentView", "profile");
-				App();
+				main();
 		};
 	}
 }
