@@ -32,7 +32,6 @@ function	initApp()
 
 export async function	userIsLoggedIn()
 {
-	updateAccessTkn();
 	let	accessToken = sessionStorage.getItem("access");
 
 	if (accessToken !== null)

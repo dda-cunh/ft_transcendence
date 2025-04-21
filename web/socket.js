@@ -17,9 +17,24 @@ let keyState = {
 let half_w = 0, half_h = 0;
 
 
+function adaptMode(mode) {
+  switch(mode) {
+    case "Single Player":
+    case "Local Multiplayer":
+      return "local";
+    case "Online Multiplayer":
+      return "remote";
+    case "tournament":
+        return "tournament";
+    default:
+      return "local";
+  }
+}
+
 export async function connectWebSocket(mode) {
   // mode depends on the clicked button; send 'local', 'remote' or 'tournament'
-  gmode = mode;
+  gmode = adaptMode(mode);
+  mode = gmode;
   if (socket) socket.close();
   updateAccessTkn();
   document.cookie = "access=" + sessionStorage.getItem("access") + "; path=/; Secure";
