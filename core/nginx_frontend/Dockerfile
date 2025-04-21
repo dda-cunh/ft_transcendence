@@ -14,7 +14,6 @@ RUN mkdir -p /var/www/html && \
     cd /var/www/html && \
     mkdir -p css js fonts
 
-
 RUN mkdir -p /etc/nginx/ssl
 # Generate a self-signed certificate
 
@@ -22,8 +21,7 @@ RUN openssl req -x509 -nodes -days 365 \
     -newkey rsa:2048 \
     -keyout /etc/nginx/ssl/nginx-selfsigned.key \
     -out /etc/nginx/ssl/nginx-selfsigned.crt \
-    -subj "/C=PT/ST=Lisbon/L=Lisbon/O=42/OU=42/CN=transcendance"
-
+    -subj "/C=PT/ST=Lisbon/L=Lisbon/O=42/OU=42/CN=ft_transcendance.42.fr"
 
 RUN chmod 600 /etc/nginx/ssl/*
 

@@ -59,7 +59,6 @@ services:
     build: ./auth
     depends_on:
       - gunicorn-base
-      - redis
     volumes:
       - ./auth/:/service
     <<: *common
@@ -68,7 +67,6 @@ services:
     container_name: management
     build: ./management
     depends_on:
-      - gunicorn-base
       - auth
     volumes:
       - ./management/:/service
@@ -78,10 +76,7 @@ services:
   nginx:
     container_name: nginx
     build: ./nginx     
-    # volumes:
-      # - web_data:/var/www/html
     depends_on:
-      - auth
       - game
       - management
     networks:
