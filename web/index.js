@@ -8,9 +8,7 @@ import {App} from './app.js'
 function	initApp()
 {
 	let	currentView = sessionStorage.getItem("currentView");
-
 	let matchType = sessionStorage.getItem("matchType");
-	let gameType = sessionStorage.getItem("gameType");
 	let paddleColor = sessionStorage.getItem("paddleColor");
 	let ballColor = sessionStorage.getItem("ballColor");
 	let backgroundColor = sessionStorage.getItem("backgroundColor");
