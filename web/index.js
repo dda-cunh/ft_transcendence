@@ -21,9 +21,6 @@ function	initApp()
 	if (matchType === null)
 		localStorage.setItem("matchType", "Single Player");
 
-	if (gameType === null)
-		localStorage.setItem("gameType", "Original");
-
 	if (paddleColor === null)
 		localStorage.setItem("paddleColor", "White");
 
@@ -34,22 +31,9 @@ function	initApp()
 		localStorage.setItem("backgroundColor", "Black");
 }
 
-async function	checkToken(path, method, tkn)
-{
-	let	response = await fetch("auth/" + path, {
-		method: method,
-		headers: {
-			"Content-Type": "application/json",
-			"Authorization": "Bearer " + tkn,
-		},
-	} );
-
-	return (response);
-}
-
 async function	userIsLoggedIn()
 {
-	let	accessToken = localStorage.getItem("access");
+	let	accessToken = sessionStorage.getItem("access");
 
 	if (accessToken !== null)
 	{
@@ -68,12 +52,12 @@ async function	userIsLoggedIn()
 										headers: {
 											"Content-Type": "application/json",
 											},
-										body: JSON.stringify({ refresh: localStorage.getItem("refresh") }),
+										body: JSON.stringify({ refresh: sessionStorage.getItem("refresh") }),
 										} );
 		if (refreshCheck.ok)
 		{
 			let body = await refreshCheck.json();
-			localStorage.setItem("access", body.access);
+			sessionStorage.setItem("access", body.access);
 			return (true);
 		}
 	}
@@ -82,10 +66,10 @@ async function	userIsLoggedIn()
 }
 
 
+
 async function	main()
 {
 	initApp();
-
 
 	if (!(await userIsLoggedIn() ) )
 		renderAuth();
