@@ -57,6 +57,7 @@ class PublicUserDetailView(APIView):
         data = {
             "id": str(user.id),
             "username": user.username,
+            "motto": user.motto,
             "avatar": user.avatar.name if user.avatar else None,
             "last_activity": user.last_activity,
         }
@@ -147,6 +148,45 @@ class FriendListView(APIView):
             last_active_delta = now - f.last_activity
 
             is_online = (last_active_delta <= ONLINE_THRESHOLD)
+            response_data.append({
+                "id": str(f.id),
+                "username": f.username,
+                "online": is_online,
+                "last_activity": f.last_activity.isoformat(),
+                "avatar": f.avatar.name if f.avatar else None,
+            })
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+class PublicFriendListView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, user_id):
+        # Fetch the target user or return 404
+        user = get_object_or_404(User, pk=user_id)
+
+        # Find all accepted, non-rejected friend requests involving that user
+        accepted_reqs = FriendRequest.objects.filter(
+            accepted_at__isnull=False,
+            rejected_at__isnull=True
+        ).filter(
+            models.Q(sender=user) | models.Q(receiver=user)
+        )
+
+        # Collect the IDs of the friends
+        friend_ids = []
+        for fr in accepted_reqs:
+            friend_ids.append(fr.receiver.id if fr.sender == user else fr.sender.id)
+
+        # Query the user records for those friend IDs
+        friends = User.objects.filter(id__in=friend_ids)
+
+        ONLINE_THRESHOLD = timedelta(minutes=5)
+        now = timezone.now()
+        response_data = []
+        for f in friends:
+            last_active_delta = now - f.last_activity
+            is_online = last_active_delta <= ONLINE_THRESHOLD
             response_data.append({
                 "id": str(f.id),
                 "username": f.username,
