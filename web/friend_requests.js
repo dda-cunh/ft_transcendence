@@ -119,7 +119,7 @@ function	setupEventHandlers()
 {
 	document.querySelectorAll(".profile-link").forEach(link => {
 		link.addEventListener("click", (event) => renderUserProfile(event.target.dataset.id) );
-	})
+	});
 
 	document.querySelectorAll(".accept-btn").forEach(button => {
 		button.addEventListener("click", (event) => acceptFriendRequest(event) );

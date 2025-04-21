@@ -49,7 +49,11 @@ export async function renderFriendsList()
 
 
 	/*	MAIN FUNCTION	*/
-export function	renderProfile()
+export async function	renderProfile()
 {
-	renderFriendsList();
+	await renderFriendsList();
+
+	document.querySelectorAll(".profile-link").forEach(link => {
+		link.addEventListener("click", (event) => renderUserProfile(event.target.dataset.id) );
+	});
 }
