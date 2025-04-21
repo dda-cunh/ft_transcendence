@@ -11,7 +11,7 @@ class	TournamentHistory(models.Model):
 	def	to_dict(self):
 		return {
 			"id": self.id,
-			"winner_id": self.winner.id,
+			"winner": self.winner.id,
 			"winner_username": self.winner.username,
 			"ended_at": self.ended_at or None
 		}
@@ -33,11 +33,11 @@ class	MatchHistory(models.Model):
 	def	to_dict(self):
 		return {
 			"id": self.id,
-			"player1_id": self.player1.id,
+			"player1": self.player1.id,
 			"player1_username": self.player1.username,
-			"player2_id": self.player2.id,
+			"player2": self.player2.id,
 			"player2_username": self.player2.username,
-			"winner_id": self.winner.id,
+			"winner": self.winner.id,
 			"winner_username": self.winner.username,
 			"ended_at": self.ended_at or None
 		}
@@ -59,8 +59,8 @@ class	TournamentMatchHistory(models.Model):
 	def	to_dict(self):
 		return {
 			"id": self.id,
-			"tournament_id": self.tournament.id,
-			"match_id": self.match.id,
+			"tournament": self.tournament.id,
+			"match": self.match.id,
 			"stage": self.stage,
 			"tournament": self.tournament.to_dict(),
 			"match": self.match.to_dict(),
