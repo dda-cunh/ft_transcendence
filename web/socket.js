@@ -1,4 +1,3 @@
-
 let socket = null;
 let gameConstants = {};
 let gameState = null;
@@ -22,6 +21,7 @@ export function connectWebSocket(mode) {
 
   document.cookie = "access=" + localStorage.getItem("access") + "; path=/; Secure";
   let wsUrl = `wss://${window.location.hostname}/${mode}pong/`;
+
   socket = new WebSocket(wsUrl);
   
   socket.onopen = function(event) {
