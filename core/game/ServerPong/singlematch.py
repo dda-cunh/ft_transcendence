@@ -153,6 +153,8 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 		gamestate = event.get('gamestate')
 		if gamestate is not False:
 			await self.send(text_data=json.dumps({ 'gamestate': gamestate }))
+			visual = event.get('visual')
+			await self.send(text_data=json.dumps({ 'visual': visual }))
 		if event['close']:
 			await self.close()
 		

@@ -8,6 +8,53 @@ from ServerPong.game_utils import *
 
 room_tasks = {}
 
+
+def visual_gamestate(gamestate):
+	try:
+		width = 58
+		height = 42
+		original_width = CANVAS_W
+		original_height = CANVAS_H
+		scale_w = width / original_width
+		scale_h = height / original_height
+		halve_width = width // 2
+		halve_height = height // 2
+		paddle_corrY = int(PADDLE_HEIGHT * scale_h * 0.5)
+		paddle_char = "█"
+		ball_char = "o"
+		empty_char = " "
+
+		screen = [[empty_char for _ in range(width)] for _ in range(height)]
+
+		p1_pos_scaled = int((gamestate['p1_pos_y'] + CANVAS_H // 2) * scale_h)
+		p2_pos_scaled = int((gamestate['p2_pos_y'] + CANVAS_H // 2) * scale_h)
+
+		for y in range(p1_pos_scaled - paddle_corrY, p1_pos_scaled + paddle_corrY):
+			if 0 <= y < height:
+				screen[y][2] = paddle_char
+		for y in range(p2_pos_scaled - paddle_corrY, p2_pos_scaled + paddle_corrY):
+			if 0 <= y < height:
+				screen[y][width - 3] = paddle_char
+
+		ball_x_scaled = int((gamestate['ball']['x'] + CANVAS_W // 2) * scale_w)
+		ball_y_scaled = int((gamestate['ball']['y'] + CANVAS_H // 2) * scale_h)
+
+		if 0 <= ball_x_scaled < width and 0 <= ball_y_scaled < height:
+			screen[ball_y_scaled][ball_x_scaled] = ball_char
+
+		# Add score line at the bottom
+		score_line = f"PLAYER 1: {gamestate['p1_score']}           PLAYER 2: {gamestate['p2_score']}"
+		lines = ["".join(row) for row in screen]
+		lines.append(score_line.center(width))
+
+		return lines
+	except Exception as e:
+		return "Failed to generate visual gamestate: " + str(e)
+
+
+
+
+
 async def local_monitor_room(self):
 	userName = "p1"
 	opponentName = "p2"
@@ -31,9 +78,13 @@ async def local_monitor_room(self):
 	r.set(f"keystate_p1_{self.user_id}", "IDLE")
 	r.set(f"keystate_p2_{self.user_id}", "IDLE")
 	r.hset(f"gamestate_{self.user_id}", mapping=state.to_redis())
+	
+	visual = "\n".join(visual_gamestate(state.to_dict()))
+
 	await self.send(text_data=json.dumps({
 		'initial': initial,
-		'gamestate': state.to_dict()
+		'gamestate': state.to_dict(),
+		'visual': visual,
 	}))
 
 	while True:
@@ -46,8 +97,12 @@ async def local_monitor_room(self):
 		)
 		
 		state = get_next_frame(old_state, actions)
+		
+		visual = "\n".join(visual_gamestate(state.to_dict()))
+
 		await self.send(text_data=json.dumps({
-			'gamestate': state.to_dict()
+			'gamestate': state.to_dict(),
+			'visual': visual,
 		}))
 		
 		r.hset(f"gamestate_{self.user_id}", mapping=state.to_redis())
@@ -114,12 +169,15 @@ async def monitor_room(room_name, channel_layer):
 		ball_vec = Vec2D(0, 0),
 	)
 
+	visual = "\n".join(visual_gamestate(state.to_dict()))
+
 	await channel_layer.group_send(
 		room_name,
 		{
 			'type': 'room_message',
 			'message': False,
 			'gamestate': state.to_dict(),
+			'visual': visual,
 			'close': False,
 			'initial': initial,
 		}
@@ -139,6 +197,8 @@ async def monitor_room(room_name, channel_layer):
 		)
 		# call get_next_frame with gamestate and redis keystates
 		state = get_next_frame(old_state, actions)
+		
+		visual = "\n".join(visual_gamestate(state.to_dict()))
 
 		# send the gamestate to the players
 		await channel_layer.group_send(
@@ -147,6 +207,7 @@ async def monitor_room(room_name, channel_layer):
 				'type': 'room_message',
 				'message': False,
 				'gamestate': state.to_dict(),
+				'visual': visual,
 				'close': False,
 				'initial': False,
 			}
@@ -188,6 +249,7 @@ async def monitor_room(room_name, channel_layer):
 			break
 
 	r.delete(f"gamestate_{room_name}")
+	r.delete(f"visual_{room_name}")
 	if r.exists(f"keystate_{users[0]}"):
 		r.delete(f"keystate_{users[0]}")
 	if r.exists(f"keystate_{users[-1]}"):
