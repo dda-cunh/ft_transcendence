@@ -3,6 +3,7 @@ import {acceptFriendRequest} from './friend_requests.js'
 import {denyFriendRequest} from './friend_requests.js'
 import {updateAccessTkn} from './utils.js'
 import {getOwnUserData} from './utils.js'
+import { renderMatchHistory, renderTournamentHistory } from "./profile.js";
 
 "use strict";
 
@@ -298,4 +299,6 @@ export async function	renderUserProfile(userID)
 
 	await renderPlayerCard(userID);
 	renderPlayerProfile(userID);
+	await renderMatchHistory(userID)
+	await renderTournamentHistory(userID)
 }

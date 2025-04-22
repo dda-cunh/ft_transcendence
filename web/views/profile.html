@@ -21,7 +21,7 @@
 				</div>
 				<div class="col-1 col-lg-1 align-self-center text-start">
 
-					<small>7</small>
+					<small id="played"></small>
 
 				</div>
 				<div class="col-3 col-lg-3 text-wrap align-self-center text-end">
@@ -29,7 +29,7 @@
 				</div>
 				<div class="col-1 col-lg-1 align-self-center text-start">
 
-					<small>5</small>
+					<small id="won"></small>
 
 				</div>
 				<div class="col-3 col-lg-3 text-wrap align-self-center text-end">
@@ -37,7 +37,7 @@
 				</div>
 				<div class="col-1 col-lg-1 align-self-center text-start">
 
-					<small>2</small>
+					<small id="lost"></small>
 
 				</div>
 
@@ -49,7 +49,7 @@
 				</div>
 				<div class="col-1 col-lg-2 align-self-center text-start">
 
-					<small>1</small>
+					<small id="joined"></small>
 
 				</div>
 				<div class="col-5 col-lg-4 text-wrap align-self-center text-end">
@@ -57,7 +57,7 @@
 				</div>
 				<div class="col-1 col-lg-2 align-self-center text-start">
 
-					<small>2</small>
+					<small id="twon"></small>
 
 				</div>
 			</div>
@@ -84,12 +84,11 @@
 										<tr>
 											<th>Date</th>
 											<th>Opponent</th>
-											<th>Game type</th>
 											<th>Score</th>
 											<th>Result</th>
 										</tr>
 									</thead>
-									<tbody>
+									<tbody id="matchHistory">
 										<!--MATCH HISTORY-->
 									</tbody>
 								</table>
@@ -101,11 +100,10 @@
 									<thead>
 										<tr>
 											<th>Date</th>
-											<th>Game type</th>
 											<th>Placement</th>
 										</tr>
 									</thead>
-									<tbody>
+									<tbody id="tHistory">
 										<!--TOURNAMENT HISTORY-->
 									</tbody>
 								</table>
