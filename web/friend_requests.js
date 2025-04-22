@@ -37,7 +37,6 @@ async function	renderList()
 		else
 		{
 			responseData.forEach(entry => {
-				console.log(entry);
 				let row = `
 					<tr>
 						<td>
@@ -126,7 +125,12 @@ export async function	denyFriendRequest(event)
 function	setupEventHandlers()
 {
 	document.querySelectorAll(".profile-link").forEach(link => {
-		link.addEventListener("click", (event) => renderUserProfile(event.target.dataset.id) );
+		link.addEventListener("click", (event) => {
+			sessionStorage.setItem("currentView", `user#${event.target.dataset.id}`);
+			main();
+		})
+
+		//	renderUserProfile(event.target.dataset.id) );
 	});
 
 	document.querySelectorAll(".accept-btn").forEach(button => {
