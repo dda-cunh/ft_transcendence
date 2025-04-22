@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework.exceptions import ValidationError
 from django.utils import timezone
+from django.db.models import Q
 from .models import FriendRequest
 
 User = get_user_model()
@@ -65,6 +66,14 @@ class FriendRequestSerializer(serializers.ModelSerializer):
         receiver = attrs.get('receiver')
         if sender == receiver:
             raise serializers.ValidationError("You cannot send a friend request to yourself.")
+
+        # Prevent sending a new request if users are already friends
+        if FriendRequest.objects.filter(
+            Q(sender=sender, receiver=receiver) | Q(sender=receiver, receiver=sender),
+            accepted_at__isnull=False
+        ).exists():
+            raise serializers.ValidationError("You are already friends with this user.")
+
         return attrs
 
 class PendingFriendRequestsViewSerializer(serializers.ModelSerializer):
