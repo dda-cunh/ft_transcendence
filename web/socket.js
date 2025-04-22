@@ -86,7 +86,7 @@ export async function connectWebSocket(mode) {
     unloadControls();
     setTimeout(() => {
       main();
-    }, 1000);
+    }, 3000);
   };
 
   socket.onerror = function(event) {

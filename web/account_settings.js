@@ -55,9 +55,10 @@ async function	chgMotto(event)
 
 	try
 	{
+/*
 		if (!newMottoField.value)
 			throw new Error("This field cannot be empty.");
-
+*/
 		await updateAccessTkn();
 
 		let response = await fetch("management/profile/motto/", {
@@ -79,6 +80,7 @@ async function	chgMotto(event)
 	}
 	catch (error)
 	{
+		alert
 		let errMsg = document.getElementById("errMsg");
 		if (errMsg !== null)
 			errMsg.remove();

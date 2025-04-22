@@ -203,12 +203,14 @@ async def monitor_room(room_name, channel_layer):
 		winningplayer = users[-1]
 		losingplayer = users[0]
 		winner = opponentName
-	
+
 	# save match to db
 	save_match = {
 		"player1": users[0],
 		"player2": users[-1],
-		"winner": winningplayer,
+		"p1_score": state.p1_score,
+		"p2_score": state.p2_score,
+		"winner": winningplayer
 	}
 	
 	match_info = await save_match_history(save_match)

@@ -1,3 +1,4 @@
+import {main} from "./index.js"
 import {updateAccessTkn} from './utils.js'
 import {renderUserProfile} from './social.js'
 
@@ -7,6 +8,8 @@ import {renderUserProfile} from './social.js'
 async function	renderList()
 {
 	updateAccessTkn();
+
+	let frTable = document.getElementById("frList");
 
 	try
 	{
@@ -21,13 +24,12 @@ async function	renderList()
 		if (!response.ok)
 			return ;
 
-		let frTable = document.getElementById("frList");
 		let responseData = await response.json();
 
 		if (Object.keys(responseData).length === 0)
 		{
 			frTable.innerHTML = `
-				<tr class="align-items-center justify-content-around">
+				<tr class="lead">
 					<td>You have no new friend requests</td>
 				</tr>
 			`;
@@ -36,18 +38,18 @@ async function	renderList()
 		{
 			responseData.forEach(entry => {
 				let row = `
-					<tr>
-						<td>
-							<a class="profile-link" href="#">
+					<tr data-id="${entry.sender}">
+						<td data-id="${entry.sender}">
+							<a data-id="${entry.sender}" class="profile-link" href="#">
 								<img data-id="${entry.sender}" style="object-fit: cover; height: 75px; width: 75px;" class="img-fluid rounded-circle" src="/management/media/avatars/${entry.sender_avatar.split("/").pop()}" alt="${entry.sender_username}'s avatar" />
 							</a>
 						</td>
-						<td>
+						<td data-id="${entry.sender}">
 							<a data-id="${entry.sender}" class="profile-link display-6 link-light link-underline link-underline-opacity-0 link-opacity-75-hover" href="#">
 								${entry.sender_username}
 							</a>
-						</td>
-						<td>
+						</td data-id="${entry.sender}">
+						<td data-id="${entry.sender}">
 							<button class="btn btn-outline-success accept-btn" data-id="${entry.id}">ACCEPT</button>
 							<button class="btn btn-outline-danger deny-btn" data-id="${entry.id}">DENY</button>
 						</td>
@@ -59,14 +61,20 @@ async function	renderList()
 	}
 	catch (error)
 	{
-		alert(error);
+		frTable.innerHTML = `
+			<tr>
+				<td>
+					<p class="text-danger">${error}</p>
+				</td>
+			</tr>
+		`;
 	}
 }
 
-async function	acceptFriendRequest(event)
+export async function	acceptFriendRequest(event)
 {
 	const	id = event.target.dataset.id;
-
+	console.log(event);
 	updateAccessTkn();
 
 	try
@@ -79,17 +87,17 @@ async function	acceptFriendRequest(event)
 		} );
 
 		if (!response.ok)
-			throw new Error("Error: Failed to accept request");
+			throw new Error("Failed to accept request");
 
-		renderFriendRequests();
+		main();
 	}
 	catch (error)
 	{
-		alert(error);
+		console.log(error);
 	}
 }
 
-async function	denyFriendRequest(event)
+export async function	denyFriendRequest(event)
 {
 	const	id = event.target.dataset.id;
 
@@ -105,20 +113,23 @@ async function	denyFriendRequest(event)
 		} );
 
 		if (!response.ok)
-			throw new Error("Error: Failed to deny request");
+			throw new Error("Failed to deny request");
 
-		renderFriendRequests();
+		main();
 	}
 	catch (error)
 	{
-		alert(error);
+		console.log(error);
 	}
 }
 
 function	setupEventHandlers()
 {
 	document.querySelectorAll(".profile-link").forEach(link => {
-		link.addEventListener("click", (event) => renderUserProfile(event.target.dataset.id) );
+		link.addEventListener("click", (event) => {
+			sessionStorage.setItem("currentView", `user#${event.target.dataset.id}`);
+			main();
+		})
 	});
 
 	document.querySelectorAll(".accept-btn").forEach(button => {

@@ -5,23 +5,12 @@ import {renderProfile} from './profile.js'
 import {renderFriendRequests} from './friend_requests.js'
 import {renderAcctSettings} from './account_settings.js'
 import {renderUserProfile} from './social.js'
+import {getOwnUserData} from './utils.js'
 
 
 "use strict";
 
 
-async function	getUserData()
-{
-	let response = await fetch("management/management/user/", {
-		method: "GET",
-		headers: {
-			"Content-Type": "application/json",
-			"Authorization": "Bearer " + sessionStorage.getItem("access"),
-		}
-	});
-
-	return (await response.json() );
-}
 
 	/*	PAGE RENDERING	*/
 async function renderNavbar()
@@ -66,7 +55,9 @@ async function renderPlayerCard()
 		let playerCardHtml = await response.text();
 		playerCardContainer.innerHTML = playerCardHtml;
 
-		let userData = await getUserData();
+		let userData = await getOwnUserData();
+
+		console.log(userData);
 
 		let imgSrc = userData.avatar;
 		let userName = userData.username;
@@ -226,6 +217,14 @@ export async function	App()
 
 /*
 	TO DO:
-		FIGURE OUT THAT SHIT WITH THE POINTER
+		F
+		M
+			PULL MATCH HISTORY
+			FIX DESIGN IN GAME VIEW
+		B
+			MAKE GAME VIEW PERSISTENT
 
+		PENDING MERGE:
+			REMOVE "ADD FRIEND" BUTTON AFTER REQUEST IS SENT (NEEDS ENDPOINT)
+			ADD ELEMENT TO PLAYER CARD TO DISPLAY ONLINE STATUS
 */
