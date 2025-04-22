@@ -13,13 +13,7 @@ async function	getUserData(userID)
 	return (await response.json() );
 }
 
-/*
-	522c2d36-daf0-4390-8157-a8b3f20c43ef
-	curl -X POST management:8000/management/friends/request \
-	-d '{"receiver": "${userID}"}' \
-	-H "Content-Type: application/json" \
-	-H "Authorization: Bearer ${token}"
-*/
+
 async function	sendFriendRequest(userID)
 {
 	updateAccessTkn();
@@ -86,7 +80,6 @@ async function	renderPlayerCard(userID)
 		catch (error)
 		{
 			console.log(error);
-
 			return (false);
 		}
 	}
@@ -96,19 +89,14 @@ async function	renderPlayerCard(userID)
 		let controlsCol = document.getElementById("playerCardControlsCol");
 		let id = pendingRequestID;
 
-		if (id !== "self")
-		{
-			controlsCol.innerHTML = `
-				<small class="mt-2 me-2">${userData.username}<br>has sent you a friend request</small>
-				<button id="acceptBtn" data-id="${id}" class="btn btn-sm btn-outline-success me-2 mt-2"><i class="bi-check-lg"></i></button>
-				<button id="denyBtn" data-id="${id}" class="btn btn-sm btn-outline-danger mt-2"><i class="bi-x-lg"></i></button>
-			`;
+		controlsCol.innerHTML = `
+			<small class="mt-2 me-2">${userData.username}<br>has sent you a friend request</small>
+			<button id="acceptBtn" data-id="${id}" class="btn btn-sm btn-outline-success me-2 mt-2"><i class="bi-check-lg"></i></button>
+			<button id="denyBtn" data-id="${id}" class="btn btn-sm btn-outline-danger mt-2"><i class="bi-x-lg"></i></button>
+		`;
 
-			document.getElementById("acceptBtn").addEventListener("click", (event) => acceptFriendRequest(event) );
-			document.getElementById("denyBtn").addEventListener("click", (event) => denyFriendRequest(event) );
-		}
-//		else
-			//	RENDER SOMETHING ELSE...
+		document.getElementById("acceptBtn").addEventListener("click", (event) => acceptFriendRequest(event) );
+		document.getElementById("denyBtn").addEventListener("click", (event) => denyFriendRequest(event) );
 
 	}
 
@@ -158,6 +146,11 @@ async function	renderPlayerCard(userID)
 		document.getElementById("friendRequestBtn").onclick = (event) => sendFriendRequest(userID);
 	}
 
+	function	addOnlineStatus(userID)
+	{
+
+	}
+
 	let	playerCardContainer = document.getElementById("appContainer");
 
 	try
@@ -171,11 +164,14 @@ async function	renderPlayerCard(userID)
 		playerCardContainer.innerHTML = playerCardHtml;
 
 		let userData = await getUserData(userID);
-//		ADD ONLINE STATUS THING
+		console.log(userData);
+//		ADD ONLINE STATUS BADGE
+		addOnlineStatus(userID);
 
+		//	MUST ALSO CHECK IF FRIEND REQUEST HAS BEEN SENT TO THIS USER
 		if (await pendingFriendRequest(userID) )
 			addFriendRequestResponseBtns(userData);
-		else if (!(await userIsFriend(userID) ) /* && !friendRequestSent()*/ )
+		else if (!(await userIsFriend(userID) ))
 			addFriendRequestBtn(userID);
 		else
 		{
@@ -234,7 +230,6 @@ async function	renderPlayerProfile(userID)
 
 			let responseData = await response.json();
 			responseData.forEach(entry => {
-				console.log(entry);
 				let statusColor = entry.online ? "success" : "secondary";
 				let row = `
 					<tr data-id="${entry.id}" class="profile-link cursor-pointer" style="cursor: pointer;">
@@ -257,8 +252,6 @@ async function	renderPlayerProfile(userID)
 			document.querySelectorAll(".profile-link").forEach(link => {
 				link.addEventListener("click", (event) => changeProfile(event.target.dataset.id) );
 			});
-			//	ADD EVENT LISTENERS
-			//	MUST CHECK IF PROFILE SELECTED IS SELF OR OTHER
 		}
 		catch (error)
 		{
