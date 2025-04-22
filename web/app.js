@@ -158,9 +158,10 @@ window.addEventListener("popstate", function(event) {
 	if (event.state?.view && history.state?.view !== sessionStorage.getItem("currentView") )
 	{
 		sessionStorage.setItem("currentView", event.state.view);
-		changeView();
+		main();
 	}
 } );
+
 
 document.addEventListener("DOMContentLoaded", () => {
 	history.replaceState({view: sessionStorage.getItem("currentView")}, document.title, location.href);

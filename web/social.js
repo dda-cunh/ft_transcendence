@@ -202,7 +202,7 @@ async function	renderPlayerCard(userID)
 }
 
 
-async function	changeProfile(userID)
+export async function	changeProfile(userID)
 {
 	let ownData = await getOwnUserData();
 	if (ownData.id === userID)
@@ -298,7 +298,7 @@ export async function	renderUserProfile(userID)
 		history.pushState({view: currentView}, document.title, location.href);
 
 	await renderPlayerCard(userID);
-	renderPlayerProfile(userID);
+	await renderPlayerProfile(userID);
 	await renderMatchHistory(userID)
 	await renderTournamentHistory(userID)
 }

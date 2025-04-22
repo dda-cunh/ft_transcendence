@@ -1,4 +1,5 @@
 import { renderUserProfile } from './social.js'
+import { changeProfile } from './social.js'
 import { updateAccessTkn } from './utils.js';
 
 
@@ -11,32 +12,32 @@ async function	getUserData(userID)
 	return (await response.json() );
 }
 
-async function renderGameEntries(data, id, dest) {
+async function renderGameEntries(data, userID, dest) {
 	let played = 0, won = 0, lost = 0;
 	for (const entry of data) {
 	  played++;
-	  let link = entry.player1;
+	  let id = entry.player1;
 	  let result = "lost";
 	  
-	  if (entry.player1 === id)
-		link = entry.player2;
+	  if (entry.player1 === userID)
+		id = entry.player2;
 	  
-	  if (entry.winner === id) {
+	  if (entry.winner === userID) {
 		result = "won";
 		won++;
 	  } else
 		lost++;
 	  
-	  let opponent = await getUserData(link);
+	  let opponent = await getUserData(id);
 
 	  const date = new Date(entry.ended_at);
 	  const formattedDate = date.toLocaleString();
 
-	  let row = `<tr data-id="${link}" class="profile-link cursor-pointer">
-		<td data-id="${link}" class="cursor-pointer">${formattedDate}</td>
-		<td data-id="${link}" class="cursor-pointer">${opponent.username}</td>
-		<td data-id="${link}" class="cursor-pointer">${entry.p1_score} - ${entry.p2_score}</td>
-		<td data-id="${link}" class="cursor-pointer">${result}</td>
+	  let row = `<tr data-id="${id}" class="history-link cursor-pointer" style="cursor: pointer;">
+		<td data-id="${id}" class="cursor-pointer">${formattedDate}</td>
+		<td data-id="${id}" class="cursor-pointer">${opponent.username}</td>
+		<td data-id="${id}" class="cursor-pointer">${entry.p1_score} - ${entry.p2_score}</td>
+		<td data-id="${id}" class="cursor-pointer">${result}</td>
 	  </tr>`;
   
 	  dest.innerHTML += row;
@@ -47,6 +48,10 @@ async function renderGameEntries(data, id, dest) {
 		document.querySelector("#won").innerText = won;
 	if (document.querySelector("#lost"))
 		document.querySelector("#lost").innerText = lost;
+
+	document.querySelectorAll(".history-link").forEach(link => {
+		link.addEventListener("click", (event) => changeProfile(event.target.dataset.id) );
+	})
 }
 
 
@@ -98,6 +103,7 @@ export async function renderMatchHistory(userID)
 	try
 	{
 		let id = userID ? userID : await getPersonalID();
+
 		let	response = await fetch(`game/tracker/matches/user/${id}`, {
 			method: "GET",
 			headers: {
@@ -112,6 +118,7 @@ export async function renderMatchHistory(userID)
 		let dest = document.querySelector("#matchHistory");
 		if (!dest)
 			return
+
 		let data = await response.json();
 		await renderGameEntries(data, id, dest);
 	}
