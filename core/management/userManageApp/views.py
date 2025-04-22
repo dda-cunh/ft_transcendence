@@ -54,9 +54,13 @@ class PublicUserDetailView(APIView):
 
     def get(self, request, user_id):
         user = get_object_or_404(User, pk=user_id)
+        now = timezone.now()
+        ONLINE_THRESHOLD = timedelta(minutes=5)
+        is_online = (now - user.last_activity) <= ONLINE_THRESHOLD
         data = {
             "id": str(user.id),
             "username": user.username,
+            "online": is_online,
             "motto": user.motto,
             "avatar": user.avatar.name if user.avatar else None,
             "last_activity": user.last_activity,
