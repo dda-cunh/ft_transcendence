@@ -207,7 +207,6 @@ async function	renderPlayerCard(userID)
 
 async function	changeProfile(userID)
 {
-	alert(userID);
 	let ownData = await getOwnUserData();
 	if (ownData.id === userID)
 	{
@@ -242,7 +241,7 @@ async function	renderPlayerProfile(userID)
 						<td data-id="${entry.id}">
 							<img data-id="${entry.id}" style="height: 75px; width: 75px; object-fit: cover;" class="rounded-circle" src="/management/media/${entry.avatar}" alt="${entry.username}'s avatar" />
 						</td>
-						<td>
+						<td data-id="${entry.id}">
 		            		<a data-id="${entry.id}" class="cursor-pointer display-6 link-light link-underline link-underline-opacity-0 link-opacity-75-hover">
 								${entry.username}
 		            		</a>
