@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from django.db.models import Q
 
 class FriendRequest(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -21,7 +22,13 @@ class FriendRequest(models.Model):
     rejected_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        unique_together = (('sender', 'receiver'),)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['sender', 'receiver'],
+                condition=Q(accepted_at__isnull=True, rejected_at__isnull=True),
+                name='unique_pending_friend_request'
+            )
+        ]
 
     def __str__(self):
         return f"FriendRequest from {self.sender} to {self.receiver}"
