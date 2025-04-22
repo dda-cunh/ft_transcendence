@@ -64,6 +64,8 @@ class PongAI {
 
     initializeAI() {
         setInterval(() => this.updateBallPrediction(), AI_UPDATE_INTERVAL);
+        setInterval(() => this.update(), AI_UPDATE_INTERVAL);
+        
     }
 
     updateBallPrediction() {
