@@ -1,4 +1,4 @@
-import { renderMatchHistory } from "./profile.js";
+import { renderMatchHistory, renderTournamentHistory } from "./profile.js";
 
 "use strict";
 
@@ -84,6 +84,7 @@ export async function	renderUserProfile(userID)
 		history.pushState({view: currentView}, document.title, location.href);
 
 	await renderPlayerCard(userID);
-	await renderMatchHistory(userID)
 	renderPlayerProfile(userID);
+	await renderMatchHistory(userID)
+	await renderTournamentHistory(userID)
 }

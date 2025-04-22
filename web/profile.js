@@ -35,6 +35,7 @@ async function renderGameEntries(data, id, dest) {
 	  let row = `<tr data-id="${link}" class="profile-link cursor-pointer">
 		<td data-id="${link}" class="cursor-pointer">${formattedDate}</td>
 		<td data-id="${link}" class="cursor-pointer">${opponent.username}</td>
+		<td data-id="${link}" class="cursor-pointer">${entry.p1_score} - ${entry.p2_score}</td>
 		<td data-id="${link}" class="cursor-pointer">${result}</td>
 	  </tr>`;
   
@@ -46,8 +47,35 @@ async function renderGameEntries(data, id, dest) {
 		document.querySelector("#won").innerText = won;
 	if (document.querySelector("#lost"))
 		document.querySelector("#lost").innerText = lost;
-  }
-  
+}
+
+
+async function renderTournamentEntries(data, id, dest) {
+	let joined = 0, won = 0;
+	for (const entry of data) {
+		joined++;
+		let placement = "participant";
+		
+		const date = new Date(entry.ended_at);
+		const formattedDate = date.toLocaleString();
+
+		if (entry.winner === id){
+			won++;
+			placement = "Winner";
+		}
+		let row = `<tr>
+		<td>${formattedDate}</td>
+		<td>${placement}</td>
+	    </tr>`;
+		
+	  	dest.innerHTML += row;
+	}
+	if (document.querySelector("#joined"))
+		document.querySelector("#joined").innerText = joined;
+	if (document.querySelector("#twon"))
+		document.querySelector("#twon").innerText = won;
+}
+
 
 async function getPersonalID()
 {
@@ -67,11 +95,10 @@ async function getPersonalID()
 /* GET MATCH HISTORY */
 export async function renderMatchHistory(userID)
 {
-	updateAccessTkn();
 	try
 	{
 		let id = userID ? userID : await getPersonalID();
-		let	response = await fetch(`game/tracker/matches/user/${id}/`, {
+		let	response = await fetch(`game/tracker/matches/user/${id}`, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
@@ -87,7 +114,36 @@ export async function renderMatchHistory(userID)
 			return
 		let data = await response.json();
 		await renderGameEntries(data, id, dest);
+	}
+	catch(error)
+	{
+		console.error(error)
+	}
+}
 
+
+/* GET TOURNAMENT HISTORY */
+export async function renderTournamentHistory(userID)
+{
+	try
+	{
+		let id = userID ? userID : await getPersonalID();
+		let	response = await fetch(`game/tracker/tournament/user/${id}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": "Bearer " + sessionStorage.getItem("access"),
+			},
+		} );
+
+		if (!response.ok)
+			return
+
+		let dest = document.querySelector("#tHistory");
+		if (!dest)
+			return
+		let data = await response.json();
+		await renderTournamentEntries(data, id, dest);
 	}
 	catch(error)
 	{
@@ -140,8 +196,10 @@ export async function renderFriendsList()
 	/*	MAIN FUNCTION	*/
 export async function	renderProfile()
 {
+	updateAccessTkn();
 	await renderFriendsList();
 	await renderMatchHistory(null);
+	await renderTournamentHistory(null);
 	document.querySelectorAll(".profile-link").forEach(link => {
 		link.addEventListener("click", (event) => renderUserProfile(event.target.dataset.id) );
 	});
