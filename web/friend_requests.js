@@ -68,7 +68,7 @@ async function	renderList()
 export async function	acceptFriendRequest(event)
 {
 	const	id = event.target.dataset.id;
-
+	alert(id);
 	updateAccessTkn();
 
 	try
@@ -81,7 +81,7 @@ export async function	acceptFriendRequest(event)
 		} );
 
 		if (!response.ok)
-			throw new Error("Error: Failed to accept request");
+			throw new Error("Failed to accept request");
 
 		main();
 	}
@@ -94,7 +94,7 @@ export async function	acceptFriendRequest(event)
 export async function	denyFriendRequest(event)
 {
 	const	id = event.target.dataset.id;
-
+	alert(id);
 	updateAccessTkn();
 
 	try
@@ -107,7 +107,7 @@ export async function	denyFriendRequest(event)
 		} );
 
 		if (!response.ok)
-			throw new Error("Error: Failed to deny request");
+			throw new Error("Failed to deny request");
 
 		main();
 	}
