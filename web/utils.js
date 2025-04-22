@@ -5,6 +5,20 @@ import {renderAuth} from './auth.js'
 "use strict";
 
 
+export async function	getOwnUserData()
+{
+	let response = await fetch("management/management/user/", {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": "Bearer " + sessionStorage.getItem("access"),
+		}
+	});
+
+	return (await response.json() );
+}
+
+
 export async function	updateAccessTkn()
 {
 	if (!sessionStorage.getItem("access"))

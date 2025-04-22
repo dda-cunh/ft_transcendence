@@ -9,6 +9,8 @@ async function	renderList()
 {
 	updateAccessTkn();
 
+	let frTable = document.getElementById("frList");
+
 	try
 	{
 		let response = await fetch("management/management/friends/pending", {
@@ -22,13 +24,12 @@ async function	renderList()
 		if (!response.ok)
 			return ;
 
-		let frTable = document.getElementById("frList");
 		let responseData = await response.json();
 
 		if (Object.keys(responseData).length === 0)
 		{
 			frTable.innerHTML = `
-				<tr class="align-items-center justify-content-around">
+				<tr class="lead">
 					<td>You have no new friend requests</td>
 				</tr>
 			`;
@@ -61,14 +62,19 @@ async function	renderList()
 	}
 	catch (error)
 	{
-		alert(error);
+		frTable.innerHTML = `
+			<tr>
+				<td>
+					<p class="text-danger">${error}</p>
+				</td>
+			</tr>
+		`;
 	}
 }
 
 export async function	acceptFriendRequest(event)
 {
 	const	id = event.target.dataset.id;
-	alert(id);
 	updateAccessTkn();
 
 	try

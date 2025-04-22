@@ -5,23 +5,12 @@ import {renderProfile} from './profile.js'
 import {renderFriendRequests} from './friend_requests.js'
 import {renderAcctSettings} from './account_settings.js'
 import {renderUserProfile} from './social.js'
+import {getOwnUserData} from './utils.js'
 
 
 "use strict";
 
 
-async function	getUserData()
-{
-	let response = await fetch("management/management/user/", {
-		method: "GET",
-		headers: {
-			"Content-Type": "application/json",
-			"Authorization": "Bearer " + sessionStorage.getItem("access"),
-		}
-	});
-
-	return (await response.json() );
-}
 
 	/*	PAGE RENDERING	*/
 async function renderNavbar()
@@ -66,9 +55,7 @@ async function renderPlayerCard()
 		let playerCardHtml = await response.text();
 		playerCardContainer.innerHTML = playerCardHtml;
 
-		let userData = await getUserData();
-
-		console.log(userData);
+		let userData = await getOwnUserData();
 
 		let imgSrc = userData.avatar;
 		let userName = userData.username;

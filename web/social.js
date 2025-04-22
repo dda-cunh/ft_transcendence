@@ -2,6 +2,7 @@ import {main} from "./index.js"
 import {acceptFriendRequest} from './friend_requests.js'
 import {denyFriendRequest} from './friend_requests.js'
 import {updateAccessTkn} from './utils.js'
+import {getOwnUserData} from './utils.js'
 
 "use strict";
 
@@ -22,8 +23,6 @@ async function	getUserData(userID)
 async function	sendFriendRequest(userID)
 {
 	updateAccessTkn();
-
-	alert("sending friend request")
 
 	try
 	{
@@ -69,7 +68,6 @@ async function	renderPlayerCard(userID)
 
 			let result = false;
 			let requestsList = await response.json();
-			console.log(requestsList);
 			requestsList.forEach(entry => {
 				if (entry.sender === userID)
 				{
@@ -206,10 +204,19 @@ async function	renderPlayerCard(userID)
 	}
 }
 
-/*
-	curl -X GET \
-	  http://management:8000/management/user/{user id}/friends/
-*/
+
+async function	changeProfile(userID)
+{
+	alert(userID);
+	let ownData = await getOwnUserData();
+	if (ownData.id === userID)
+	{
+		sessionStorage.setItem("currentView", "profile");
+		main();
+	}
+	else
+		renderUserProfile(userID);
+}
 
 async function	renderPlayerProfile(userID)
 {
@@ -229,6 +236,7 @@ async function	renderPlayerProfile(userID)
 			let responseData = await response.json();
 			responseData.forEach(entry => {
 				console.log(entry);
+				let statusColor = entry.online ? "success" : "secondary";
 				let row = `
 					<tr data-id="${entry.id}" class="profile-link cursor-pointer" style="cursor: pointer;">
 						<td data-id="${entry.id}">
@@ -239,16 +247,19 @@ async function	renderPlayerProfile(userID)
 								${entry.username}
 		            		</a>
 						</td>
-						<td>
-					
+						<td data-id="${entry.id}">
+							<span data-id="${entry.id}" class="badge bg-${statusColor} border border-light rounded-circle" style="height: 20px; width: 20px">
 						</td>
 					</tr>
 				`;
 				tableBody.innerHTML += row;
 			} );
 
+			document.querySelectorAll(".profile-link").forEach(link => {
+				link.addEventListener("click", (event) => changeProfile(event.target.dataset.id) );
+			});
 			//	ADD EVENT LISTENERS
-//			throw new Error("so far so good");
+			//	MUST CHECK IF PROFILE SELECTED IS SELF OR OTHER
 		}
 		catch (error)
 		{
@@ -275,7 +286,7 @@ async function	renderPlayerProfile(userID)
 		let viewHtml = await response.text();
 		viewRow.innerHTML = viewHtml;
 
-		renderFriendsList(userID);
+		await renderFriendsList(userID);
 		//	RENDER MATCH HISTORY
 	}
 	catch (error)
