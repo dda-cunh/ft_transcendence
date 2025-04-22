@@ -26,7 +26,7 @@ export async function renderFriendsList()
 		let data = await response.json();
 		data.forEach(entry => {
 			console.log(entry);
-            let row = `<tr data-id="${entry.id}" class="profile-link cursor-pointer">
+            let row = `<tr data-id="${entry.id}" class="profile-link cursor-pointer" style="cursor: pointer;">
 				<td data-id="${entry.id}" class="cursor-pointer">
 					<img data-id="${entry.id}" style="height: 75px; width: 75px; object-fit: cover;" class="cursor-pointer rounded-circle" src="/management/media/${entry.avatar}" alt="${entry.username}'s avatar" />
 				</td>

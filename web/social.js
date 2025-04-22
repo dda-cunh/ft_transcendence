@@ -206,8 +206,63 @@ async function	renderPlayerCard(userID)
 	}
 }
 
+/*
+	curl -X GET \
+	  http://management:8000/management/user/{user id}/friends/
+*/
+
 async function	renderPlayerProfile(userID)
 {
+	async function	renderFriendsList(userID)
+	{
+		updateAccessTkn();
+
+		let tableBody = document.getElementById("friendsList");
+
+		try
+		{
+			let response = await fetch(`management/management/user/${userID}/friends/`);
+
+			if (!response.ok)
+				throw new Error("Failed to retrieve friends list");
+
+			let responseData = await response.json();
+			responseData.forEach(entry => {
+				console.log(entry);
+				let row = `
+					<tr data-id="${entry.id}" class="profile-link cursor-pointer" style="cursor: pointer;">
+						<td data-id="${entry.id}">
+							<img data-id="${entry.id}" style="height: 75px; width: 75px; object-fit: cover;" class="rounded-circle" src="/management/media/${entry.avatar}" alt="${entry.username}'s avatar" />
+						</td>
+						<td>
+		            		<a data-id="${entry.id}" class="cursor-pointer display-6 link-light link-underline link-underline-opacity-0 link-opacity-75-hover">
+								${entry.username}
+		            		</a>
+						</td>
+						<td>
+					
+						</td>
+					</tr>
+				`;
+				tableBody.innerHTML += row;
+			} );
+
+			//	ADD EVENT LISTENERS
+//			throw new Error("so far so good");
+		}
+		catch (error)
+		{
+			if (tableBody)
+				tableBody.innerHTML = `
+					<tr>
+						<td class="text-danger">${error}</td>
+					</tr>
+				`;
+			else
+				alert(error);
+		}
+	}
+
 	let viewRow = document.getElementById("viewRow");
 
 	try
@@ -220,6 +275,8 @@ async function	renderPlayerProfile(userID)
 		let viewHtml = await response.text();
 		viewRow.innerHTML = viewHtml;
 
+		renderFriendsList(userID);
+		//	RENDER MATCH HISTORY
 	}
 	catch (error)
 	{
