@@ -22,7 +22,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
 
 class UserPasswordSerializer(serializers.Serializer):
     current_password = serializers.CharField(required=True, write_only=True)
-    new_password = serializers.CharField(required=True, write_only=True)
+    new_password = serializers.CharField(required=True, write_only=True, min_length=6)
 
     def validate_current_password(self, value):
         user = self.context['request'].user
