@@ -91,8 +91,8 @@ async function	renderPlayerCard(userID)
 
 		controlsCol.innerHTML = `
 			<small class="mt-2 me-2">${userData.username}<br>has sent you a friend request</small>
-			<button id="acceptBtn" data-id="${id}" class="btn btn-sm btn-outline-success me-2 mt-2"><i class="bi-check-lg"></i></button>
-			<button id="denyBtn" data-id="${id}" class="btn btn-sm btn-outline-danger mt-2"><i class="bi-x-lg"></i></button>
+			<button id="acceptBtn" data-id="${id}" class="btn btn-sm btn-outline-success me-2 mt-2"><i data-id="${id}" class="bi-check-lg"></i></button>
+			<button id="denyBtn" data-id="${id}" class="btn btn-sm btn-outline-danger mt-2"><i data-id="${id}" class="bi-x-lg"></i></button>
 		`;
 
 		document.getElementById("acceptBtn").addEventListener("click", (event) => acceptFriendRequest(event) );
@@ -262,7 +262,7 @@ async function	renderPlayerProfile(userID)
 					</tr>
 				`;
 			else
-				alert(error);
+				console.log(error);
 		}
 	}
 
@@ -289,6 +289,9 @@ async function	renderPlayerProfile(userID)
 
 export async function	renderUserProfile(userID)
 {
+	if (sessionStorage.getItem("currentView") !== `user#${userID}`)
+		sessionStorage.setItem("currentView", `user#${userID}`);
+
 	let currentView = sessionStorage.getItem("currentView");
 	if (history.state?.view !== currentView)
 		history.pushState({view: currentView}, document.title, location.href);

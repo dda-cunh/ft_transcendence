@@ -57,6 +57,8 @@ async function renderPlayerCard()
 
 		let userData = await getOwnUserData();
 
+		console.log(userData);
+
 		let imgSrc = userData.avatar;
 		let userName = userData.username;
 		let motto = userData.motto;

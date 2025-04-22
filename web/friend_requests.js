@@ -38,18 +38,18 @@ async function	renderList()
 		{
 			responseData.forEach(entry => {
 				let row = `
-					<tr>
-						<td>
-							<a class="profile-link" href="#">
+					<tr data-id="${entry.sender}">
+						<td data-id="${entry.sender}">
+							<a data-id="${entry.sender}" class="profile-link" href="#">
 								<img data-id="${entry.sender}" style="object-fit: cover; height: 75px; width: 75px;" class="img-fluid rounded-circle" src="/management/media/avatars/${entry.sender_avatar.split("/").pop()}" alt="${entry.sender_username}'s avatar" />
 							</a>
 						</td>
-						<td>
+						<td data-id="${entry.sender}">
 							<a data-id="${entry.sender}" class="profile-link display-6 link-light link-underline link-underline-opacity-0 link-opacity-75-hover" href="#">
 								${entry.sender_username}
 							</a>
-						</td>
-						<td>
+						</td data-id="${entry.sender}">
+						<td data-id="${entry.sender}">
 							<button class="btn btn-outline-success accept-btn" data-id="${entry.id}">ACCEPT</button>
 							<button class="btn btn-outline-danger deny-btn" data-id="${entry.id}">DENY</button>
 						</td>
@@ -74,6 +74,7 @@ async function	renderList()
 export async function	acceptFriendRequest(event)
 {
 	const	id = event.target.dataset.id;
+	console.log(event);
 	updateAccessTkn();
 
 	try
@@ -92,14 +93,14 @@ export async function	acceptFriendRequest(event)
 	}
 	catch (error)
 	{
-		alert(error);
+		console.log(error);
 	}
 }
 
 export async function	denyFriendRequest(event)
 {
 	const	id = event.target.dataset.id;
-	alert(id);
+
 	updateAccessTkn();
 
 	try
@@ -118,7 +119,7 @@ export async function	denyFriendRequest(event)
 	}
 	catch (error)
 	{
-		alert(error);
+		console.log(error);
 	}
 }
 
@@ -129,8 +130,6 @@ function	setupEventHandlers()
 			sessionStorage.setItem("currentView", `user#${event.target.dataset.id}`);
 			main();
 		})
-
-		//	renderUserProfile(event.target.dataset.id) );
 	});
 
 	document.querySelectorAll(".accept-btn").forEach(button => {
