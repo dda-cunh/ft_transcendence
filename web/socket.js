@@ -1,9 +1,10 @@
 import { main } from "./index.js";
 import { updateAccessTkn } from "./utils.js";
+import PongAI from "./pongAI.js";
 
 let socket = null;
 let gameConstants = {};
-let gameState = null;
+export let gameState = null;
 let gmode = null;
 let keyState = {
   w: false,
@@ -15,6 +16,7 @@ let keyState = {
 };
 
 let half_w = 0, half_h = 0;
+let ai = false, playerAi = null;
 
 
 function adaptMode(mode) {
@@ -34,6 +36,8 @@ function adaptMode(mode) {
 export async function connectWebSocket(mode) {
   // mode depends on the clicked button; send 'local', 'remote' or 'tournament'
   gmode = adaptMode(mode);
+  if (mode === "Local Multiplayer")
+    ai = true;
   mode = gmode;
   if (socket) socket.close();
   updateAccessTkn();
@@ -73,6 +77,9 @@ export async function connectWebSocket(mode) {
         document.getElementById("p1").innerText = gameConstants.p1_name;
       if (document.querySelectorAll("#p2")[0])
         document.getElementById("p2").innerText = gameConstants.p2_name;
+      
+      if (gmode === "local" && ai)
+        playerAi = new PongAI(gameConstants);
     }
     if (data && data.gamestate) {
       gameState = data.gamestate;
@@ -87,6 +94,7 @@ export async function connectWebSocket(mode) {
     setTimeout(() => {
       main();
     }, 3000);
+    playerAi = null;
   };
 
   socket.onerror = function(event) {
