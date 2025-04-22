@@ -68,6 +68,8 @@ async function renderPlayerCard()
 
 		let userData = await getUserData();
 
+		console.log(userData);
+
 		let imgSrc = userData.avatar;
 		let userName = userData.username;
 		let motto = userData.motto;
@@ -230,11 +232,13 @@ export async function	App()
 			FIGURE OUT THAT SHIT WITH THE POINTER
 			ADD ELEMENT TO PLAYER CARD TO DISPLAY ONLINE STATUS
 			CHECK CONDITIONS/ADD BUTTONS FOR ADD FRIEND/ACCEPT/REJECT ON OTHER USERS PLAYER CARD
-			ADD MOTTO TO OTHER USER'S PLAYER CARD
 		M
 			PULL MATCH HISTORY
 			FIX DESIGN IN GAME VIEW
 		B
 			MAKE MATCH VIEW PERSISTENT
 
+		PENDING MERGE:
+			ADD MOTTO TO OTHER USER'S PLAYER CARD
+			ADD FRIENDS LIST IN OTHER USER'S PROFILE VIEW
 */

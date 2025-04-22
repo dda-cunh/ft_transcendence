@@ -1,3 +1,4 @@
+import {main} from "./index.js"
 import {updateAccessTkn} from './utils.js'
 import {renderUserProfile} from './social.js'
 
@@ -35,6 +36,7 @@ async function	renderList()
 		else
 		{
 			responseData.forEach(entry => {
+				console.log(entry);
 				let row = `
 					<tr>
 						<td>
@@ -63,7 +65,7 @@ async function	renderList()
 	}
 }
 
-async function	acceptFriendRequest(event)
+export async function	acceptFriendRequest(event)
 {
 	const	id = event.target.dataset.id;
 
@@ -81,7 +83,7 @@ async function	acceptFriendRequest(event)
 		if (!response.ok)
 			throw new Error("Error: Failed to accept request");
 
-		renderFriendRequests();
+		main();
 	}
 	catch (error)
 	{
@@ -89,7 +91,7 @@ async function	acceptFriendRequest(event)
 	}
 }
 
-async function	denyFriendRequest(event)
+export async function	denyFriendRequest(event)
 {
 	const	id = event.target.dataset.id;
 
@@ -107,7 +109,7 @@ async function	denyFriendRequest(event)
 		if (!response.ok)
 			throw new Error("Error: Failed to deny request");
 
-		renderFriendRequests();
+		main();
 	}
 	catch (error)
 	{

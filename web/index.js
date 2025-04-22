@@ -1,5 +1,6 @@
 import {renderAuth} from './auth.js'
 import {App} from './app.js'
+import {updateAccessTkn} from './utils.js'
 
 
 "use strict";
@@ -7,37 +8,35 @@ import {App} from './app.js'
 
 function	initApp()
 {
-	let	currentView = localStorage.getItem("currentView");
-
-	let matchType = localStorage.getItem("matchType");
-	let gameType = localStorage.getItem("gameType");
-	let paddleColor = localStorage.getItem("paddleColor");
-	let ballColor = localStorage.getItem("ballColor");
-	let backgroundColor = localStorage.getItem("backgroundColor");
+	let	currentView = sessionStorage.getItem("currentView");
+	let matchType = sessionStorage.getItem("matchType");
+	let paddleColor = sessionStorage.getItem("paddleColor");
+	let ballColor = sessionStorage.getItem("ballColor");
+	let backgroundColor = sessionStorage.getItem("backgroundColor");
 
 	if (currentView === null)
-		localStorage.setItem("currentView", "home");
+		sessionStorage.setItem("currentView", "home");
 
 	if (matchType === null)
-		localStorage.setItem("matchType", "Single Player");
+		sessionStorage.setItem("matchType", "Single Player");
 
 	if (paddleColor === null)
-		localStorage.setItem("paddleColor", "White");
+		sessionStorage.setItem("paddleColor", "White");
 
 	if (ballColor === null)
-		localStorage.setItem("ballColor", "White");
+		sessionStorage.setItem("ballColor", "White");
 
 	if (backgroundColor === null)
-		localStorage.setItem("backgroundColor", "Black");
+		sessionStorage.setItem("backgroundColor", "Black");
 }
 
-async function	userIsLoggedIn()
+export async function	userIsLoggedIn()
 {
 	let	accessToken = sessionStorage.getItem("access");
 
 	if (accessToken !== null)
 	{
-		let accessCheck = await await fetch("auth/validate", {
+		let accessCheck = await fetch("auth/validate", {
 											method: "GET",
 											headers: {
 												"Content-Type": "application/json",
@@ -67,10 +66,10 @@ async function	userIsLoggedIn()
 
 
 
-async function	main()
+export async function	main()
 {
 	initApp();
-
+	updateAccessTkn();
 	if (!(await userIsLoggedIn() ) )
 		renderAuth();
 	else
