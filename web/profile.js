@@ -1,6 +1,7 @@
 import { renderUserProfile } from './social.js'
 import { changeProfile } from './social.js'
 import { updateAccessTkn } from './utils.js';
+import { renderToggableGraph } from './stats.js'
 
 
 "use strict";
@@ -98,7 +99,7 @@ async function getPersonalID()
 }
 
 /* GET MATCH HISTORY */
-export async function renderMatchHistory(userID)
+export async function renderMatchHistory(userID, stats)
 {
 	try
 	{
@@ -116,11 +117,14 @@ export async function renderMatchHistory(userID)
 			return
 
 		let dest = document.querySelector("#matchHistory");
-		if (!dest)
+		if (!dest && !stats)
 			return
 
 		let data = await response.json();
-		await renderGameEntries(data, id, dest);
+		if (!stats)
+			await renderGameEntries(data, id, dest);
+		else
+			await renderToggableGraph(data, id, "matchStats")
 	}
 	catch(error)
 	{
@@ -210,7 +214,7 @@ export async function	renderProfile()
 {
 	updateAccessTkn();
 	await renderFriendsList();
-	await renderMatchHistory(null);
+	await renderMatchHistory(null, false);
 	await renderTournamentHistory(null);
 	document.querySelectorAll(".profile-link").forEach(link => {
 		link.addEventListener("click", (event) => renderUserProfile(event.target.dataset.id) );

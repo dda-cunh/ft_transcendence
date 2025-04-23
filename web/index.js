@@ -1,7 +1,13 @@
 import {renderAuth} from './auth.js'
 import {App} from './app.js'
 import {updateAccessTkn} from './utils.js'
+import {showOpts, hideOpts, calcoords, adjust, toggleGraph} from './stats.js'
 
+window.showOpts = showOpts
+window.hideOpts = hideOpts
+window.adjust = adjust
+window.calcoords = calcoords
+window.toggleGraph = toggleGraph
 
 "use strict";
 

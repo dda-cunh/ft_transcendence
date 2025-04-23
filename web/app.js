@@ -6,6 +6,7 @@ import {renderFriendRequests} from './friend_requests.js'
 import {renderAcctSettings} from './account_settings.js'
 import {renderUserProfile} from './social.js'
 import {getOwnUserData} from './utils.js'
+import { renderStats } from "./stats.js";
 
 
 "use strict";
@@ -138,6 +139,9 @@ async function	changeView()
 		case ("friend_requests"):
 			renderFriendRequests();
 			break ;
+		case ("stats"):
+			await renderStats();
+			break ;
 		case ("account_settings"):
 			renderAcctSettings();
 			break ;
@@ -187,6 +191,10 @@ function	setupEventHandlers()
 			sessionStorage.setItem("currentView", "friend_requests");
 			main();
 	};
+	document.getElementById("statsBtn").onclick = function() {
+		sessionStorage.setItem("currentView", "stats");
+		main();
+};
 	document.getElementById("logoutBtn").onclick = () => logoutUser();
 
 
