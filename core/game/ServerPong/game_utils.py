@@ -23,7 +23,7 @@ BALL_SIZE      = 20      # diameter
 BASE_SPEED_PPS = 600      # pixels per second
 TICKS_PER_SECOND = 60
 # FRAME_MOVE_PX  = 5       # pixels per frame
-SCORE_TO_WIN   = 3
+SCORE_TO_WIN   = 10
 
 
 # ─── Optional “defaults” for starting positions ──────────────────────────────

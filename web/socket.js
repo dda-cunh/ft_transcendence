@@ -3,7 +3,7 @@ import { updateAccessTkn } from "./utils.js";
 import PongAI from "./pongAI.js";
 
 let socket = null;
-let gameConstants = {};
+export let gameConstants = {};
 export let gameState = null;
 let gmode = null;
 let keyState = {
@@ -40,6 +40,10 @@ export async function connectWebSocket(mode) {
     ai = true;
   mode = gmode;
   if (socket) socket.close();
+  if (playerAi) {
+    playerAi.destroy();
+    playerAi = null;
+  }
   updateAccessTkn();
   document.cookie = "access=" + sessionStorage.getItem("access") + "; path=/; Secure";
   let wsUrl = `wss://${window.location.hostname}/ws/${mode}pong/`;

@@ -1,114 +1,156 @@
-import { gameState } from "./socket.js";
+import { gameState, gameConstants } from "./socket.js";
 
-const AI_UPDATE_INTERVAL = 1000;
-const AI_REACTION_JITTER = 200;
-const AI_ACCURACY = 0.85;
-const KEY_PRESS_DURATION = 20;
+const AI_REACTION_TIME = 25;
+const PREDICTION_FRAMES = 60;
+const MOVEMENT_THRESHOLD = 5;
 
-
-function getMovVector(x1, y1, x2, y2) {
-    let dx = x2 - x1;
-    let dy = y2 - y1;
-    let magnitude = Math.sqrt(dx * dx + dy * dy);
-
-    if (magnitude === 0) return { dx: 0, dy: 0 };
-
-    return { dx: dx / magnitude, dy: dy / magnitude }
-}
-
-// ========== AI SYSTEM ==========
 export default class PongAI {
-    constructor(gameConstants) {
-        this.predictedImpactY = gameConstants.canvas_h / 2;
-        this.activeTimeouts = [];
-        this.lastPrediction = Date.now();
-        this.targetY = gameConstants.canvas_h / 2;
-        this.positionThreshold = 10 + (1 - AI_ACCURACY) * 70;
-        this.speed = 0;
-        this.lastSnapshot = {x: 0, y: 0};
-        this.initializeAI();
-        this.gameConstants = gameConstants;
+  constructor() {
+    this.activeDirection = null;
+    this.updateInterval = null;
+    this.isActive = false;
+    this.currentY = 0;
+    this.safeConstants = {
+      canvas_w: 800,
+      canvas_h: 600,
+      paddle_w: 20,
+      paddle_h: 100,
+      ball_rad: 5
+    };
+    this.initialize();
+  }
+
+  initialize() {
+    this.isActive = true;
+    this.updateInterval = setInterval(() => {
+      if (this.isActive) this.update();
+    }, AI_REACTION_TIME);
+  }
+
+  getValidConstants() {
+    return gameConstants || this.safeConstants;
+  }
+
+  getCurrentPaddlePosition() {
+    if (!gameState) return this.currentY;
+    const constants = this.getValidConstants();
+    this.currentY = gameState.p2_pos_y + (constants.canvas_h / 2);
+    return this.currentY;
+  }
+
+  predictImpactPosition() {
+    try {
+      if (!gameState?.ball) return this.currentY;
+      const constants = this.getValidConstants();
+
+      // Convert relative positions to absolute coordinates
+      const ballAbsX = gameState.ball.x + (constants.canvas_w / 2);
+      const ballAbsY = gameState.ball.y + (constants.canvas_h / 2);
+      const paddleX = constants.canvas_w - constants.paddle_w;
+
+      // Handle invalid ball speed
+      if (Math.abs(gameState.ball.speedX) < 0.1) return this.currentY;
+
+      // Calculate time to impact with safety checks
+      const timeToImpact = (paddleX - ballAbsX) / gameState.ball.speedX;
+      if (!Number.isFinite(timeToImpact)) return this.currentY;
+
+      // Predict Y position with wall bounce simulation
+      let predictedY = ballAbsY + (gameState.ball.speedY * timeToImpact);
+      const maxY = constants.canvas_h - constants.ball_rad;
+      const minY = constants.ball_rad;
+
+      // Normalize predicted position
+      while (predictedY > maxY || predictedY < minY) {
+        predictedY = predictedY > maxY
+          ? 2 * maxY - predictedY
+          : 2 * minY - predictedY;
+      }
+
+      // Return paddle center position
+      return predictedY - (constants.paddle_h / 2);
+
+    } catch (error) {
+      console.error('Prediction error:', error);
+      return this.currentY;
     }
+  }
 
-    initializeAI() {
-        setInterval(() => this.updateBallPrediction(), AI_UPDATE_INTERVAL);
+  update() {
+    if (!this.isActive) return;
+
+    try {
+      const targetY = this.predictImpactPosition();
+      const currentY = this.getCurrentPaddlePosition();
+
+      // Validate numerical values
+      if (!Number.isFinite(targetY)) {
+        console.warn('Invalid target position');
+        return;
+      }
+
+      const deltaY = targetY - currentY;
+
+      console.log('Current paddle Y:', currentY);
+      console.log('Target Y:', targetY);
+      console.log('Delta Y:', deltaY);
+
+      if (Math.abs(deltaY) > MOVEMENT_THRESHOLD) {
+        const direction = deltaY > 0 ? 'ArrowDown' : 'ArrowUp';
+        this.handleMovement(direction);
+      } else {
+        this.releaseMovement();
+      }
+    } catch (error) {
+      console.error('Update error:', error);
     }
+  }
 
-    updateBallPrediction() {
-        // Store current ball state for prediction
-        if (!gameState)
-        {
-            clearInterval(this.updateBallPrediction);
-            return ;
-        }
+  destroy() {
+    this.isActive = false;
+    clearInterval(this.updateInterval);
+    this.releaseMovement();
+    console.log('AI destroyed');
+  }
+  handleMovement(direction) {
+    if (this.activeDirection === direction) return;
 
-        let ballSnapshot = {
-            x: gameState.ball.x,
-            y: gameState.ball.y,
-            speedX: this.speed,
-            speedY: this.speed
-        };
+    this.releaseMovement();
 
-        let ballMov = getMovVector(this.lastSnapshot.x, this.lastSnapshot.y, gameState.ball.x, gameState.ball.y)
-        if (!this.speed)
-            this.speed = Math.sqrt((gameState.ball.x) ** 2 + (gameState.ball.y) ** 2);
-        ballSnapshot.speedX = ballMov.dx * this.speed;
-        ballSnapshot.speedY = ballMov.dy * this.speed;
-        this.lastSnapshot = ballSnapshot;
-        
-        // Prediction logic with wall bounce simulation
-        let virtualX = ballSnapshot.x;
-        let virtualY = ballSnapshot.y;
-        let virtualSpeedX = ballSnapshot.speedX;
-        let virtualSpeedY = ballSnapshot.speedY;
+    const targetElement = document.getElementById('gameCanvas') || document.body;
 
-        for (let steps = 0; steps < 5000; steps++) {
-            if (virtualSpeedX > 0 && virtualX >= this.gameConstants.canvas_w - this.gameConstants.paddle_w) {
-                this.predictedImpactY = virtualY;
-                break;
-            }
+    const downEvent = new KeyboardEvent('keydown', {
+      key: direction,
+      code: direction,
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+      repeat: false
+    });
 
-            const yTravel = virtualSpeedY > 0 
-                ? this.gameConstants.canvas_h - virtualY 
-                : -virtualY;
-            const yTime = Math.abs(yTravel / virtualSpeedY);
-            const xTime = (this.gameConstants.canvas_w - this.gameConstants.paddle_w - virtualX) / virtualSpeedX;
-            const stepTime = Math.min(xTime, yTime);
+    targetElement.dispatchEvent(downEvent);
+    this.activeDirection = direction;
 
-            if (xTime < yTime) {
-                virtualX += virtualSpeedX * xTime;
-                virtualY += virtualSpeedY * xTime;
-                this.predictedImpactY = virtualY;
-                break;
-            } else {
-                virtualX += virtualSpeedX * stepTime;
-                virtualY += virtualSpeedY * stepTime;
-                virtualSpeedY *= -1;
-            }
-        }
-        
-        const error = this.predictedImpactY - gameState.p2_pos_y;
-    
-        if (Math.abs(error) <= this.positionThreshold) return;
-    
-        const direction = error > 0 ? 'ArrowDown' : 'ArrowUp';
-        const distance = Math.abs(error);
-    
-        const paddleSpeed = 10;
-        const timeToHold = distance / paddleSpeed * 1000;
-    
-        const jitterDelay = Math.random() * AI_REACTION_JITTER;
-    
-        setTimeout(() => {
-            const downEvent = new KeyboardEvent('keydown', { key: direction, bubbles: true });
-            document.dispatchEvent(downEvent);
-    
-            const releaseTimeout = setTimeout(() => {
-                const upEvent = new KeyboardEvent('keyup', { key: direction, bubbles: true });
-                document.dispatchEvent(upEvent);
-            }, timeToHold);
-    
-            this.activeTimeouts.push(releaseTimeout);
-        }, jitterDelay);
-    }
+    setTimeout(() => {
+      this.releaseMovement();
+    }, AI_REACTION_TIME / 2);
+  }
+
+  releaseMovement() {
+    if (!this.activeDirection) return;
+
+    const targetElement = document.getElementById('gameCanvas') || document.body;
+
+    const upEvent = new KeyboardEvent('keyup', {
+      key: this.activeDirection,
+      code: this.activeDirection,
+      bubbles: true,
+      cancelable: true,
+      composed: true
+    });
+
+    targetElement.dispatchEvent(upEvent);
+    this.activeDirection = null;
+  }
+
 }
