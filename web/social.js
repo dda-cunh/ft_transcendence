@@ -38,6 +38,8 @@ async function	sendFriendRequest(userID)
 
 		if (!response.ok)
 			throw new Error("Failed to send friend request");
+
+		renderUserProfile(userID);
 	}
 	catch (error)
 	{
@@ -47,6 +49,14 @@ async function	sendFriendRequest(userID)
 
 }
 
+function	addRequestSentBtn()
+{
+	let controlsCol = document.getElementById("playerCardControlsCol");
+
+	controlsCol.innerHTML = `
+		<button class="btn btn-sm btn-outline-secondary disabled mt-3">FRIEND REQUEST SENT</button>
+	`;
+}
 
 async function	renderPlayerCard(userID)
 {
@@ -99,8 +109,8 @@ async function	renderPlayerCard(userID)
 
 		controlsCol.innerHTML = `
 			<small class="mt-2 me-2">${userData.username}<br>has sent you a friend request</small>
-			<button id="acceptBtn" data-id="${id}" class="btn btn-sm btn-outline-success me-2 mt-2"><i data-id="${id}" class="bi-check-lg"></i></button>
-			<button id="denyBtn" data-id="${id}" class="btn btn-sm btn-outline-danger mt-2"><i data-id="${id}" class="bi-x-lg"></i></button>
+			<button id="acceptBtn" data-id="${id}" class="btn btn-sm btn-outline-success me-2 mt-3"><i data-id="${id}" class="bi-check-lg"></i></button>
+			<button id="denyBtn" data-id="${id}" class="btn btn-sm btn-outline-danger mt-3"><i data-id="${id}" class="bi-x-lg"></i></button>
 		`;
 
 		document.getElementById("acceptBtn").addEventListener("click", (event) => acceptFriendRequest(event) );
