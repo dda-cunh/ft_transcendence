@@ -322,6 +322,6 @@ export async function	renderUserProfile(userID)
 
 	await renderPlayerCard(userID);
 	await renderPlayerProfile(userID);
-	await renderMatchHistory(userID)
+	await renderMatchHistory(userID, null)
 	await renderTournamentHistory(userID)
 }
