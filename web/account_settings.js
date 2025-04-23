@@ -54,7 +54,6 @@ async function	chgMotto(event)
 
 	try
 	{
-		throw new Error("error")
 		await updateAccessTkn();
 
 		let response = await fetch("management/profile/motto/", {
@@ -128,7 +127,6 @@ async function	chgPfp(event)
 	catch (error)
 	{
 		showPopover(error.toString().slice(7), uploadBtn, "danger");
-//		uploadBtn.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback d-block\">"+error+"</div>");
 		event.stopPropagation();
 	}
 
@@ -187,15 +185,13 @@ async function	chgPassword(event)
 	}
 	catch(error)
 	{
-		if (errField !== undefined)
-		{
-			let	errElem = document.getElementById(errField);
-			errElem.classList.add("is-invalid");
-			errElem.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>")
-			event.stopPropagation();
-		}
-		else
-			alert(error);
+		if (errField === undefined)
+			errField = "chgPasswdBtn";
+
+		let	errElem = document.getElementById(errField);
+		errElem.classList.add("is-invalid");
+		showPopover(error.toString().slice(7), errElem.parentElement, 'danger');
+		event.stopPropagation();
 	}
 }
 

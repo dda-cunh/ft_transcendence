@@ -95,15 +95,13 @@ async function	registerUser(event)
 	catch (error)
 	{
 		clearPopovers();
-		if (errField !== undefined)
-		{
+		if (errField === undefined)
+			errField = "registerUserBtn";
+
 			let	errElem = document.getElementById(errField);
 			errElem.classList.add("is-invalid");
-			showPopover(error.toString().slice(7), errField, 'danger');
+			showPopover(error.toString().slice(7), errElem.parentElement, 'danger');
 			event.stopPropagation();
-		}
-		else
-			alert(error);
 	}
 }
 
@@ -120,7 +118,6 @@ async function	loginUser(event)
 
 	try
 	{
-//		throw new Error("here")
 		let responseData = await doAuth(creds, "auth/");
 
 		if (!responseData.ok)
@@ -156,7 +153,7 @@ async function	loginUser(event)
 
 		let	errElem = document.getElementById(errField);
 		errElem.classList.add("is-invalid");
-		showPopover(error.toString().slice(7), errField, 'danger');
+		showPopover(error.toString().slice(7), errElem.parentElement, 'danger');
 		event.stopPropagation();
 	}
 }
