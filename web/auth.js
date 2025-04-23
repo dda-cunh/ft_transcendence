@@ -26,9 +26,9 @@ async function	renderPage()
 	}
 }
 
-function showPopover(error, errField)
+function showPopover(msg, targetElem, color = 'primary')
 {
-		const popoverTrigger = document.getElementById(errField).parentElement;
+		const popoverTrigger = document.getElementById(targetElem).parentElement;
 
 
 		// Initialize the Bootstrap popover
@@ -41,12 +41,12 @@ function showPopover(error, errField)
 			const popoverEl = document.querySelector('.popover');
 
 			if (popoverEl) {
-			popoverEl.classList.add('border', 'border-danger');
+			popoverEl.classList.add('border', `border-${color}`);
 
 			const body = popoverEl.querySelector('.popover-body');
 			if (body) {
-				body.classList.add('text-danger');
-				body.innerText = error
+				body.classList.add(`text-${color}`);
+				body.innerText = msg
 			}
 
 			observer.disconnect(); // Stop watching once found
@@ -61,7 +61,10 @@ function showPopover(error, errField)
 			setTimeout(() => {
 				popover.dispose();
 			}, 150);
-
+			const	markedFields = document.querySelectorAll(".is-invalid");
+			markedFields.forEach((field) => {
+			field.classList.remove("is-invalid");
+	} );
 		}, 3000);
 }
 
@@ -136,7 +139,7 @@ async function	registerUser(event)
 		{
 			let	errElem = document.getElementById(errField);
 			errElem.classList.add("is-invalid");
-			showPopover(error, errField);
+			showPopover(error.toString().slice(7), errField, 'danger');
 			event.stopPropagation();
 		}
 		else
@@ -191,7 +194,7 @@ async function	loginUser(event)
 		{
 			let	errElem = document.getElementById(errField);
 			errElem.classList.add("is-invalid");
-			showPopover(error, errField);
+			showPopover(error.toString().slice(7), errField, 'danger');
 			event.stopPropagation();
 		}
 		else
