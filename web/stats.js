@@ -205,7 +205,7 @@ export async function renderToggableGraph(data, userID, elem)
         let result = await getUserData(id);
         let p1_score = 0;
         let p2_score = 0;
-        if (entry.player1 === userID)
+        if (entry.player1 !== userID)
         {
             id = entry.player2;
             scored += entry.p2_score;
@@ -227,8 +227,12 @@ export async function renderToggableGraph(data, userID, elem)
         lost++;
 
         let opponent = await getUserData(id);
+        let resultColor = "success";
         if (entry.winner === id)
+        {
+        		resultColor = "danger";
                 result = opponent;
+        }
 
         const date = new Date(entry.ended_at);
         const formattedDate = date.toLocaleString();
@@ -246,7 +250,7 @@ export async function renderToggableGraph(data, userID, elem)
                     </span>
                 </span>
             </td>
-            <td class="col">
+            <td class="col text-${resultColor}">
                 <span id="userpoints">${p1_score}</span>
                 <span> - </span>
                 <span id="opponentpoints">${p2_score}</span>
