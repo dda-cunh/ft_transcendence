@@ -2,19 +2,18 @@ import {renderAuth} from './auth.js'
 import {App} from './app.js'
 import { main } from "./index.js";
 import {updateAccessTkn} from './utils.js'
-import {clearErrFields} from './utils.js'
+import {clearPopovers} from './utils.js'
+import {showPopover} from './utils.js'
 
 "use strict";
 
-
-//function	showPopover()
 
 
 async function	chgUserName(event)
 {
 	let newUserField = document.getElementById("newUserField");
 
-	clearErrFields();
+	clearPopovers();
 
 	try
 	{
@@ -41,27 +40,21 @@ async function	chgUserName(event)
 	}
 	catch(error)
 	{
-			let errMsg = document.getElementById("errMsg");
-			if (errMsg !== null)
-				errMsg.remove();
 			newUserField.classList.add("is-invalid");
-			newUserField.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>");
+			showPopover(error.toString().slice(7), newUserField.parentElement, "danger");
 			event.stopPropagation();
 	}
 }
 
 async function	chgMotto(event)
 {
-	clearErrFields();
+	clearPopovers();
 
 	let newMottoField = document.getElementById("newMottoField");
 
 	try
 	{
-/*
-		if (!newMottoField.value)
-			throw new Error("This field cannot be empty.");
-*/
+		throw new Error("error")
 		await updateAccessTkn();
 
 		let response = await fetch("management/profile/motto/", {
@@ -83,19 +76,15 @@ async function	chgMotto(event)
 	}
 	catch (error)
 	{
-		alert
-		let errMsg = document.getElementById("errMsg");
-		if (errMsg !== null)
-			errMsg.remove();
 		newMottoField.classList.add("is-invalid");
-		newMottoField.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>");
+		showPopover(error.toString().slice(7), newMottoField.parentElement, "danger")
 		event.stopPropagation();
 	}
 }
 
 async function	chgPfp(event)
 {
-	clearErrFields();
+	clearPopovers();
 
 	let uploadBtn = document.getElementById("pfpUploadBtn");
 	let newPfp = new FormData();
@@ -138,7 +127,8 @@ async function	chgPfp(event)
 	}
 	catch (error)
 	{
-		uploadBtn.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback d-block\">"+error+"</div>");
+		showPopover(error.toString().slice(7), uploadBtn, "danger");
+//		uploadBtn.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback d-block\">"+error+"</div>");
 		event.stopPropagation();
 	}
 

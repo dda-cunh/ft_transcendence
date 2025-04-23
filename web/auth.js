@@ -1,6 +1,7 @@
 import {App} from './app.js'
 import { main } from "./index.js";
-import {clearErrFields} from './utils.js'
+import {clearPopovers} from './utils.js'
+import {showPopover} from './utils.js'
 
 "use strict";
 
@@ -26,47 +27,6 @@ async function	renderPage()
 	}
 }
 
-function showPopover(msg, targetElem, color = 'primary')
-{
-		const popoverTrigger = document.getElementById(targetElem).parentElement;
-
-
-		// Initialize the Bootstrap popover
-		const popover = new bootstrap.Popover(popoverTrigger);
-
-		// Show the popover on page load
-
-
-		const observer = new MutationObserver(() => {
-			const popoverEl = document.querySelector('.popover');
-
-			if (popoverEl) {
-			popoverEl.classList.add('border', `border-${color}`);
-
-			const body = popoverEl.querySelector('.popover-body');
-			if (body) {
-				body.classList.add(`text-${color}`);
-				body.innerText = msg
-			}
-
-			observer.disconnect(); // Stop watching once found
-			}
-		});
-
-		observer.observe(document.body, { childList: true, subtree: true });
-
-		popover.show();
-		setTimeout(() => {
-			popover.hide();
-			setTimeout(() => {
-				popover.dispose();
-			}, 150);
-			const	markedFields = document.querySelectorAll(".is-invalid");
-			markedFields.forEach((field) => {
-			field.classList.remove("is-invalid");
-	} );
-		}, 3000);
-}
 
 	/*	EVENT HANDLERS	*/
 async function	doAuth(creds, dir)
@@ -134,7 +94,7 @@ async function	registerUser(event)
 	}
 	catch (error)
 	{
-		clearErrFields();
+		clearPopovers();
 		if (errField !== undefined)
 		{
 			let	errElem = document.getElementById(errField);
@@ -160,6 +120,7 @@ async function	loginUser(event)
 
 	try
 	{
+//		throw new Error("here")
 		let responseData = await doAuth(creds, "auth/");
 
 		if (!responseData.ok)
@@ -189,16 +150,14 @@ async function	loginUser(event)
 	}
 	catch(error)
 	{
-		clearErrFields();
-		if (errField !== undefined)
-		{
-			let	errElem = document.getElementById(errField);
-			errElem.classList.add("is-invalid");
-			showPopover(error.toString().slice(7), errField, 'danger');
-			event.stopPropagation();
-		}
-		else
-			alert(error);
+		clearPopovers();
+		if (errField === undefined)
+			errField = "loginBtn"
+
+		let	errElem = document.getElementById(errField);
+		errElem.classList.add("is-invalid");
+		showPopover(error.toString().slice(7), errField, 'danger');
+		event.stopPropagation();
 	}
 }
 
