@@ -1,3 +1,5 @@
+import {connectWebSocket} from './socket.js'
+
 "use strict"
 
 function    fixDPI(canvas)
@@ -38,7 +40,7 @@ function    renderPage()
     transcendenceApp.style.height = window.innerHeight;
 }
 
-export function renderPongGame()
+export function renderPongGame(gameMode)
 {
     renderPage();
 
@@ -46,7 +48,7 @@ export function renderPongGame()
     const ctx = canvas.getContext("2d");
     fixDPI(canvas);
 
-//  FOR MOBILE DEVICES ONLY
-//    alert("For a better experience, please flip your device to landscape view");
-
+    let mode = gameMode === "tournament" ? "tournament" : sessionStorage.getItem("matchType");
+    console.log(mode)
+    connectWebSocket(mode);
 }

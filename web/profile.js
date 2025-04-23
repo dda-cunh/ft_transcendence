@@ -15,6 +15,7 @@ async function	getUserData(userID)
 
 async function renderGameEntries(data, userID, dest) {
 	let played = 0, won = 0, lost = 0;
+
 	for (const entry of data) {
 	  played++;
 	  let id = entry.player1;

@@ -19,6 +19,7 @@ function	initApp()
 	let paddleColor = sessionStorage.getItem("paddleColor");
 	let ballColor = sessionStorage.getItem("ballColor");
 	let backgroundColor = sessionStorage.getItem("backgroundColor");
+	let gameMode = sessionStorage.getItem("gameMode");
 
 	if (currentView === null)
 		sessionStorage.setItem("currentView", "home");
@@ -34,6 +35,9 @@ function	initApp()
 
 	if (backgroundColor === null)
 		sessionStorage.setItem("backgroundColor", "Black");
+
+	if (gameMode === null)
+		sessionStorage.setItem("gameMode", "friendlyMatch");
 }
 
 export async function	userIsLoggedIn()

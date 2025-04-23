@@ -7,6 +7,8 @@ import {renderAcctSettings} from './account_settings.js'
 import {renderUserProfile} from './social.js'
 import {getOwnUserData} from './utils.js'
 import { renderStats } from "./stats.js";
+import {renderPongGame} from './pong_game.js'
+import {socket} from './socket.js'
 
 
 "use strict";
@@ -57,8 +59,6 @@ async function renderPlayerCard()
 		playerCardContainer.innerHTML = playerCardHtml;
 
 		let userData = await getOwnUserData();
-
-		console.log(userData);
 
 		let imgSrc = userData.avatar;
 		let userName = userData.username;
@@ -117,7 +117,7 @@ function	logoutUser()
 async function	changeView()
 {
 	let currentView = sessionStorage.getItem("currentView");
-	if (!currentView.startsWith("user#"))
+	if (!currentView.startsWith("user#") && currentView !== "game")
 		await renderView();
 
 
@@ -141,6 +141,9 @@ async function	changeView()
 		case ("account_settings"):
 			renderAcctSettings();
 			break ;
+		case ("game"):
+			renderPongGame(sessionStorage.getItem("gameMode"));
+			break ;
 		default:
 			renderUserProfile(currentView.split("#").pop());
 	}
@@ -148,19 +151,24 @@ async function	changeView()
 
 let initialLoad = true;
 
-window.addEventListener("popstate", function(event) {
+export function	handleHistoryPopState(event)
+{
 	if (initialLoad)
 	{
 		initialLoad = false;
 		return ;
 	}
 
-	if (event.state?.view && history.state?.view !== sessionStorage.getItem("currentView") )
+	if (history.state?.view !== sessionStorage.getItem("currentView") )
 	{
+		if (sessionStorage.getItem("currentView") === "game" && socket)
+			socket.close();
 		sessionStorage.setItem("currentView", event.state.view);
 		main();
 	}
-} );
+}
+
+window.addEventListener("popstate", (event) => handleHistoryPopState(event) );
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -214,8 +222,11 @@ function	setupEventHandlers()
 
 export async function	App()
 {
-	await renderPage();
-	setupEventHandlers();
+	if (sessionStorage.getItem("currentView") !== "game")
+	{
+		await renderPage();
+		setupEventHandlers();
+	}
 
 	changeView();
 }

@@ -1,7 +1,6 @@
+import { main } from "./index.js";
 import {renderAuth} from './auth.js'
 import {renderProfile} from './profile.js'
-import {renderPongGame} from './pong_game.js'
-import {connectWebSocket} from './socket.js'
 
 "use strict";
 
@@ -35,8 +34,14 @@ function	setupEventHandlers()
 	document.getElementById("ballColor").onclick = () => sessionStorage.setItem("ballColor", document.getElementById("ballColor").value);
 	document.getElementById("paddleColor").onclick = () => sessionStorage.setItem("paddleColor", document.getElementById("paddleColor").value);
 	document.getElementById("backgroundColor").onclick = () => sessionStorage.setItem("backgroundColor", document.getElementById("backgroundColor").value);
+
+	document.getElementById("btnFriendlyMatch").onclick = () => { checkAlias(), sessionStorage.setItem("currentView", "game"), sessionStorage.setItem("gameMode", "friendlyMatch"), main() };
+	document.getElementById("btnTournament").onclick = () => { checkAlias(), sessionStorage.setItem("currentView", "game"), sessionStorage.setItem("gameMode", "tournament"), main() };
+
+/*
 	document.getElementById("btnFriendlyMatch").onclick = () => { checkAlias(), renderPongGame(); connectWebSocket(sessionStorage.getItem("matchType")) };
 	document.getElementById("btnTournament").onclick = () => { checkAlias(), renderPongGame(); connectWebSocket('tournament')};
+*/
 }
 
 
