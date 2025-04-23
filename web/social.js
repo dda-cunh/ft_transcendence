@@ -9,7 +9,13 @@ import { renderMatchHistory, renderTournamentHistory } from "./profile.js";
 
 async function	getUserData(userID)
 {
-	let response = await fetch(`management/management/user/${userID}/`);
+	updateAccessTkn();
+	let response = await fetch(`management/management/user/${userID}/`, {
+								method: "GET",
+								headers: {
+									"Authorization": `Bearer ${sessionStorage.getItem("access")}`,
+								},
+	} );
 
 	return (await response.json() );
 }
@@ -40,6 +46,7 @@ async function	sendFriendRequest(userID)
 	}
 
 }
+
 
 async function	renderPlayerCard(userID)
 {
@@ -172,6 +179,8 @@ async function	renderPlayerCard(userID)
 		//	MUST ALSO CHECK IF FRIEND REQUEST HAS BEEN SENT TO THIS USER
 		if (await pendingFriendRequest(userID) )
 			addFriendRequestResponseBtns(userData);
+		else if (userData.request_sent)
+			addRequestSentBtn();
 		else if (!(await userIsFriend(userID) ))
 			addFriendRequestBtn(userID);
 		else
