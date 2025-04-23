@@ -3,7 +3,7 @@ import { updateAccessTkn } from "./utils.js";
 import PongAI from "./pongAI.js";
 
 let socket = null;
-let gameConstants = {};
+export let gameConstants = {};
 export let gameState = null;
 let gmode = null;
 let keyState = {
