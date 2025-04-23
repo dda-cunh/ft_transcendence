@@ -54,9 +54,25 @@ class PublicUserDetailView(APIView):
 
     def get(self, request, user_id):
         user = get_object_or_404(User, pk=user_id)
+        now = timezone.now()
+        ONLINE_THRESHOLD = timedelta(minutes=5)
+        is_online = (now - user.last_activity) <= ONLINE_THRESHOLD
+
+        # <-- this only ever looks for a request *from* the current viewer
+        request_sent = False
+        if request.user.is_authenticated:
+            request_sent = FriendRequest.objects.filter(
+                sender=request.user,
+                receiver=user,
+                accepted_at__isnull=True,
+                rejected_at__isnull=True
+            ).exists()
+
         data = {
             "id": str(user.id),
             "username": user.username,
+            "online": is_online,
+            "request_sent":  request_sent,
             "motto": user.motto,
             "avatar": user.avatar.name if user.avatar else None,
             "last_activity": user.last_activity,
