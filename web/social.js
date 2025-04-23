@@ -9,7 +9,16 @@ import { renderMatchHistory, renderTournamentHistory } from "./profile.js";
 
 async function	getUserData(userID)
 {
-	let response = await fetch(`management/management/user/${userID}/`);
+	updateAccessTkn();
+
+	let response = await fetch(`management/management/user/${userID}/`, {
+								method: "GET",
+								headers: {
+									"Authorization": `Bearer ${sessionStorage.getItem("access")}`,
+								},
+	});
+	if (!response.ok)
+		throw new Error("Failed to fetch user info");
 
 	return (await response.json() );
 }
