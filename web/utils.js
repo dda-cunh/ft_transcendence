@@ -52,4 +52,10 @@ export function	clearErrFields()
 	markedFields.forEach((field) => {
 		field.classList.remove("is-invalid");
 	} );
+
+	let errPopover = document.querySelectorAll(".popover");
+	errPopover.forEach(msg => {
+		msg.remove();
+	})
+		
 }

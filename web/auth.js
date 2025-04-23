@@ -26,6 +26,45 @@ async function	renderPage()
 	}
 }
 
+function showPopover(error, errField)
+{
+		const popoverTrigger = document.getElementById(errField).parentElement;
+
+
+		// Initialize the Bootstrap popover
+		const popover = new bootstrap.Popover(popoverTrigger);
+
+		// Show the popover on page load
+
+
+		const observer = new MutationObserver(() => {
+			const popoverEl = document.querySelector('.popover');
+
+			if (popoverEl) {
+			popoverEl.classList.add('border', 'border-danger');
+
+			const body = popoverEl.querySelector('.popover-body');
+			if (body) {
+				body.classList.add('text-danger');
+				body.innerText = error
+			}
+
+			observer.disconnect(); // Stop watching once found
+			}
+		});
+
+		observer.observe(document.body, { childList: true, subtree: true });
+
+		popover.show();
+		setTimeout(() => {
+			popover.hide();
+			setTimeout(() => {
+				popover.dispose();
+			}, 150);
+
+		}, 3000);
+}
+
 	/*	EVENT HANDLERS	*/
 async function	doAuth(creds, dir)
 {
@@ -95,10 +134,9 @@ async function	registerUser(event)
 		clearErrFields();
 		if (errField !== undefined)
 		{
-
 			let	errElem = document.getElementById(errField);
 			errElem.classList.add("is-invalid");
-			errElem.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>")
+			showPopover(error, errField);
 			event.stopPropagation();
 		}
 		else
@@ -153,7 +191,7 @@ async function	loginUser(event)
 		{
 			let	errElem = document.getElementById(errField);
 			errElem.classList.add("is-invalid");
-			errElem.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">" + error + "</div>");
+			showPopover(error, errField);
 			event.stopPropagation();
 		}
 		else
@@ -162,12 +200,14 @@ async function	loginUser(event)
 }
 
 
+
 	/*	MAIN FUNCTION	*/
 export async function	renderAuth()
 {
 	sessionStorage.setItem("currentView", "home");
 
 	await renderPage();
+
 
 	document.getElementById("loginForm").onsubmit = (event) => { loginUser(event) };
 	document.getElementById("registerForm").onsubmit = (event) => { registerUser(event) };
