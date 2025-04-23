@@ -164,9 +164,13 @@ async function	renderPlayerCard(userID)
 		document.getElementById("friendRequestBtn").onclick = (event) => sendFriendRequest(userID);
 	}
 
-	function	addOnlineStatus(userID)
+	function	addOnlineStatus(status)
 	{
+		let statusColor = status ? "success" : "secondary";
 
+		document.getElementById("onlineStatusCol").innerHTML = `
+			<span class="badge bg-${statusColor} border border-light rounded-circle mt-2" style="height: 17.5px; width: 17.5px">
+		`;
 	}
 
 	let	playerCardContainer = document.getElementById("appContainer");
@@ -183,8 +187,8 @@ async function	renderPlayerCard(userID)
 
 		let userData = await getUserData(userID);
 		console.log(userData);
-//		ADD ONLINE STATUS BADGE
-		addOnlineStatus(userID);
+
+		addOnlineStatus(userData.online);
 
 		//	MUST ALSO CHECK IF FRIEND REQUEST HAS BEEN SENT TO THIS USER
 		if (await pendingFriendRequest(userID) )
