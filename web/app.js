@@ -68,10 +68,6 @@ async function renderPlayerCard()
 		pfp.src = `management/media/${imgSrc}`;
 		document.getElementById("userNameDisplay").innerText = userName;
 		document.getElementById("mottoDisplay").innerText = `"` + motto + `"`;
-
-		let pfpHeight = document.getElementById("pfpContainer").offsetHeight;
-		pfp.style.height = `${pfpHeight}px`;
-		pfp.style.width = `${pfpHeight}px`;
 	}
 	catch (error)
 	{

@@ -10,15 +10,12 @@ import { renderMatchHistory, renderTournamentHistory } from "./profile.js";
 async function	getUserData(userID)
 {
 	updateAccessTkn();
-
 	let response = await fetch(`management/management/user/${userID}/`, {
 								method: "GET",
 								headers: {
 									"Authorization": `Bearer ${sessionStorage.getItem("access")}`,
 								},
-	});
-	if (!response.ok)
-		throw new Error("Failed to fetch user info");
+	} );
 
 	return (await response.json() );
 }
@@ -41,6 +38,8 @@ async function	sendFriendRequest(userID)
 
 		if (!response.ok)
 			throw new Error("Failed to send friend request");
+
+		renderUserProfile(userID);
 	}
 	catch (error)
 	{
@@ -48,6 +47,15 @@ async function	sendFriendRequest(userID)
 		return ;
 	}
 
+}
+
+function	addRequestSentBtn()
+{
+	let controlsCol = document.getElementById("playerCardControlsCol");
+
+	controlsCol.innerHTML = `
+		<button class="btn btn-sm btn-outline-secondary disabled mt-3">FRIEND REQUEST SENT</button>
+	`;
 }
 
 async function	renderPlayerCard(userID)
@@ -81,7 +89,7 @@ async function	renderPlayerCard(userID)
 				else if (entry.receiver === userID)
 				{
 					pendingRequestID = "self";
-					result = false;
+					result = true;
 				}
 			} );
 
@@ -101,8 +109,8 @@ async function	renderPlayerCard(userID)
 
 		controlsCol.innerHTML = `
 			<small class="mt-2 me-2">${userData.username}<br>has sent you a friend request</small>
-			<button id="acceptBtn" data-id="${id}" class="btn btn-sm btn-outline-success me-2 mt-2"><i data-id="${id}" class="bi-check-lg"></i></button>
-			<button id="denyBtn" data-id="${id}" class="btn btn-sm btn-outline-danger mt-2"><i data-id="${id}" class="bi-x-lg"></i></button>
+			<button id="acceptBtn" data-id="${id}" class="btn btn-sm btn-outline-success me-2 mt-3"><i data-id="${id}" class="bi-check-lg"></i></button>
+			<button id="denyBtn" data-id="${id}" class="btn btn-sm btn-outline-danger mt-3"><i data-id="${id}" class="bi-x-lg"></i></button>
 		`;
 
 		document.getElementById("acceptBtn").addEventListener("click", (event) => acceptFriendRequest(event) );
@@ -155,17 +163,16 @@ async function	renderPlayerCard(userID)
 
 		document.getElementById("friendRequestBtn").onclick = (event) => sendFriendRequest(userID);
 	}
-/*
-	function	addOnlineStatus(userData)
+
+	function	addOnlineStatus(status)
 	{
-		let statusCol = document.getElementById("onlineStatusCol");
-		let statusColor = userData.online ? "success" : "secondary";
+		let statusColor = status ? "success" : "secondary";
 
-		console.log(userData.online)
-
-		statusCol.innerHTML = `<span class="badge bg-${statusColor} border border-light rounded-circle d-block mt-3" style="height: 17.6px; width: 17.6px">`;
+		document.getElementById("onlineStatusCol").innerHTML = `
+			<span class="badge bg-${statusColor} border border-light rounded-circle mt-2" style="height: 17.5px; width: 17.5px">
+		`;
 	}
-*/
+
 	let	playerCardContainer = document.getElementById("appContainer");
 
 	try
@@ -179,15 +186,15 @@ async function	renderPlayerCard(userID)
 		playerCardContainer.innerHTML = playerCardHtml;
 
 		let userData = await getUserData(userID);
-//		ADD ONLINE STATUS BADGE
-//		addOnlineStatus(userData);
-
 		console.log(userData);
+
+		addOnlineStatus(userData.online);
+
 		//	MUST ALSO CHECK IF FRIEND REQUEST HAS BEEN SENT TO THIS USER
 		if (await pendingFriendRequest(userID) )
 			addFriendRequestResponseBtns(userData);
 		else if (userData.request_sent)
-				console.log("start here")
+			addRequestSentBtn();
 		else if (!(await userIsFriend(userID) ))
 			addFriendRequestBtn(userID);
 		else
@@ -195,6 +202,7 @@ async function	renderPlayerCard(userID)
 			document.getElementById("acctSettingsBtn").style.opacity = 0;
 			document.getElementById("acctSettingsBtn").classList.add("disabled");
 		}
+
 
 		let imgSrc = userData.avatar;
 		let userName = userData.username;

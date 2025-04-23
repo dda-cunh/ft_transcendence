@@ -86,6 +86,7 @@ async function	registerUser(event)
 		{
 			sessionStorage.setItem("access", responseData.tokens.access);
 			sessionStorage.setItem("refresh", responseData.tokens.refresh);
+			sessionStorage.setItem("currentView", "home");
 			main();
 		}
 	}
@@ -141,6 +142,7 @@ async function	loginUser(event)
 		{
 			sessionStorage.setItem("access", responseData.access);
 			sessionStorage.setItem("refresh", responseData.refresh);
+			sessionStorage.setItem("currentView", "home");
 			main();
 		}
 	}
