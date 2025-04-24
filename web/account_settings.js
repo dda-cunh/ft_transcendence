@@ -4,6 +4,7 @@ import { main } from "./index.js";
 import {updateAccessTkn} from './utils.js'
 import {clearPopovers} from './utils.js'
 import {showPopover} from './utils.js'
+import {getOwnUserData} from './utils.js'
 
 "use strict";
 
@@ -93,6 +94,25 @@ async function	chgMotto(event)
 	}
 }
 
+async function	getNewPfpPath()
+{
+	updateAccessTkn();
+
+	try
+	{
+		let userData = await getOwnUserData();
+
+		if (!userData)
+			throw new Error("failed to retrieve user data");
+
+		return (`management/media/${userData.avatar}`)
+	}
+	catch(error)
+	{
+		console.log(error);
+	}
+}
+
 async function	chgPfp(event)
 {
 	clearPopovers();
@@ -134,7 +154,12 @@ async function	chgPfp(event)
 			throw new Error(errorMsg);
 		}
 
-		main();
+		let pfpElem = document.getElementById("userPfp");
+		if (pfpElem)
+			pfpElem.src = await getNewPfpPath();
+
+		document.getElementById("changePfpForm").reset();
+		showPopover("Profile picture updated successfully", uploadBtn, "success");
 	}
 	catch (error)
 	{
