@@ -1,9 +1,14 @@
+import { main } from "./index.js";
 import {renderAuth} from './auth.js'
 import {renderHome} from './home.js'
 import {renderProfile} from './profile.js'
 import {renderFriendRequests} from './friend_requests.js'
 import {renderAcctSettings} from './account_settings.js'
 import {renderUserProfile} from './social.js'
+import {getOwnUserData} from './utils.js'
+import { renderStats } from "./stats.js";
+import {renderPongGame} from './pong_game.js'
+import {socket} from './socket.js'
 
 
 "use strict";
@@ -65,7 +70,13 @@ async function renderPlayerCard()
 		let playerCardHtml = await response.text();
 		playerCardContainer.innerHTML = playerCardHtml;
 
-		let userData = await getUserData();
+		document.getElementById("playerCardControlsCol").innerHTML = `
+			<button id="acctSettingsBtn" type="button" class="btn btn-sm btn-outline-light mt-2">
+				<i class="bi-gear-fill"></i>
+			</button>
+		`
+
+		let userData = await getOwnUserData();
 
 		let imgSrc = userData.avatar;
 		let userName = userData.username;
@@ -76,10 +87,6 @@ async function renderPlayerCard()
 		pfp.src = `management/media/${imgSrc}`;
 		document.getElementById("userNameDisplay").innerText = userName;
 		document.getElementById("mottoDisplay").innerText = `"` + motto + `"`;
-
-		let pfpHeight = document.getElementById("pfpContainer").offsetHeight;
-		pfp.style.height = `${pfpHeight}px`;
-		pfp.style.width = `${pfpHeight}px`;
 	}
 	catch (error)
 	{
@@ -89,7 +96,7 @@ async function renderPlayerCard()
 
 async function	renderView()
 {
-	let viewName = localStorage.getItem("currentView");
+	let viewName = sessionStorage.getItem("currentView");
 	let viewRow = document.getElementById("viewRow");
 
 	try
@@ -111,7 +118,7 @@ async function	renderView()
 async function renderPage() 
 {
 	await renderNavbar();
-	if (!localStorage.getItem("currentView").startsWith("user#"))
+	if (!sessionStorage.getItem("currentView").startsWith("user#"))
 		await renderPlayerCard();
 }
 
@@ -121,14 +128,14 @@ function	logoutUser()
 {
 	sessionStorage.removeItem("access");
 	sessionStorage.removeItem("refresh");
-	localStorage.setItem("currentView", "home");
+	sessionStorage.setItem("currentView", "home");
 	renderAuth();
 }
 
 async function	changeView()
 {
-	let currentView = localStorage.getItem("currentView");
-	if (!currentView.startsWith("user#"))
+	let currentView = sessionStorage.getItem("currentView");
+	if (!currentView.startsWith("user#") && currentView !== "game")
 		await renderView();
 
 
@@ -146,8 +153,14 @@ async function	changeView()
 		case ("friend_requests"):
 			renderFriendRequests();
 			break ;
+		case ("stats"):
+			await renderStats();
+			break ;
 		case ("account_settings"):
 			renderAcctSettings();
+			break ;
+		case ("game"):
+			renderPongGame(sessionStorage.getItem("gameMode"));
 			break ;
 		default:
 			renderUserProfile(currentView.split("#").pop());
@@ -156,69 +169,91 @@ async function	changeView()
 
 let initialLoad = true;
 
-window.addEventListener("popstate", function(event) {
+export function	handleHistoryPopState(event)
+{
 	if (initialLoad)
 	{
 		initialLoad = false;
 		return ;
 	}
 
-	if (event.state?.view && history.state?.view !== localStorage.getItem("currentView") )
+	if (event.state?.view !== sessionStorage.getItem("currentView") )
 	{
-		localStorage.setItem("currentView", event.state.view);
-		changeView();
+		if (sessionStorage.getItem("currentView") === "game" && socket)
+			socket.close();
+		sessionStorage.setItem("currentView", event.state.view);
+		main();
 	}
-} );
+}
+
+window.addEventListener("popstate", (event) => handleHistoryPopState(event) );
+
 
 document.addEventListener("DOMContentLoaded", () => {
-	history.replaceState({view: localStorage.getItem("currentView")}, document.title, location.href);
+	history.replaceState({view: sessionStorage.getItem("currentView")}, document.title, location.href);
 } );
 
 function	setupEventHandlers()
 {
 		/*	NAVBAR	*/
 	document.getElementById("titleHeader").onclick = function() {
-			localStorage.setItem("currentView", "home");
-			App();
+			sessionStorage.setItem("currentView", "home");
+			main();
 	};
 
 	document.getElementById("homeBtn").onclick = function() {
-			localStorage.setItem("currentView", "home");
-			App();
+			sessionStorage.setItem("currentView", "home");
+			main();
 	};
 	document.getElementById("profileBtn").onclick = function() {
-			localStorage.setItem("currentView", "profile");
-			App();
+			sessionStorage.setItem("currentView", "profile");
+			main();
 	};
 	document.getElementById("friendRequestsBtn").onclick = function() {
-			localStorage.setItem("currentView", "friend_requests");
-			App();
+			sessionStorage.setItem("currentView", "friend_requests");
+			main();
 	};
+	document.getElementById("statsBtn").onclick = function() {
+		sessionStorage.setItem("currentView", "stats");
+		main();
+};
 	document.getElementById("logoutBtn").onclick = () => logoutUser();
 
 
 		/*	PLAYER CARD	*/
-	if (!localStorage.getItem("currentView").startsWith("user#"))
+	if (!sessionStorage.getItem("currentView").startsWith("user#"))
 	{			
 		document.getElementById("acctSettingsBtn").onclick = function() {
-				localStorage.setItem("currentView", "account_settings");
-				App();
+				sessionStorage.setItem("currentView", "account_settings");
+				main();
 		};
 		document.getElementById("userPfp").onclick = function() {
-				localStorage.setItem("currentView", "profile");
-				App();
+				sessionStorage.setItem("currentView", "profile");
+				main();
 		};
 		document.getElementById("userNameDisplay").onclick = function() {
-				localStorage.setItem("currentView", "profile");
-				App();
+				sessionStorage.setItem("currentView", "profile");
+				main();
 		};
 	}
 }
 
 export async function	App()
 {
-	await renderPage();
-	setupEventHandlers();
+	if (sessionStorage.getItem("currentView") !== "game")
+	{
+		await renderPage();
+		setupEventHandlers();
+	}
 
 	changeView();
 }
+
+
+/*
+	TO DO
+		ADD PERSISTENCE + HISTORY FOR GAME VIEW
+		FIX CANVAS RENDERING (SIZE IS ALL DUCKED UP)
+		ADD ONLINE STATUS TO PLAYER CARD OF OTHER USERS
+		PENDING SENT REQUESTS NEEDS AN ENDPOINT (TO RENDER OTHER USERS PLAYER CARD ACCORDINGLY)
+*/

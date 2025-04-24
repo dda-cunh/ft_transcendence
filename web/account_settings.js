@@ -1,17 +1,22 @@
 import {renderAuth} from './auth.js'
 import {App} from './app.js'
+import { main } from "./index.js";
 import {updateAccessTkn} from './utils.js'
 import {clearErrFields} from './utils.js'
 import {enable2FA} from './auth.js'
+import {clearPopovers} from './utils.js'
+import {showPopover} from './utils.js'
+import {getOwnUserData} from './utils.js'
 
 "use strict";
+
 
 
 async function	chgUserName(event)
 {
 	let newUserField = document.getElementById("newUserField");
 
-	clearErrFields();
+	clearPopovers();
 
 	try
 	{
@@ -34,30 +39,30 @@ async function	chgUserName(event)
 			throw new Error(responseData[Object.keys(responseData)[0]]);
 		}
 
-		App();
+		let userNameDisplay = document.getElementById("userNameDisplay");
+		if (userNameDisplay)
+			userNameDisplay.innerText = newUserField.value;
+
+		document.getElementById("changeUsernameForm").reset();
+		newUserField.classList.add("is-valid");
+		showPopover("Username updated", newUserField.parentElement, 'success');
 	}
 	catch(error)
 	{
-			let errMsg = document.getElementById("errMsg");
-			if (errMsg !== null)
-				errMsg.remove();
 			newUserField.classList.add("is-invalid");
-			newUserField.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>");
+			showPopover(error.toString().slice(7), newUserField.parentElement, "danger");
 			event.stopPropagation();
 	}
 }
 
 async function	chgMotto(event)
 {
-	clearErrFields();
+	clearPopovers();
 
 	let newMottoField = document.getElementById("newMottoField");
 
 	try
 	{
-		if (!newMottoField.value)
-			throw new Error("This field cannot be empty.");
-
 		await updateAccessTkn();
 
 		let response = await fetch("management/profile/motto/", {
@@ -75,22 +80,44 @@ async function	chgMotto(event)
 			throw new Error(responseData[Object.keys(responseData)[0]]);
 		}
 
-		App();
+		let mottoDisplay = document.getElementById("mottoDisplay");
+		if (mottoDisplay)
+			mottoDisplay.innerText = `"${newMottoField.value}"`;
+
+		document.getElementById("changeMottoForm").reset();
+		newMottoField.classList.add("is-valid");
+		showPopover("Motto updated", newMottoField.parentElement, 'success');
 	}
 	catch (error)
 	{
-		let errMsg = document.getElementById("errMsg");
-		if (errMsg !== null)
-			errMsg.remove();
 		newMottoField.classList.add("is-invalid");
-		newMottoField.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>");
+		showPopover(error.toString().slice(7), newMottoField.parentElement, "danger")
 		event.stopPropagation();
+	}
+}
+
+async function	getNewPfpPath()
+{
+	updateAccessTkn();
+
+	try
+	{
+		let userData = await getOwnUserData();
+
+		if (!userData)
+			throw new Error("failed to retrieve user data");
+
+		return (`management/media/${userData.avatar}`)
+	}
+	catch(error)
+	{
+		console.log(error);
 	}
 }
 
 async function	chgPfp(event)
 {
-	clearErrFields();
+	clearPopovers();
 
 	let uploadBtn = document.getElementById("pfpUploadBtn");
 	let newPfp = new FormData();
@@ -129,11 +156,16 @@ async function	chgPfp(event)
 			throw new Error(errorMsg);
 		}
 
-		App();
+		let pfpElem = document.getElementById("userPfp");
+		if (pfpElem)
+			pfpElem.src = await getNewPfpPath();
+
+		document.getElementById("changePfpForm").reset();
+		showPopover("Profile picture updated", uploadBtn, "success");
 	}
 	catch (error)
 	{
-		uploadBtn.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback d-block\">"+error+"</div>");
+		showPopover(error.toString().slice(7), uploadBtn, "danger");
 		event.stopPropagation();
 	}
 
@@ -188,29 +220,40 @@ async function	chgPassword(event)
 		}
 
 		document.getElementById("chgPasswdForm").reset();
-		document.getElementById("confirmPasswordField").insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"valid-feedback d-block\">Password updated successfully</div>")
+
+		document.getElementById("oldPasswordField").classList.add("is-valid");
+		document.getElementById("newPasswordField").classList.add("is-valid");
+		document.getElementById("confirmPasswordField").classList.add("is-valid");
+
+
+		showPopover("Password updated", document.getElementById("chgPasswdBtn").parentElement, 'success');
 	}
 	catch(error)
 	{
-		if (errField !== undefined)
-		{
-			let	errElem = document.getElementById(errField);
-			errElem.classList.add("is-invalid");
-			errElem.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>")
-			event.stopPropagation();
-		}
-		else
-			alert(error);
+		if (errField === undefined)
+			errField = "chgPasswdBtn";
+
+		let	errElem = document.getElementById(errField);
+		errElem.classList.add("is-invalid");
+		showPopover(error.toString().slice(7), errElem.parentElement, 'danger');
+		event.stopPropagation();
 	}
 }
 
 function	setupEventHandlers()
 {
+<<<<<<< HEAD
 	document.getElementById("changeUsernameForm").onsubmit = (event) => chgUserName(event);
 	document.getElementById("changeMottoForm").onsubmit = (event) => chgMotto(event);
 	document.getElementById("chg2FAForm").onsubmit = (event) => enable2FA(event);
 	document.getElementById("changePfpForm").onsubmit = (event) => chgPfp(event);
 	document.getElementById("chgPasswdForm").onsubmit = (event) => chgPassword(event);
+=======
+	document.getElementById("changeUsernameForm").onsubmit = (event) => { event.preventDefault(), chgUserName(event) };
+	document.getElementById("changeMottoForm").onsubmit = (event) => { event.preventDefault(), chgMotto(event) };
+	document.getElementById("changePfpForm").onsubmit = (event) => { event.preventDefault(), chgPfp(event) };
+	document.getElementById("chgPasswdForm").onsubmit = (event) => { event.preventDefault(), chgPassword(event) };
+>>>>>>> frontend-designFixes
 }
 
 
