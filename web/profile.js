@@ -30,6 +30,9 @@ async function renderGameEntries(data, userID, dest) {
 	  } else
 		lost++;
 	  
+	  let color = (result === "won") ? "success": "danger";
+	  console.log(color);
+
 	  let opponent = await getUserData(id);
 
 	  const date = new Date(entry.ended_at);
@@ -38,7 +41,7 @@ async function renderGameEntries(data, userID, dest) {
 	  let row = `<tr data-id="${id}" class="history-link cursor-pointer" style="cursor: pointer;">
 		<td data-id="${id}" class="cursor-pointer">${formattedDate}</td>
 		<td data-id="${id}" class="cursor-pointer">${opponent.username}</td>
-		<td data-id="${id}" class="cursor-pointer">${entry.p1_score} - ${entry.p2_score}</td>
+		<td data-id="${id}" class="cursor-pointer text-${color}">${entry.p1_score} - ${entry.p2_score}</td>
 		<td data-id="${id}" class="cursor-pointer">${result}</td>
 	  </tr>`;
   
