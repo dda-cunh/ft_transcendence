@@ -16,7 +16,7 @@ Including another URLconf
 """
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.urls import re_path
-from user.views import RegisterView, DeleteUserView, TwoFactorTokenObtainView, ValidateTokenView, TwoFactorEnable, TwoFactorVerify
+from user.views import RegisterView, DeleteUserView, TwoFactorTokenObtainView, ValidateTokenView, TwoFactorEnable, TwoFactorVerify, TwoFactorDisable
 
 urlpatterns = [
     re_path(r'^refresh/?$', TokenRefreshView.as_view(), name='token_refresh'),
@@ -26,4 +26,5 @@ urlpatterns = [
     re_path(r'^validate/?$', ValidateTokenView.as_view(), name='validate'),
     re_path(r'^twoFactor_enable/?$', TwoFactorEnable.as_view(), name='enable'),
     re_path(r'^twoFactor_verify/?$', TwoFactorVerify.as_view(), name='verify'),
+    re_path(r'^twoFactor_disable/?$', TwoFactorDisable.as_view(), name='disable'),
 ]

@@ -168,6 +168,25 @@ async function	loginUser(event)
 	}
 }
 
+export async function	toggle2FA()
+{
+	try {
+		const user = await getUserData();
+		const btn = document.getElementById("toggle2FABtn");
+		if (btn) {
+		  if (user.otp_enabled) {
+			btn.textContent = "Disable";
+			btn.onclick = disable2FA;
+		  } else {
+			btn.textContent = "Enable";
+			btn.onclick = enable2FA;
+		  }
+		}
+	  } catch (error) {
+		console.error("2FA toggle init failed:", error);
+	}
+}
+
 export async function	enable2FA()
 {
 	try
@@ -206,6 +225,30 @@ export async function	enable2FA()
 		console.log(error);
 	}
 }
+
+
+export async function disable2FA() {
+	try {
+	let response = await fetch("auth/twoFactor_disable", {
+		method: "POST",
+		headers: {
+		"Content-Type": "application/json",
+		"Authorization": "Bearer " + sessionStorage.getItem("access"),
+		},
+	});
+	if (!response.ok) {
+		let errorData = await response.json();
+		let errorMsg = errorData.message || "Failed to disable 2FA";
+		throw new Error(errorMsg);
+	}
+	main();
+	} catch (error) {
+	if (document.querySelector("#twofa-text"))
+		document.getElementById("twofa-text").innerHTML = error;
+	console.log(error);
+	}
+}
+
 
 export async function	verify2FA(event)
 {

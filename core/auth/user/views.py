@@ -98,6 +98,17 @@ class TwoFactorEnable(APIView):
             return JsonResponse({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+class TwoFactorDisable(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        TOTPDevice.objects.filter(user=user, name="default").delete()
+        user.otp_enabled = False
+        user.otp_secret = ""
+        user.save()
+        return JsonResponse({"message": "Two-factor authentication disabled"}, status=status.HTTP_200_OK)
+
 
 class TwoFactorVerify(APIView):
     permission_classes = [IsAuthenticated]
