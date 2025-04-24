@@ -23,7 +23,7 @@ async function	renderPage()
 	}
 	catch (error)
 	{
-		mainContainer.innerHTML = `<p>${error}</p>`;
+		mainContainer.innerHTML = `<p>${error.toString().slice(7)}</p>`;
 	}
 }
 
