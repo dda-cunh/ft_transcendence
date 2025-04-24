@@ -71,20 +71,21 @@ function	addRequestSentBtn()
 function addFriendConfirmedBtn()
 {
 	document.getElementById("playerCardControlsCol").innerHTML = `
-			<button id="friendConfirmedBtn" class="btn btn-sm btn-outline-primary disabled mt-2">
+			<button id="friendConfirmedBtn" class="btn btn-sm btn-outline-primary mt-2" aria-disabled="true">
 				<i class="bi-people-fill mt-2"></i>
 			</button>
 	`;
 
 	let friendConfirmedBtn = document.getElementById("friendConfirmedBtn");
 	friendConfirmedBtn.addEventListener('mouseenter', () => {
-											acceptBtn.style.color = 'var(--bs-light)';
-											acceptBtn.style.backgroundColor = 'var(--bs-primary)';
-											acceptBtn.style.borderColor = 'var(--bs-light)';
+											friendConfirmedBtn.style.color = 'var(--bs-light)';
+											friendConfirmedBtn.style.backgroundColor = 'var(--bs-primary)';
+											friendConfirmedBtn.style.borderColor = 'var(--bs-primary)';
 	});
 	friendConfirmedBtn.addEventListener('mouseleave', () => {
-											acceptBtn.style.color = ''; // resets to original
-											acceptBtn.style.borderColor = ''; // resets to original
+											friendConfirmedBtn.style.color = ''; // resets to original
+											friendConfirmedBtn.style.backgroundColor = '';
+											friendConfirmedBtn.style.borderColor = ''; // resets to original
 	});
 }
 
@@ -258,6 +259,12 @@ async function	renderPlayerCard(userID)
 
 		let playerCardHtml = await response.text();
 		playerCardContainer.innerHTML = playerCardHtml;
+
+		document.getElementById("userPfp").parentElement.classList.add("pe-none");
+		document.getElementById("userPfp").parentElement.setAttribute("aria-disabled", true);
+
+		document.getElementById("userNameDisplay").classList.add("pe-none");
+		document.getElementById("userNameDisplay").setAttribute("aria-disabled", true);
 
 		let userData = await getUserData(userID);
 

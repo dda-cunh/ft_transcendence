@@ -51,13 +51,25 @@ async function	renderList()
 							</a>
 						</td data-id="${entry.sender}">
 						<td data-id="${entry.sender}">
-							<button class="btn btn-outline-success accept-btn" data-id="${entry.id}">ACCEPT</button>
+							<button id="acceptBtn" class="btn btn-outline-success accept-btn" data-id="${entry.id}">ACCEPT</button>
 							<button class="btn btn-outline-danger deny-btn" data-id="${entry.id}">DENY</button>
 						</td>
 					</tr>
 				`;
 				frTable.innerHTML += row;
 			} );
+
+			let acceptBtn = document.getElementById("acceptBtn");
+			acceptBtn.addEventListener('mouseenter', () => {
+													acceptBtn.style.color = 'var(--bs-success)';
+													acceptBtn.style.backgroundColor = 'var(--bs-light)';
+													acceptBtn.style.borderColor = 'var(--bs-success)';
+			});
+			acceptBtn.addEventListener('mouseleave', () => {
+													acceptBtn.style.color = ''; // resets to original
+													acceptBtn.style.backgroundColor = '';
+													acceptBtn.style.borderColor = ''; // resets to original
+			});
 		}
 	}
 	catch (error)
