@@ -3,8 +3,6 @@ export default class PongAI {
     this.gameConstants = gameConstants;
     this.ballPhysics = new BallPhysics(gameConstants);
     this.currentDirection = null;
-    this.lastPosition = null;
-    this.calculatedSpeed = null;
     this.isActive = true;
     this.accuracy = 1;
     this.aiDelay = 1000;
@@ -17,21 +15,15 @@ export default class PongAI {
     if (!this.isActive) return;
 
     const currentTime = Date.now();
-    // Skip processing if delay hasn't elapsed
-    if (currentTime - this.lastProcessedTime < this.aiDelay) {
-      return;
-    }
+    if (currentTime - this.lastProcessedTime < this.aiDelay) return;
+    
     this.lastProcessedTime = currentTime;
-    if (gameState.ball.x === 0) {
-      this.calculatedSpeed = null;
-      this.lastPosition = null;
-    }
-
     const observedBall = {
       x: gameState.ball.x,
       y: gameState.ball.y,
       timestamp: currentTime,
     };
+
     if (this.lastKnownBall) {
       this.predictedSpeed = this.ballPhysics.calculateInitialSpeed(
         this.lastKnownBall,
@@ -55,50 +47,46 @@ export default class PongAI {
     }
 
     this.lastKnownBall = observedBall;
-    this.lastProcessedTime = currentTime;
   }
 
   controlPaddle(targetY, currentPaddleY) {
-    let newDirection = null;
     const paddleCenter = currentPaddleY;
     const acc = Math.max(0.1, Math.abs(this.accuracy));
     const threshold = (this.gameConstants.paddle_h * 0.3) / acc;
 
-    
     if (this.activeTimeout) {
       clearTimeout(this.activeTimeout);
       this.dispatchKeyChange(null);
     }
+    
     const distance = targetY - paddleCenter;
     const absoluteDistance = Math.abs(distance);
     if (absoluteDistance < threshold) return;
     
     const direction = distance < 0 ? 'ArrowUp' : 'ArrowDown';
-    const movementTime = (absoluteDistance / this.gameConstants.paddle_speed) * (1000 / this.gameConstants.framerate);
+    const movementTime = (absoluteDistance / this.gameConstants.paddle_speed) * 
+      (1000 / this.gameConstants.framerate);
 
     this.dispatchKeyChange(direction);
     this.activeTimeout = setTimeout(() => {
       this.dispatchKeyChange(null);
       this.activeTimeout = null;
-    }, movementTime) ; // Never exceed AI update interval
+    }, movementTime);
   }
-  
 
   dispatchKeyChange(newDirection) {
     if (this.currentDirection) {
-      const upEvent = new KeyboardEvent("keyup", {
+      document.dispatchEvent(new KeyboardEvent("keyup", {
         key: this.currentDirection,
         bubbles: true,
-      });
-      document.dispatchEvent(upEvent);
+      }));
     }
 
     if (newDirection) {
-      const downEvent = new KeyboardEvent("keydown", {
+      document.dispatchEvent(new KeyboardEvent("keydown", {
         key: newDirection,
         bubbles: true,
-      });
-      document.dispatchEvent(downEvent);
+      }));
     }
 
     this.currentDirection = newDirection;
@@ -115,55 +103,47 @@ class BallPhysics {
     this.constants = gameConstants;
     this.paddleX = gameConstants.canvas_w - gameConstants.paddle_w;
     this.centerOffsetY = this.constants.canvas_h / 2;
-    this.centerOffsetX = this.constants.canvas_w / 2;
-    
   }
 
   calculateInitialSpeed(prev, current) {
     if (!prev) return null;
     const dt = (current.timestamp - prev.timestamp) / 1000;
-    return dt > 0
-      ? {
-          x: (current.x - prev.x) / dt,
-          y: (current.y - prev.y) / dt,
-        }
-      : null;
+    return dt > 0 ? {
+      x: (current.x - prev.x) / dt,
+      y: (current.y - prev.y) / dt,
+    } : null;
   }
 
   predictImpactY(currentBall, speed) {
-    // Convert center-based coordinates to top-left canvas coordinates
-    let virtualX = currentBall.x + this.centerOffsetX; // If X is also center-based
-    let virtualY = currentBall.y + this.centerOffsetY; // Adjust Y to top-left system
-
+    let virtualY = currentBall.y + this.centerOffsetY;
     let currentSpeedY = speed.y;
+    let virtualX = currentBall.x + this.constants.canvas_w / 2;
 
     while (speed.x > 0 && virtualX < this.paddleX) {
       const timeToPaddle = (this.paddleX - virtualX) / speed.x;
-      const timeToWall =
-        currentSpeedY > 0
-          ? (this.constants.canvas_h - virtualY) / currentSpeedY // Distance to bottom wall
-          : -virtualY / currentSpeedY; // Distance to top wall
+      const timeToWall = currentSpeedY > 0
+        ? (this.constants.canvas_h - virtualY) / currentSpeedY
+        : -virtualY / currentSpeedY;
 
       if (timeToPaddle <= timeToWall) {
-        return virtualY + currentSpeedY * timeToPaddle - this.centerOffsetY; // Convert back to center-based Y
+        return virtualY + currentSpeedY * timeToPaddle - this.centerOffsetY;
       }
 
       virtualX += speed.x * timeToWall;
       virtualY += currentSpeedY * timeToWall;
-      currentSpeedY *= -1; // Reverse direction on wall bounce
-      virtualY = Math.max(0, Math.min(virtualY, this.constants.canvas_h)); // Clamp to canvas bounds
+      currentSpeedY *= -1;
+      virtualY = Math.max(0, Math.min(virtualY, this.constants.canvas_h));
     }
 
     return virtualY - this.centerOffsetY;
   }
   
   extrapolatePosition(observedBall, speed, elapsedTime) {
-    let virtualX = observedBall.x + this.centerOffsetX;
     let virtualY = observedBall.y + this.centerOffsetY;
+    let virtualX = observedBall.x + this.constants.canvas_w / 2;
     let remainingTime = elapsedTime;
     let currentSpeedY = speed.y;
 
-    // Simulate wall bounces during the unobserved period
     while (remainingTime > 0 && speed.x > 0) {
       const timeToWall = currentSpeedY > 0 
         ? (this.constants.canvas_h - virtualY) / currentSpeedY
@@ -175,14 +155,13 @@ class BallPhysics {
       remainingTime -= stepTime;
 
       if (stepTime === timeToWall) {
-        currentSpeedY *= -1; // Bounce on wall
+        currentSpeedY *= -1;
       }
     }
 
     return {
-      x: virtualX - this.centerOffsetX,
+      x: virtualX - this.constants.canvas_w / 2,
       y: virtualY - this.centerOffsetY,
-      timestamp: observedBall.timestamp + elapsedTime * 1000
     };
   }
 }
