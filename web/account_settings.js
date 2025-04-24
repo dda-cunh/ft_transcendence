@@ -3,7 +3,6 @@ import {App} from './app.js'
 import { main } from "./index.js";
 import {updateAccessTkn} from './utils.js'
 import {clearErrFields} from './utils.js'
-import {enable2FA} from './auth.js'
 
 "use strict";
 
