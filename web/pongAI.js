@@ -1,156 +1,143 @@
-import { gameState, gameConstants } from "./socket.js";
-
-const AI_REACTION_TIME = 25;
-const PREDICTION_FRAMES = 60;
-const MOVEMENT_THRESHOLD = 5;
-
 export default class PongAI {
-  constructor() {
-    this.activeDirection = null;
-    this.updateInterval = null;
-    this.isActive = false;
-    this.currentY = 0;
-    this.safeConstants = {
-      canvas_w: 800,
-      canvas_h: 600,
-      paddle_w: 20,
-      paddle_h: 100,
-      ball_rad: 5
-    };
-    this.initialize();
-  }
-
-  initialize() {
+  constructor(gameConstants) {
+    this.gameConstants = gameConstants;
+    this.ballPhysics = new BallPhysics(gameConstants);
+    this.currentDirection = null;
+    this.lastPosition = null;
+    this.calculatedSpeed = null;
     this.isActive = true;
-    this.updateInterval = setInterval(() => {
-      if (this.isActive) this.update();
-    }, AI_REACTION_TIME);
+    this.accuracy = 0.85;
+    this.aiDelay = 500;
   }
 
-  getValidConstants() {
-    return gameConstants || this.safeConstants;
-  }
-
-  getCurrentPaddlePosition() {
-    if (!gameState) return this.currentY;
-    const constants = this.getValidConstants();
-    this.currentY = gameState.p2_pos_y + (constants.canvas_h / 2);
-    return this.currentY;
-  }
-
-  predictImpactPosition() {
-    try {
-      if (!gameState?.ball) return this.currentY;
-      const constants = this.getValidConstants();
-
-      // Convert relative positions to absolute coordinates
-      const ballAbsX = gameState.ball.x + (constants.canvas_w / 2);
-      const ballAbsY = gameState.ball.y + (constants.canvas_h / 2);
-      const paddleX = constants.canvas_w - constants.paddle_w;
-
-      // Handle invalid ball speed
-      if (Math.abs(gameState.ball.speedX) < 0.1) return this.currentY;
-
-      // Calculate time to impact with safety checks
-      const timeToImpact = (paddleX - ballAbsX) / gameState.ball.speedX;
-      if (!Number.isFinite(timeToImpact)) return this.currentY;
-
-      // Predict Y position with wall bounce simulation
-      let predictedY = ballAbsY + (gameState.ball.speedY * timeToImpact);
-      const maxY = constants.canvas_h - constants.ball_rad;
-      const minY = constants.ball_rad;
-
-      // Normalize predicted position
-      while (predictedY > maxY || predictedY < minY) {
-        predictedY = predictedY > maxY
-          ? 2 * maxY - predictedY
-          : 2 * minY - predictedY;
-      }
-
-      // Return paddle center position
-      return predictedY - (constants.paddle_h / 2);
-
-    } catch (error) {
-      console.error('Prediction error:', error);
-      return this.currentY;
-    }
-  }
-
-  update() {
+  update(gameState) {
     if (!this.isActive) return;
-
-    try {
-      const targetY = this.predictImpactPosition();
-      const currentY = this.getCurrentPaddlePosition();
-
-      // Validate numerical values
-      if (!Number.isFinite(targetY)) {
-        console.warn('Invalid target position');
-        return;
-      }
-
-      const deltaY = targetY - currentY;
-
-      console.log('Current paddle Y:', currentY);
-      console.log('Target Y:', targetY);
-      console.log('Delta Y:', deltaY);
-
-      if (Math.abs(deltaY) > MOVEMENT_THRESHOLD) {
-        const direction = deltaY > 0 ? 'ArrowDown' : 'ArrowUp';
-        this.handleMovement(direction);
-      } else {
-        this.releaseMovement();
-      }
-    } catch (error) {
-      console.error('Update error:', error);
+    
+    const currentTime = Date.now();
+    // Skip processing if delay hasn't elapsed
+    if (currentTime - this.lastProcessedTime < this.aiDelay) {
+      return;
     }
+    this.lastProcessedTime = currentTime; 
+    if (gameState.ball.x === 0) {
+      this.calculatedSpeed = null;
+      this.lastPosition = null;
+    }
+  
+    const currentBall = {
+      x: gameState.ball.x,
+      y: gameState.ball.y,
+      timestamp: Date.now()
+    };
+    // console.log("Ball X:", currentBall.x);
+    if (this.isBallApproaching(currentBall)) {
+      this.calculatedSpeed = this.ballPhysics.calculateInitialSpeed(
+        this.lastPosition,
+        currentBall
+      );
+      // console.log("Calculated Speed:", this.calculatedSpeed)
+    }
+
+    if (this.calculatedSpeed) {
+      const predictedY = this.ballPhysics.predictImpactY(
+        currentBall,
+        this.calculatedSpeed
+      );
+      console.log(predictedY);
+      this.controlPaddle(predictedY, gameState.p2_pos_y);
+    }
+
+    this.lastPosition = currentBall;
+  }
+
+  isBallApproaching(currentBall) {
+    return !this.lastPosition || this.lastPosition.x < currentBall.x;
+  }
+
+  controlPaddle(targetY, currentPaddleY) {
+    const paddleCenter = currentPaddleY;
+    const acc = Math.max(0.1, Math.abs(this.accuracy))
+    const threshold = (this.gameConstants.paddle_h * 0.3) / acc;
+
+    let newDirection = null;
+    if (targetY < paddleCenter - threshold) {
+      newDirection = 'ArrowUp'; // Corrected direction mapping
+    } else if (targetY > paddleCenter + threshold) {
+      newDirection = 'ArrowDown';
+    }
+
+    if (newDirection !== this.currentDirection) {
+      this.dispatchKeyChange(newDirection);
+    }
+  }
+
+  dispatchKeyChange(newDirection) {
+    if (this.currentDirection) {
+      const upEvent = new KeyboardEvent('keyup', { 
+        key: this.currentDirection,
+        bubbles: true
+      });
+      document.dispatchEvent(upEvent);
+    }
+
+    if (newDirection) {
+      const downEvent = new KeyboardEvent('keydown', { 
+        key: newDirection,
+        bubbles: true
+      });
+      document.dispatchEvent(downEvent);
+    }
+
+    this.currentDirection = newDirection;
   }
 
   destroy() {
     this.isActive = false;
-    clearInterval(this.updateInterval);
-    this.releaseMovement();
-    console.log('AI destroyed');
+    this.dispatchKeyChange(null);
   }
-  handleMovement(direction) {
-    if (this.activeDirection === direction) return;
+}
 
-    this.releaseMovement();
-
-    const targetElement = document.getElementById('gameCanvas') || document.body;
-
-    const downEvent = new KeyboardEvent('keydown', {
-      key: direction,
-      code: direction,
-      bubbles: true,
-      cancelable: true,
-      composed: true,
-      repeat: false
-    });
-
-    targetElement.dispatchEvent(downEvent);
-    this.activeDirection = direction;
-
-    setTimeout(() => {
-      this.releaseMovement();
-    }, AI_REACTION_TIME / 2);
+class BallPhysics {
+  constructor(gameConstants) {
+    this.constants = gameConstants;
+    this.paddleX = gameConstants.canvas_w - gameConstants.paddle_w;
   }
 
-  releaseMovement() {
-    if (!this.activeDirection) return;
-
-    const targetElement = document.getElementById('gameCanvas') || document.body;
-
-    const upEvent = new KeyboardEvent('keyup', {
-      key: this.activeDirection,
-      code: this.activeDirection,
-      bubbles: true,
-      cancelable: true,
-      composed: true
-    });
-
-    targetElement.dispatchEvent(upEvent);
-    this.activeDirection = null;
+  calculateInitialSpeed(prev, current) {
+    if (!prev) return null;
+    const dt = (current.timestamp - prev.timestamp) / 1000;
+    return dt > 0 ? {
+      x: (current.x - prev.x) / dt,
+      y: (current.y - prev.y) / dt
+    } : null;
   }
 
+  predictImpactY(currentBall, speed) {
+    const centerOffsetY = this.constants.canvas_h / 2; // Half the canvas height
+    const centerOffsetX = this.constants.canvas_w / 2; // Half the canvas height
+
+    // Convert center-based coordinates to top-left canvas coordinates
+    let virtualX = currentBall.x + centerOffsetX; // If X is also center-based
+    let virtualY = currentBall.y + centerOffsetY; // Adjust Y to top-left system
+
+    let currentSpeedY = speed.y;
+
+    while (speed.x > 0 && virtualX < this.paddleX) {
+      const timeToPaddle = (this.paddleX - virtualX) / speed.x;
+      const timeToWall = currentSpeedY > 0 
+        ? (this.constants.canvas_h - virtualY) / currentSpeedY // Distance to bottom wall
+        : -virtualY / currentSpeedY; // Distance to top wall
+
+      if (timeToPaddle <= timeToWall) {
+        return virtualY + currentSpeedY * timeToPaddle - centerOffsetY; // Convert back to center-based Y
+      }
+
+      virtualX += speed.x * timeToWall;
+      virtualY += currentSpeedY * timeToWall;
+      currentSpeedY *= -1; // Reverse direction on wall bounce
+      virtualY = Math.max(0, Math.min(virtualY, this.constants.canvas_h)); // Clamp to canvas bounds
+    }
+
+    return virtualY - centerOffsetY;
+  }
 }

@@ -85,8 +85,10 @@ export async function connectWebSocket(mode) {
       if (gmode === "local" && ai)
         playerAi = new PongAI(gameConstants);
     }
+    // In socket.onmessage handler:
     if (data && data.gamestate) {
       gameState = data.gamestate;
+      if (playerAi) playerAi.update(gameState); // 🟢 Add this line
       drawFrame();
     }
   };
