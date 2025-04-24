@@ -165,7 +165,7 @@ export function	handleHistoryPopState(event)
 		return ;
 	}
 
-	if (history.state?.view !== sessionStorage.getItem("currentView") )
+	if (event.state?.view !== sessionStorage.getItem("currentView") )
 	{
 		if (sessionStorage.getItem("currentView") === "game" && socket)
 			socket.close();

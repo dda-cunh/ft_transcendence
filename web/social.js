@@ -134,8 +134,17 @@ async function	renderPlayerCard(userID)
 			<button id="denyBtn" data-id="${id}" class="btn btn-sm btn-outline-danger mt-2"><i data-id="${id}" class="bi-x-lg"></i></button>
 		`;
 
-		document.getElementById("acceptBtn").addEventListener("click", (event) => { acceptFriendRequest(event); addFriendConfirmedBtn(); showPopover("Friend request accepted", controlsCol, 'success'); });
-		document.getElementById("denyBtn").addEventListener("click", (event) => { denyFriendRequest(event); addFriendRequestBtn(userID); showPopover("Friend request rejected", controlsCol); });
+		document.getElementById("acceptBtn").addEventListener("click", (event) => { 
+																					acceptFriendRequest(event);
+																					addFriendConfirmedBtn();
+																					showPopover("Friend request accepted", controlsCol, 'success');
+																				} );
+
+		document.getElementById("denyBtn").addEventListener("click", (event) => { 
+																					denyFriendRequest(event);
+																					addFriendRequestBtn(userID); 
+																					showPopover("Friend request rejected", controlsCol);
+																				} );
 
 	}
 

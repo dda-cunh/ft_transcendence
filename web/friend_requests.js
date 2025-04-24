@@ -1,6 +1,7 @@
 import {main} from "./index.js"
-import {updateAccessTkn} from './utils.js'
 import {renderUserProfile} from './social.js'
+import {updateAccessTkn} from './utils.js'
+import {showPopover} from './utils.js'
 
 "use strict";
 
@@ -131,11 +132,19 @@ function	setupEventHandlers()
 	});
 
 	document.querySelectorAll(".accept-btn").forEach(button => {
-		button.addEventListener("click", (event) => acceptFriendRequest(event) );
+		button.addEventListener("click", (event) => {
+														acceptFriendRequest(event);
+														renderList();
+														showPopover("Friend request accepted", document.getElementById("popover"), 'success');
+													} );
 	} );
 
 	document.querySelectorAll(".deny-btn").forEach(button => {
-		button.addEventListener("click", (event) => denyFriendRequest(event) );
+		button.addEventListener("click", (event) => {
+														denyFriendRequest(event);
+														renderList();
+														showPopover("Friend request rejected", document.getElementById("popover"));
+													} );
 	} );
 }
 

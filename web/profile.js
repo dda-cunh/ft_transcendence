@@ -187,7 +187,6 @@ export async function renderFriendsList()
 			return
 		let data = await response.json();
 		data.forEach(entry => {
-			console.log(entry);
 			let statusColor = entry.online ? "success" : "secondary";
             let row = `<tr data-id="${entry.id}" class="profile-link cursor-pointer" style="cursor: pointer;">
 				<td data-id="${entry.id}" class="cursor-pointer">
