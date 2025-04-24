@@ -165,12 +165,10 @@ async function	loginUser(event)
 	}
 }
 
-export async function	enable2FA(event)
+export async function	enable2FA()
 {
 	try
 	{
-		event.preventDefault(); 
-		event.stopPropagation();
 		let twoFA = await fetch("auth/twoFactor_enable", {
 			method: "GET",
 			headers: {
@@ -178,8 +176,12 @@ export async function	enable2FA(event)
 				"Authorization": "Bearer " + sessionStorage.getItem("access"),
 			}
 		});
-		if (!twoFA.ok)
-			throw new Error(twoFA[Object.keys(twoFA)[0]]);
+
+		if (!twoFA.ok) {
+			let errorData = await twoFA.json();
+			let errorMsg = errorData.message || "Failed to enable 2FA code";
+			throw new Error(errorMsg);
+		}
 
 		let resp = await twoFA.json();
 		let image = resp['qr_code'];
@@ -196,14 +198,18 @@ export async function	enable2FA(event)
 	}
 	catch (error)
 	{
+		if (document.querySelector("#twofa-text"))
+			document.getElementById("twofa-text").innerHTML = error;
+
 		console.log(error);
 	}
 }
 
-export async function	verify2FA()
+export async function	verify2FA(event)
 {
 	try
 	{
+		event.preventDefault(); 
 		let resp = document.querySelector("#twofaForm").value;
 		let	response = await fetch('auth/twoFactor_verify', {
 			method: "POST",
@@ -213,8 +219,12 @@ export async function	verify2FA()
 			},
 			body: JSON.stringify({"qrcode": resp}),
 		} );
-		if (!response.ok)
-			throw new Error("Error verifying 2FA");
+		
+		if (!response.ok) {
+			let errorData = await response.json();
+			let errorMsg = errorData.message || "Failed to verify 2FA code";
+			throw new Error(errorMsg);
+		}
 
 		let responseData = await response.json();
 		console.log(responseData)
@@ -222,6 +232,9 @@ export async function	verify2FA()
 	}
 	catch (error)
 	{
+		if (document.querySelector("#twofa-text"))
+			document.getElementById("twofa-text").innerHTML = error;
+
 		console.log(error);
 	}
 }

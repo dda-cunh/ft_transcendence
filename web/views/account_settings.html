@@ -48,10 +48,11 @@
 				</div>
 				<!--CHANGE 2FA -->
 				<div class="tab-pane fade" id="change2FA">
-					<div class="col-7 mx-auto">
-						<form id="chg2FAForm">
-							<button type="submit" class="btn btn-outline-light mt-2">Enable</button>
-						</form>
+					<div id="chg2FAForm" class="d-flex flex-row">
+						<div class="d-flex flex-column mx-auto align-items-center justify-content-center">
+							<p id="twofa-text" class="text-danger"></p>
+							<button onclick="enable2FA()" class="btn btn-outline-light mt-2">Enable</button>
+						</div>
 					</div>
 				</div>
 				<!--CHANGE PFP-->

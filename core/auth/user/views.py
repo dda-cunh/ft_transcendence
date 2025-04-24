@@ -119,7 +119,7 @@ class TwoFactorVerify(APIView):
                 return JsonResponse({"message": "Invalid QR code"}, status=400)
             user.otp_enabled = True
             user.save()
-            return Response({"message": "Two-factor authentication enabled"}, status=200)
+            return JsonResponse({"message": "Two-factor authentication enabled"}, status=200)
         except Exception as e:
             return JsonResponse({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

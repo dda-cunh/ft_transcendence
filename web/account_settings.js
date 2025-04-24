@@ -243,7 +243,6 @@ function	setupEventHandlers()
 {
 	document.getElementById("changeUsernameForm").onsubmit = (event) => { event.preventDefault(), chgUserName(event) };
 	document.getElementById("changeMottoForm").onsubmit = (event) => { event.preventDefault(), chgMotto(event) };
-	document.getElementById("chg2FAForm").onsubmit = (event) => { event.preventDefault(), enable2FA(event) };
 	document.getElementById("changePfpForm").onsubmit = (event) => { event.preventDefault(), chgPfp(event) };
 	document.getElementById("chgPasswdForm").onsubmit = (event) => { event.preventDefault(), chgPassword(event) };
 }
