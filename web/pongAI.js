@@ -14,7 +14,6 @@ export default class PongAI {
   }
 
   update(gameState) {
-    console.log(this.gameConstants);
     if (!this.isActive) return;
 
     const currentTime = Date.now();
@@ -33,7 +32,6 @@ export default class PongAI {
       y: gameState.ball.y,
       timestamp: currentTime,
     };
-    // console.log("Ball X:", currentBall.x);
     if (this.lastKnownBall) {
       this.predictedSpeed = this.ballPhysics.calculateInitialSpeed(
         this.lastKnownBall,

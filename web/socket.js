@@ -73,7 +73,6 @@ export async function connectWebSocket(mode) {
         document.querySelectorAll(".msg-container")[0].innerText = data.message;
     }
     if (data && data.initial) {
-      console.log('socket', data.initial);
       gameConstants = data.initial;
       half_w = gameConstants.canvas_w / 2;
       half_h = gameConstants.canvas_h / 2;
