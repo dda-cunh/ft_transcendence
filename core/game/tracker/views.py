@@ -47,7 +47,7 @@ class	MatchByUserView(ListAPIView):
 	permission_classes	= [AllowAny]
 
 	def	get_queryset(self):
-		user = self.kwargs['user']
+		user = self.kwargs['user_id']
 		return MatchHistory.objects.filter(
 			Q(player1_id=user) | Q(player2_id=user)
 		)
