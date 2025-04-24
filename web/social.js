@@ -87,6 +87,7 @@ function addFriendConfirmedBtn()
 											friendConfirmedBtn.style.backgroundColor = '';
 											friendConfirmedBtn.style.borderColor = ''; // resets to original
 	});
+	friendConfirmedBtn.style.cursor = 'default';
 }
 
 async function	renderPlayerCard(userID)
