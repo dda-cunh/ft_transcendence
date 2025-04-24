@@ -43,7 +43,7 @@ async function	chgUserName(event)
 
 		document.getElementById("changeUsernameForm").reset();
 		newUserField.classList.add("is-valid");
-		showPopover("Username updated successfully", newUserField.parentElement, 'success');
+		showPopover("Username updated", newUserField.parentElement, 'success');
 	}
 	catch(error)
 	{
@@ -84,7 +84,7 @@ async function	chgMotto(event)
 
 		document.getElementById("changeMottoForm").reset();
 		newMottoField.classList.add("is-valid");
-		showPopover("Motto updated successfully", newMottoField.parentElement, 'success');
+		showPopover("Motto updated", newMottoField.parentElement, 'success');
 	}
 	catch (error)
 	{
@@ -159,7 +159,7 @@ async function	chgPfp(event)
 			pfpElem.src = await getNewPfpPath();
 
 		document.getElementById("changePfpForm").reset();
-		showPopover("Profile picture updated successfully", uploadBtn, "success");
+		showPopover("Profile picture updated", uploadBtn, "success");
 	}
 	catch (error)
 	{
@@ -224,7 +224,7 @@ async function	chgPassword(event)
 		document.getElementById("confirmPasswordField").classList.add("is-valid");
 
 
-		showPopover("Password updated successfully", document.getElementById("chgPasswdBtn").parentElement, 'success');
+		showPopover("Password updated", document.getElementById("chgPasswdBtn").parentElement, 'success');
 	}
 	catch(error)
 	{

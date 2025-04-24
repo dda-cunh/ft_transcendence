@@ -71,10 +71,21 @@ function	addRequestSentBtn()
 function addFriendConfirmedBtn()
 {
 	document.getElementById("playerCardControlsCol").innerHTML = `
-			<button class="btn btn-sm btn-outline-primary disabled mt-2">
+			<button id="friendConfirmedBtn" class="btn btn-sm btn-outline-primary disabled mt-2">
 				<i class="bi-people-fill mt-2"></i>
 			</button>
 	`;
+
+	let friendConfirmedBtn = document.getElementById("friendConfirmedBtn");
+	friendConfirmedBtn.addEventListener('mouseenter', () => {
+											acceptBtn.style.color = 'var(--bs-light)';
+											acceptBtn.style.backgroundColor = 'var(--bs-primary)';
+											acceptBtn.style.borderColor = 'var(--bs-light)';
+	});
+	friendConfirmedBtn.addEventListener('mouseleave', () => {
+											acceptBtn.style.color = ''; // resets to original
+											acceptBtn.style.borderColor = ''; // resets to original
+	});
 }
 
 async function	renderPlayerCard(userID)
@@ -130,21 +141,38 @@ async function	renderPlayerCard(userID)
 			<button class="btn btn-sm btn-primary disabled mt-2 me-2">
 				<i class="bi-person-fill-add"></i>
 			</button>
-			<button id="acceptBtn" data-id="${id}" class="btn btn-sm btn-outline-success me-1 mt-2"><i data-id="${id}" class="bi-check-lg"></i></button>
-			<button id="denyBtn" data-id="${id}" class="btn btn-sm btn-outline-danger mt-2"><i data-id="${id}" class="bi-x-lg"></i></button>
+			<button id="acceptBtn" data-id="${id}" class="btn btn-sm btn-outline-light me-1 mt-2">
+				<i data-id="${id}" class="bi-check-lg"></i>
+			</button>
+			<button id="denyBtn" data-id="${id}" class="btn btn-sm btn-outline-danger mt-2">
+				<i data-id="${id}" class="bi-x-lg"></i>
+			</button>
 		`;
 
-		document.getElementById("acceptBtn").addEventListener("click", (event) => { 
-																					acceptFriendRequest(event);
-																					addFriendConfirmedBtn();
-																					showPopover("Friend request accepted", controlsCol, 'success');
-																				} );
 
-		document.getElementById("denyBtn").addEventListener("click", (event) => { 
-																					denyFriendRequest(event);
-																					addFriendRequestBtn(userID); 
-																					showPopover("Friend request rejected", controlsCol);
-																				} );
+		let acceptBtn = document.getElementById("acceptBtn");
+		let denyBtn = document.getElementById("denyBtn");
+
+		acceptBtn.addEventListener("click", (event) => { 
+												acceptFriendRequest(event);
+												addFriendConfirmedBtn();
+												showPopover("Friend request accepted", controlsCol, 'success');
+											} );
+		acceptBtn.addEventListener('mouseenter', () => {
+												acceptBtn.style.color = 'var(--bs-success)';
+												acceptBtn.style.backgroundColor = 'transparent';
+												acceptBtn.style.borderColor = 'var(--bs-success)';
+		});
+		acceptBtn.addEventListener('mouseleave', () => {
+												acceptBtn.style.color = ''; // resets to original
+												acceptBtn.style.borderColor = ''; // resets to original
+		});
+
+		denyBtn.addEventListener("click", (event) => { 
+												denyFriendRequest(event);
+												addFriendRequestBtn(userID); 
+												showPopover("Friend request rejected", controlsCol);
+											} );
 
 	}
 
@@ -188,12 +216,26 @@ async function	renderPlayerCard(userID)
 		let controlsCol = document.getElementById("playerCardControlsCol");
 
 		controlsCol.innerHTML = `
-			<button id="friendRequestBtn" data-id="${userID}" class="btn btn-sm btn-outline-primary mt-2">
+			<button id="friendRequestBtn" data-id="${userID}" class="btn btn-sm btn-outline-light mt-2">
 				<i class="bi-person-fill-add"> </i>
 			</button>
 		`;
 
-		document.getElementById("friendRequestBtn").onclick = (event) => sendFriendRequest(userID);
+		let friendRequestBtn = document.getElementById("friendRequestBtn");
+		
+		friendRequestBtn.addEventListener('mouseenter', () => {
+		    friendRequestBtn.style.color = 'var(--bs-primary)';
+		    friendRequestBtn.style.backgroundColor = 'transparent';
+		    friendRequestBtn.style.borderColor = 'var(--bs-primary)';
+		  });
+
+		  friendRequestBtn.addEventListener('mouseleave', () => {
+		    friendRequestBtn.style.color = ''; // resets to original
+		    friendRequestBtn.style.borderColor = ''; // resets to original
+		  });
+
+
+		friendRequestBtn.onclick = (event) => sendFriendRequest(userID);
 	}
 
 	function	addOnlineStatus(status)
