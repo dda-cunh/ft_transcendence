@@ -1,9 +1,10 @@
 import {main} from "./index.js"
 import {acceptFriendRequest} from './friend_requests.js'
 import {denyFriendRequest} from './friend_requests.js'
+import { renderMatchHistory, renderTournamentHistory } from "./profile.js";
 import {updateAccessTkn} from './utils.js'
 import {getOwnUserData} from './utils.js'
-import { renderMatchHistory, renderTournamentHistory } from "./profile.js";
+import {showPopover} from './utils.js'
 
 "use strict";
 
@@ -25,6 +26,8 @@ async function	sendFriendRequest(userID)
 {
 	updateAccessTkn();
 
+	let playerCardControlsCol = document.getElementById("playerCardControlsCol");
+
 	try
 	{
 		let response = await fetch("management/management/friends/request", {
@@ -39,12 +42,17 @@ async function	sendFriendRequest(userID)
 		if (!response.ok)
 			throw new Error("Failed to send friend request");
 
-		renderUserProfile(userID);
+		playerCardControlsCol.innerHTML = `
+				<button id="frSentBtn" class="btn btn-sm btn-outline-secondary disabled mt-2">
+					<i class="bi-person-fill-add mt-2"></i>
+				</button>
+		`;
+
+		showPopover("Friend request sent", playerCardControlsCol);
 	}
 	catch (error)
 	{
-		console.log(error);
-		return ;
+		showPopover("Failed to send friend request", playerCardControlsCol, 'danger');
 	}
 
 }
@@ -54,7 +62,18 @@ function	addRequestSentBtn()
 	let controlsCol = document.getElementById("playerCardControlsCol");
 
 	controlsCol.innerHTML = `
-		<button class="btn btn-sm btn-outline-secondary disabled mt-3">FRIEND REQUEST SENT</button>
+				<button class="btn btn-sm btn-outline-secondary disabled mt-2">
+					<i class="bi-person-fill-add mt-2"></i>
+				</button>
+	`;
+}
+
+function addFriendConfirmedBtn()
+{
+	document.getElementById("playerCardControlsCol").innerHTML = `
+			<button class="btn btn-sm btn-outline-primary disabled mt-2">
+				<i class="bi-people-fill mt-2"></i>
+			</button>
 	`;
 }
 
@@ -108,13 +127,15 @@ async function	renderPlayerCard(userID)
 		let id = pendingRequestID;
 
 		controlsCol.innerHTML = `
-			<small class="mt-2 me-2">${userData.username}<br>has sent you a friend request</small>
-			<button id="acceptBtn" data-id="${id}" class="btn btn-sm btn-outline-success me-2 mt-3"><i data-id="${id}" class="bi-check-lg"></i></button>
-			<button id="denyBtn" data-id="${id}" class="btn btn-sm btn-outline-danger mt-3"><i data-id="${id}" class="bi-x-lg"></i></button>
+			<button class="btn btn-sm btn-primary disabled mt-2 me-2">
+				<i class="bi-person-fill-add"></i>
+			</button>
+			<button id="acceptBtn" data-id="${id}" class="btn btn-sm btn-outline-success me-1 mt-2"><i data-id="${id}" class="bi-check-lg"></i></button>
+			<button id="denyBtn" data-id="${id}" class="btn btn-sm btn-outline-danger mt-2"><i data-id="${id}" class="bi-x-lg"></i></button>
 		`;
 
-		document.getElementById("acceptBtn").addEventListener("click", (event) => acceptFriendRequest(event) );
-		document.getElementById("denyBtn").addEventListener("click", (event) => denyFriendRequest(event) );
+		document.getElementById("acceptBtn").addEventListener("click", (event) => { acceptFriendRequest(event); addFriendConfirmedBtn(); showPopover("Friend request accepted", controlsCol, 'success'); });
+		document.getElementById("denyBtn").addEventListener("click", (event) => { denyFriendRequest(event); addFriendRequestBtn(userID); showPopover("Friend request rejected", controlsCol); });
 
 	}
 
@@ -158,7 +179,9 @@ async function	renderPlayerCard(userID)
 		let controlsCol = document.getElementById("playerCardControlsCol");
 
 		controlsCol.innerHTML = `
-			<button id="friendRequestBtn" data-id="${userID}" class="btn btn-sm btn-outline-primary mt-3">ADD FRIEND</button>
+			<button id="friendRequestBtn" data-id="${userID}" class="btn btn-sm btn-outline-primary mt-2">
+				<i class="bi-person-fill-add"> </i>
+			</button>
 		`;
 
 		document.getElementById("friendRequestBtn").onclick = (event) => sendFriendRequest(userID);
@@ -200,15 +223,7 @@ async function	renderPlayerCard(userID)
 		else if (!(await userIsFriend(userID) ))
 			addFriendRequestBtn(userID);
 		else
-		{
-			let controlsCol = document.getElementById("playerCardControlsCol");
-			controlsCol.innerHTML = `
-				<button class="btn btn-sm btn-outline-primary disabled mt-2">
-					<i class="bi-people-fill mt-2"></i>
-				</button>
-			`;
-//			controlsCol.firstChild.innerText = `${userName} is your friend`
-		}
+			addFriendConfirmedBtn();
 
 
 

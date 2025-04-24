@@ -31,7 +31,6 @@ async function renderGameEntries(data, userID, dest) {
 		lost++;
 	  
 	  let color = (result === "won") ? "success": "danger";
-	  console.log(color);
 
 	  let opponent = await getUserData(id);
 

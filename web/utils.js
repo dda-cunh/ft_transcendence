@@ -62,6 +62,7 @@ export function showPopover(msg, targetElem, color = 'primary')
 {
 		const popover = new bootstrap.Popover(targetElem);
 
+//		console.log(targetElem)
 		// Show the popover on page load
 
 

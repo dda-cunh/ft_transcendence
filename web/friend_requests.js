@@ -89,7 +89,6 @@ export async function	acceptFriendRequest(event)
 		if (!response.ok)
 			throw new Error("Failed to accept request");
 
-		main();
 	}
 	catch (error)
 	{
@@ -115,7 +114,6 @@ export async function	denyFriendRequest(event)
 		if (!response.ok)
 			throw new Error("Failed to deny request");
 
-		main();
 	}
 	catch (error)
 	{
