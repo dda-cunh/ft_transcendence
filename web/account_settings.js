@@ -193,7 +193,13 @@ async function	chgPassword(event)
 		}
 
 		document.getElementById("chgPasswdForm").reset();
-		document.getElementById("confirmPasswordField").insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"valid-feedback d-block\">Password updated successfully</div>")
+
+		document.getElementById("oldPasswordField").classList.add("is-valid");
+		document.getElementById("newPasswordField").classList.add("is-valid");
+		document.getElementById("confirmPasswordField").classList.add("is-valid");
+
+
+		showPopover("Password updated successfully", document.getElementById("chgPasswdBtn").parentElement, 'success');
 	}
 	catch(error)
 	{
