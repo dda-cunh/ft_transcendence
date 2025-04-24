@@ -89,9 +89,15 @@ export function showPopover(msg, targetElem, color = 'primary')
 			setTimeout(() => {
 				popover.dispose();
 			}, 200);
-			const	markedFields = document.querySelectorAll(".is-invalid");
-			markedFields.forEach((field) => {
-			field.classList.remove("is-invalid");
-	} );
+
+			const	invalidFields = document.querySelectorAll(".is-invalid");
+			invalidFields.forEach((field) => {
+				field.classList.remove("is-invalid");
+			} );
+
+			const validFields = document.querySelectorAll(".is-valid");
+			validFields.forEach((field) => {
+				field.classList.remove("is-valid");
+			} );
 		}, 3000);
 }

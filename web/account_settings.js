@@ -36,7 +36,13 @@ async function	chgUserName(event)
 			throw new Error(responseData[Object.keys(responseData)[0]]);
 		}
 
-		main();
+		let userNameDisplay = document.getElementById("userNameDisplay");
+		if (userNameDisplay)
+			userNameDisplay.innerText = newUserField.value;
+		document.getElementById("changeUsernameForm").reset();
+
+		newUserField.classList.add("is-valid");
+		showPopover("Username updated successfully", newUserField.parentElement, 'success');
 	}
 	catch(error)
 	{
