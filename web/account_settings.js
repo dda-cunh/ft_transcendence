@@ -39,8 +39,8 @@ async function	chgUserName(event)
 		let userNameDisplay = document.getElementById("userNameDisplay");
 		if (userNameDisplay)
 			userNameDisplay.innerText = newUserField.value;
-		document.getElementById("changeUsernameForm").reset();
 
+		document.getElementById("changeUsernameForm").reset();
 		newUserField.classList.add("is-valid");
 		showPopover("Username updated successfully", newUserField.parentElement, 'success');
 	}
@@ -77,7 +77,13 @@ async function	chgMotto(event)
 			throw new Error(responseData[Object.keys(responseData)[0]]);
 		}
 
-		main();
+		let mottoDisplay = document.getElementById("mottoDisplay");
+		if (mottoDisplay)
+			mottoDisplay.innerText = `"${newMottoField.value}"`;
+
+		document.getElementById("changeMottoForm").reset();
+		newMottoField.classList.add("is-valid");
+		showPopover("Motto updated successfully", newMottoField.parentElement, 'success');
 	}
 	catch (error)
 	{
