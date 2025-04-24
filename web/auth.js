@@ -1,6 +1,5 @@
 import {App} from './app.js'
 import { main } from "./index.js";
-import {clearErrFields} from './utils.js'
 import {getUserData} from './app.js'
 import {clearPopovers} from './utils.js'
 import {showPopover} from './utils.js'
@@ -206,9 +205,6 @@ export async function	verify2FA()
 	try
 	{
 		let resp = document.querySelector("#twofaForm").value;
-		console.log(resp);
-		if (!resp)
-			return ;
 		let	response = await fetch('auth/twoFactor_verify', {
 			method: "POST",
 			headers: {

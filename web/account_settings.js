@@ -2,7 +2,6 @@ import {renderAuth} from './auth.js'
 import {App} from './app.js'
 import { main } from "./index.js";
 import {updateAccessTkn} from './utils.js'
-import {clearErrFields} from './utils.js'
 import {enable2FA} from './auth.js'
 import {clearPopovers} from './utils.js'
 import {showPopover} from './utils.js'
@@ -242,18 +241,11 @@ async function	chgPassword(event)
 
 function	setupEventHandlers()
 {
-<<<<<<< HEAD
-	document.getElementById("changeUsernameForm").onsubmit = (event) => chgUserName(event);
-	document.getElementById("changeMottoForm").onsubmit = (event) => chgMotto(event);
-	document.getElementById("chg2FAForm").onsubmit = (event) => enable2FA(event);
-	document.getElementById("changePfpForm").onsubmit = (event) => chgPfp(event);
-	document.getElementById("chgPasswdForm").onsubmit = (event) => chgPassword(event);
-=======
 	document.getElementById("changeUsernameForm").onsubmit = (event) => { event.preventDefault(), chgUserName(event) };
 	document.getElementById("changeMottoForm").onsubmit = (event) => { event.preventDefault(), chgMotto(event) };
+	document.getElementById("chg2FAForm").onsubmit = (event) => { event.preventDefault(), enable2FA(event) };
 	document.getElementById("changePfpForm").onsubmit = (event) => { event.preventDefault(), chgPfp(event) };
 	document.getElementById("chgPasswdForm").onsubmit = (event) => { event.preventDefault(), chgPassword(event) };
->>>>>>> frontend-designFixes
 }
 
 
