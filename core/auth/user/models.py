@@ -19,6 +19,9 @@ class User(AbstractBaseUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField(max_length=15, unique=True)
     password = models.CharField(max_length=128)
+    otp_secret   = models.CharField(max_length=32, blank=True, null=True)
+    otp_enabled  = models.BooleanField(default=False)
+    
     avatar = models.ImageField(
         upload_to='avatars/',
         default='avatars/default-avatar.png',

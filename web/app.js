@@ -9,7 +9,7 @@ import {renderUserProfile} from './social.js'
 "use strict";
 
 
-async function	getUserData()
+export async function	getUserData()
 {
 	let response = await fetch("management/management/user/", {
 		method: "GET",

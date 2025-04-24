@@ -1,6 +1,8 @@
 import {renderAuth} from './auth.js'
 import {App} from './app.js'
+import {verify2FA} from './auth.js'
 
+window.verify2FA = verify2FA;
 
 "use strict";
 
@@ -67,7 +69,7 @@ async function	userIsLoggedIn()
 
 
 
-async function	main()
+export async function	main()
 {
 	initApp();
 

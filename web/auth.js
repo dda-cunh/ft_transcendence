@@ -1,5 +1,7 @@
 import {App} from './app.js'
+import { main } from "./index.js";
 import {clearErrFields} from './utils.js'
+import {getUserData} from './app.js'
 
 "use strict";
 
@@ -85,7 +87,7 @@ async function	registerUser(event)
 		{
 			sessionStorage.setItem("access", responseData.tokens.access);
 			sessionStorage.setItem("refresh", responseData.tokens.refresh);
-			App();
+			main();
 		}
 	}
 	catch (error)
@@ -113,6 +115,7 @@ async function	loginUser(event)
 	let creds = {
 		username: document.getElementById("loginUserField").value,
 		password: document.getElementById("loginPasswordField").value,
+		otp_token: document.getElementById("login2FAcode").value,
 	};
 
 	try
@@ -138,9 +141,14 @@ async function	loginUser(event)
 		}
 		else
 		{
+			if (responseData.TwoFA === "Enter code")
+			{
+				document.getElementById("login2FA").classList.remove("d-none");
+				return ;
+			}
 			sessionStorage.setItem("access", responseData.access);
 			sessionStorage.setItem("refresh", responseData.refresh);
-			App();
+			main();
 		}
 	}
 	catch(error)
@@ -158,14 +166,78 @@ async function	loginUser(event)
 	}
 }
 
+export async function	enable2FA(event)
+{
+	try
+	{
+		event.preventDefault(); 
+		event.stopPropagation();
+		let twoFA = await fetch("auth/twoFactor_enable", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": "Bearer " + sessionStorage.getItem("access"),
+			}
+		});
+		if (!twoFA.ok)
+			throw new Error(twoFA[Object.keys(twoFA)[0]]);
+
+		let resp = await twoFA.json();
+		let image = resp['qr_code'];
+
+		let page = await fetch("views/twoFA.html");
+
+		if (!page.ok)
+			throw new Error("Error loading 2fa page");
+
+		let page2fa = await page.text();
+
+		document.getElementById("chg2FAForm").innerHTML = page2fa;
+		document.getElementById("twofaImg").src = `data:image/png;base64,${image}`;
+	}
+	catch (error)
+	{
+		console.log(error);
+	}
+}
+
+export async function	verify2FA()
+{
+	try
+	{
+		let resp = document.querySelector("#twofaForm").value;
+		console.log(resp);
+		if (!resp)
+			return ;
+		let	response = await fetch('auth/twoFactor_verify', {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": "Bearer " + sessionStorage.getItem("access"),
+			},
+			body: JSON.stringify({"qrcode": resp}),
+		} );
+		if (!response.ok)
+			throw new Error("Error verifying 2FA");
+
+		let responseData = await response.json();
+		console.log(responseData)
+		main();
+	}
+	catch (error)
+	{
+		console.log(error);
+	}
+}
+
 
 	/*	MAIN FUNCTION	*/
 export async function	renderAuth()
 {
-	localStorage.setItem("currentView", "home");
+	sessionStorage.setItem("currentView", "home");
 
 	await renderPage();
 
-	document.getElementById("loginForm").addEventListener("submit", (event) => loginUser(event) );
-	document.getElementById("registerForm").addEventListener("submit", (event) => registerUser(event) );
+	document.getElementById("loginForm").onsubmit = (event) => { loginUser(event) };
+	document.getElementById("registerForm").onsubmit = (event) => { registerUser(event) };
 }

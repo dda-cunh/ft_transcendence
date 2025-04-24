@@ -2,6 +2,7 @@ import {renderAuth} from './auth.js'
 import {App} from './app.js'
 import {updateAccessTkn} from './utils.js'
 import {clearErrFields} from './utils.js'
+import {enable2FA} from './auth.js'
 
 "use strict";
 
@@ -207,6 +208,7 @@ function	setupEventHandlers()
 {
 	document.getElementById("changeUsernameForm").onsubmit = (event) => chgUserName(event);
 	document.getElementById("changeMottoForm").onsubmit = (event) => chgMotto(event);
+	document.getElementById("chg2FAForm").onsubmit = (event) => enable2FA(event);
 	document.getElementById("changePfpForm").onsubmit = (event) => chgPfp(event);
 	document.getElementById("chgPasswdForm").onsubmit = (event) => chgPassword(event);
 }
