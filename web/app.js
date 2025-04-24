@@ -58,6 +58,12 @@ async function renderPlayerCard()
 		let playerCardHtml = await response.text();
 		playerCardContainer.innerHTML = playerCardHtml;
 
+		document.getElementById("playerCardControlsCol").innerHTML = `
+			<button id="acctSettingsBtn" type="button" class="btn btn-sm btn-outline-light mt-2">
+				<i class="bi-gear-fill"></i>
+			</button>
+		`
+
 		let userData = await getOwnUserData();
 
 		let imgSrc = userData.avatar;

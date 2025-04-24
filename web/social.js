@@ -186,11 +186,13 @@ async function	renderPlayerCard(userID)
 		playerCardContainer.innerHTML = playerCardHtml;
 
 		let userData = await getUserData(userID);
-		console.log(userData);
+
+		let imgSrc = userData.avatar;
+		let userName = userData.username;
+		let motto = userData.motto;
 
 		addOnlineStatus(userData.online);
 
-		//	MUST ALSO CHECK IF FRIEND REQUEST HAS BEEN SENT TO THIS USER
 		if (await pendingFriendRequest(userID) )
 			addFriendRequestResponseBtns(userData);
 		else if (userData.request_sent)
@@ -199,14 +201,16 @@ async function	renderPlayerCard(userID)
 			addFriendRequestBtn(userID);
 		else
 		{
-			document.getElementById("acctSettingsBtn").style.opacity = 0;
-			document.getElementById("acctSettingsBtn").classList.add("disabled");
+			let controlsCol = document.getElementById("playerCardControlsCol");
+			controlsCol.innerHTML = `
+				<button class="btn btn-sm btn-outline-primary disabled mt-2">
+					<i class="bi-people-fill mt-2"></i>
+				</button>
+			`;
+//			controlsCol.firstChild.innerText = `${userName} is your friend`
 		}
 
 
-		let imgSrc = userData.avatar;
-		let userName = userData.username;
-		let motto = userData.motto;
 
 		let pfp = document.getElementById("userPfp");
 
