@@ -14,6 +14,8 @@ export async function	getOwnUserData()
 			"Authorization": "Bearer " + sessionStorage.getItem("access"),
 		}
 	});
+	if (!response.ok)
+		throw new Error("Oops... Something went wrong");
 
 	return (await response.json() );
 }

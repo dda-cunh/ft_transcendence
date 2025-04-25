@@ -37,6 +37,8 @@ async function renderNavbar()
 		navLinks.forEach((link) => {
 				link.addEventListener("click", () => bsCollapse.toggle());
 		} );
+
+		setupEventHandlers("navbar");
 	}
 	catch (error)
 	{
@@ -62,19 +64,14 @@ async function renderPlayerCard()
 			<button id="acctSettingsBtn" type="button" class="btn btn-sm btn-outline-secondary mt-2">
 				<i class="bi-gear-fill"></i>
 			</button>
+			<style>
+				#acctSettingsBtn:hover {
+					color: var(--bs-light);
+					background-color: transparent;
+					border-color: var(--bs-light);
+				}
+			</style>
 		`
-
-		let acctSettingsBtn = document.getElementById("acctSettingsBtn");
-		acctSettingsBtn.addEventListener('mouseenter', () => {
-												acctSettingsBtn.style.color = 'var(--bs-light)';
-												acctSettingsBtn.style.backgroundColor = 'transparent';
-												acctSettingsBtn.style.borderColor = 'var(--bs-light)';
-		});
-		acctSettingsBtn.addEventListener('mouseleave', () => {
-												acctSettingsBtn.style.color = ''; // resets to original
-												acctSettingsBtn.style.backgroundColor = '';
-												acctSettingsBtn.style.borderColor = ''; // resets to original
-		});
 
 		let userData = await getOwnUserData();
 
@@ -87,6 +84,8 @@ async function renderPlayerCard()
 		pfp.src = `management/media/${imgSrc}`;
 		document.getElementById("userNameDisplay").innerText = userName;
 		document.getElementById("mottoDisplay").innerText = `"` + motto + `"`;
+
+		setupEventHandlers("playerCard");
 	}
 	catch (error)
 	{
@@ -139,7 +138,7 @@ async function	changeView()
 		await renderView();
 
 
-	if (history.state?.view !== currentView)
+	if (history.state && history.state.view !== currentView)
 		history.pushState({view: currentView}, document.title, location.href);
 
 	switch (currentView)
@@ -176,12 +175,14 @@ export function	handleHistoryPopState(event)
 		initialLoad = false;
 		return ;
 	}
-
-	if (event.state?.view !== sessionStorage.getItem("currentView") )
+	if (!event || !event.state)
+		return ;
+	let hist = event.state
+	if (hist && hist.view !== sessionStorage.getItem("currentView") )
 	{
 		if (sessionStorage.getItem("currentView") === "game" && socket)
 			socket.close();
-		sessionStorage.setItem("currentView", event.state.view);
+		sessionStorage.setItem("currentView", hist.view);
 		main();
 	}
 }
@@ -193,39 +194,49 @@ document.addEventListener("DOMContentLoaded", () => {
 	history.replaceState({view: sessionStorage.getItem("currentView")}, document.title, location.href);
 } );
 
-function	setupEventHandlers()
+function	setupEventHandlers(elems)
 {
+	let currentView = sessionStorage.getItem("currentView");
 		/*	NAVBAR	*/
-	document.getElementById("titleHeader").onclick = function() {
-			sessionStorage.setItem("currentView", "home");
-			main();
-	};
+	if (currentView === "game")
+		return ;
 
-	document.getElementById("homeBtn").onclick = function() {
+	if (elems === "navbar")
+	{
+		document.getElementById("titleHeader").onclick = function() {
 			sessionStorage.setItem("currentView", "home");
 			main();
-	};
-	document.getElementById("profileBtn").onclick = function() {
-			sessionStorage.setItem("currentView", "profile");
+		};
+
+		document.getElementById("homeBtn").onclick = function() {
+				sessionStorage.setItem("currentView", "home");
+				main();
+		};
+		document.getElementById("profileBtn").onclick = function() {
+				sessionStorage.setItem("currentView", "profile");
+				main();
+		};
+		document.getElementById("friendRequestsBtn").onclick = function() {
+				sessionStorage.setItem("currentView", "friend_requests");
+				main();
+		};
+		document.getElementById("statsBtn").onclick = function() {
+			sessionStorage.setItem("currentView", "stats");
 			main();
-	};
-	document.getElementById("friendRequestsBtn").onclick = function() {
-			sessionStorage.setItem("currentView", "friend_requests");
-			main();
-	};
-	document.getElementById("statsBtn").onclick = function() {
-		sessionStorage.setItem("currentView", "stats");
-		main();
-};
-	document.getElementById("logoutBtn").onclick = () => logoutUser();
+		};
+		document.getElementById("logoutBtn").onclick = () => logoutUser();
+	}
 
 
 		/*	PLAYER CARD	*/
-	if (!sessionStorage.getItem("currentView").startsWith("user#"))
-	{			
+	if (currentView.startsWith("user#"))
+		return
+
+	if (elems === "playerCard")
+	{
 		document.getElementById("acctSettingsBtn").onclick = function() {
-				sessionStorage.setItem("currentView", "account_settings");
-				main();
+			sessionStorage.setItem("currentView", "account_settings");
+			main();
 		};
 		document.getElementById("userPfp").onclick = function() {
 				sessionStorage.setItem("currentView", "profile");
@@ -243,7 +254,7 @@ export async function	App()
 	if (sessionStorage.getItem("currentView") !== "game")
 	{
 		await renderPage();
-		setupEventHandlers();
+		//setupEventHandlers();
 	}
 
 	changeView();
