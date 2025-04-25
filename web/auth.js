@@ -165,6 +165,8 @@ export async function	renderAuth()
 {
 	sessionStorage.setItem("currentView", "home");
 
+	document.getElementById.("mainContainer").innerHTML = "";
+
 	await renderPage();
 
 
