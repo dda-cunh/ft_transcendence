@@ -90,6 +90,7 @@ class PrivateUserInfoView(APIView):
             "motto": user.motto,
             "avatar": user.avatar.name if user.avatar else None,
             "last_activity": user.last_activity,
+            "otp_enabled": user.otp_enabled,
         }
         return Response(data)
 
