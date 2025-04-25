@@ -133,6 +133,8 @@ export function adjust(axs)
         adjScored += parseInt(checkboxes[i].parentElement.parentElement.children[2].children[0].children[0].innerHTML)
         adjSuffered += parseInt(checkboxes[i].parentElement.parentElement.children[2].children[0].children[2].innerHTML)
 	}
+    if (!document.getElementById("wins"))
+        return;
 	document.getElementById("wins").innerHTML = adjWins
 	document.getElementById("scored").innerHTML = adjScored
 	document.getElementById("lost").innerHTML = adjLosses

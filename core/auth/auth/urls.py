@@ -16,12 +16,15 @@ Including another URLconf
 """
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.urls import re_path
-from user.views import RegisterView, DeleteUserView, ValidateTokenView
+from user.views import RegisterView, DeleteUserView, TwoFactorTokenObtainView, ValidateTokenView, TwoFactorEnable, TwoFactorVerify, TwoFactorDisable
 
 urlpatterns = [
     re_path(r'^refresh/?$', TokenRefreshView.as_view(), name='token_refresh'),
-    re_path(r'^/?$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    re_path(r'^/?$', TwoFactorTokenObtainView.as_view(), name='token_obtain_pair'),
     re_path(r'^register/?$', RegisterView.as_view(), name='register'),
     re_path(r'^delete/?$', DeleteUserView.as_view(), name='delete'),
-    re_path(r'^validate/?$', ValidateTokenView.as_view(), name='validate')
+    re_path(r'^validate/?$', ValidateTokenView.as_view(), name='validate'),
+    re_path(r'^twoFactor_enable/?$', TwoFactorEnable.as_view(), name='enable'),
+    re_path(r'^twoFactor_verify/?$', TwoFactorVerify.as_view(), name='verify'),
+    re_path(r'^twoFactor_disable/?$', TwoFactorDisable.as_view(), name='disable'),
 ]

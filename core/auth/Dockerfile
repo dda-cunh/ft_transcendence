@@ -7,7 +7,7 @@ RUN		set -eux; \
 		zlib1g-dev \
 		libjpeg-dev;
 		
-RUN		pip install --no-cache-dir --upgrade pip wheel
+RUN		pip install --no-cache-dir --upgrade pip wheel django-otp qrcode
 
 COPY	docker_exec.sh .
 #EXPOSE	8000

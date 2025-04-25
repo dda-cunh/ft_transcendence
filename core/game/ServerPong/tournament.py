@@ -96,6 +96,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			if get_room_by_user(self.user_id):
 				warnChannel = get_room_by_user(self.user_id)
 			expire_user_info(self.user_id)
+			r.set(f"expire_{self.user_id}", lobby)
 			await self.channel_layer.group_send(
 				warnChannel,
 				{
@@ -105,6 +106,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					'close': False,
 					'initial': False,
 				}
+			)
+			await self.channel_layer.group_discard(
+				warnChannel,
+				self.channel_name,
 			)
 		elif is_user_in_queue(self.user_id, TOURN_MODE):
 			remove_user_from_queue(self.user_id, TOURN_MODE)
@@ -148,8 +153,10 @@ async def generate_match(channel_layer, lobby_name, player_id, opponent_id):
 	
 	await channel_layer.group_discard(lobby_name, r.get(f"user_channel_{player_id}"))
 	await channel_layer.group_discard(lobby_name, r.get(f"user_channel_{opponent_id}"))
-	await channel_layer.group_add(match_name, r.get(f"user_channel_{player_id}"))
-	await channel_layer.group_add(match_name, r.get(f"user_channel_{opponent_id}"))
+	if not r.exists(f"expire_{player_id}"):
+		await channel_layer.group_add(match_name, r.get(f"user_channel_{player_id}"))
+	if not r.exists(f"expire_{opponent_id}"):
+		await channel_layer.group_add(match_name, r.get(f"user_channel_{opponent_id}"))
 
 	start_monitor(match_name, channel_layer)
 	return match_name
@@ -160,6 +167,7 @@ async def generate_round(channel, lobby_name):
 
 	copy_matches = []
 	winner = None
+	allplayers = [p for p in r.smembers(lobby_name)]
 	while True:
 		players = [p for p in r.smembers(lobby_name)]
 		matches = []
@@ -183,7 +191,8 @@ async def generate_round(channel, lobby_name):
 		for p in players:
 			if r.exists(f"user_channel_{p}"):
 				user_channel = r.get(f"user_channel_{p}")
-				await channel.group_add(lobby_name, user_channel)
+				if not r.exists(f"expire_{p}"):
+					await channel.group_add(lobby_name, user_channel)
 			else:
 				r.srem(lobby_name, p)
 
@@ -216,6 +225,10 @@ async def generate_round(channel, lobby_name):
 		}
 		r.delete(f"match_id_{m}")
 		await save_tournament_match_history(tmatch)
+
+	for p in allplayers:
+		if r.exists(f"expire_{p}"):
+			delete_user_info(p)
 
 
 async def check_tournament_end(channel, lobby_name):

@@ -14,6 +14,18 @@ import {socket} from './socket.js'
 "use strict";
 
 
+export async function	getUserData()
+{
+	let response = await fetch("management/management/user/", {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": "Bearer " + sessionStorage.getItem("access"),
+		}
+	});
+
+	return (await response.json() );
+}
 
 	/*	PAGE RENDERING	*/
 async function renderNavbar()

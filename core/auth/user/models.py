@@ -3,6 +3,13 @@ from django.db import models
 import uuid
 from django.core.validators import FileExtensionValidator
 from django.utils import timezone
+from django.core.exceptions import ValidationError
+import re
+
+
+def validate_username(value):
+    if not re.match('^[a-zA-Z0-9_]+$', value):  
+        raise ValidationError('Username must only contain letters, numbers, and underscores.')
 
 class UserManager(BaseUserManager):
     def create_user(self, username, password, **extra_fields):
@@ -17,8 +24,11 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    username = models.CharField(max_length=15, unique=True)
+    username = models.CharField(max_length=15, unique=True, validators=[validate_username])
     password = models.CharField(max_length=128)
+    otp_secret   = models.CharField(max_length=32, blank=True, null=True)
+    otp_enabled  = models.BooleanField(default=False)
+    
     avatar = models.ImageField(
         upload_to='avatars/',
         default='avatars/default-avatar.png',
