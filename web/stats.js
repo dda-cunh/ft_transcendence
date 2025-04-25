@@ -240,7 +240,7 @@ export async function renderToggableGraph(data, userID, elem)
         <tr>
             <td class="col"><input onchange="adjust(0)" class="allRows" type="checkbox" checked name="graph"></td>
             <td onmouseenter="showOpts(this)" onmouseleave="hideOpts(this)" class="col">
-                <span class="allOpponents">${opponent.username}</span>
+                <span class="allOpponents pe-none">${opponent.username}</span>
                 <span class="position-relative graph-select d-none">
                     <span class="position-absolute">
                         <div class="d-flex flex-column">
@@ -251,12 +251,17 @@ export async function renderToggableGraph(data, userID, elem)
                 </span>
             </td>
             <td class="col text-${resultColor}">
-                <span id="userpoints">${p1_score}</span>
-                <span> - </span>
-                <span id="opponentpoints">${p2_score}</span>
+
+            <span class="pe-none">${p1_score} <strong class="fw-bolder">-</strong> ${p2_score}</span>
+
+            <!--
+                <span id="userpoints" class="pe-none">${p1_score}</span>
+                <span class="pe-none"> - </span>
+                <span id="opponentpoints" class="pe-none">${p2_score}</span>
+            -->
             </td>
             <td onmouseenter="showOpts(this)" onmouseleave="hideOpts(this)" class="col">
-                <span class="allWinners">${result.username}</span>
+                <span class="allWinners pe-none">${result.username}</span>
                 <span class="position-relative graph-select d-none">
                     <span class="position-absolute">
                         <div class="d-flex flex-column">

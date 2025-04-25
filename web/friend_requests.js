@@ -31,7 +31,7 @@ async function	renderList()
 		{
 			frTable.innerHTML = `
 				<tr class="lead">
-					<td>You have no new friend requests</td>
+					<td><p class="mt-3 pe-none">You have no new friend requests</p></td>
 				</tr>
 			`;
 		}
