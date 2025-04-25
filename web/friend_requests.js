@@ -1,6 +1,7 @@
 import {main} from "./index.js"
-import {updateAccessTkn} from './utils.js'
 import {renderUserProfile} from './social.js'
+import {updateAccessTkn} from './utils.js'
+import {showPopover} from './utils.js'
 
 "use strict";
 
@@ -30,7 +31,7 @@ async function	renderList()
 		{
 			frTable.innerHTML = `
 				<tr class="lead">
-					<td>You have no new friend requests</td>
+					<td><p class="mt-3 pe-none">You have no new friend requests</p></td>
 				</tr>
 			`;
 		}
@@ -50,13 +51,37 @@ async function	renderList()
 							</a>
 						</td data-id="${entry.sender}">
 						<td data-id="${entry.sender}">
-							<button class="btn btn-outline-success accept-btn" data-id="${entry.id}">ACCEPT</button>
-							<button class="btn btn-outline-danger deny-btn" data-id="${entry.id}">DENY</button>
+							<button id="acceptBtn" class="btn btn-outline-light accept-btn" data-id="${entry.id}">ACCEPT</button>
+							<button id="denyBtn" class="btn btn-outline-light deny-btn" data-id="${entry.id}">DENY</button>
 						</td>
 					</tr>
 				`;
 				frTable.innerHTML += row;
 			} );
+
+			let acceptBtn = document.getElementById("acceptBtn");
+			acceptBtn.addEventListener('mouseenter', () => {
+													acceptBtn.style.color = 'var(--bs-success)';
+													acceptBtn.style.backgroundColor = 'transparent';
+													acceptBtn.style.borderColor = 'var(--bs-success)';
+			});
+			acceptBtn.addEventListener('mouseleave', () => {
+													acceptBtn.style.color = ''; // resets to original
+													acceptBtn.style.backgroundColor = '';
+													acceptBtn.style.borderColor = ''; // resets to original
+			});
+
+			let denyBtn = document.getElementById("denyBtn");
+			denyBtn.addEventListener('mouseenter', () => {
+													denyBtn.style.color = 'var(--bs-danger)';
+													denyBtn.style.backgroundColor = 'transparent';
+													denyBtn.style.borderColor = 'var(--bs-danger)';
+			});
+			denyBtn.addEventListener('mouseleave', () => {
+													denyBtn.style.color = ''; // resets to original
+													denyBtn.style.backgroundColor = '';
+													denyBtn.style.borderColor = ''; // resets to original
+			});
 		}
 	}
 	catch (error)
@@ -89,7 +114,6 @@ export async function	acceptFriendRequest(event)
 		if (!response.ok)
 			throw new Error("Failed to accept request");
 
-		main();
 	}
 	catch (error)
 	{
@@ -115,7 +139,6 @@ export async function	denyFriendRequest(event)
 		if (!response.ok)
 			throw new Error("Failed to deny request");
 
-		main();
 	}
 	catch (error)
 	{
@@ -133,11 +156,19 @@ function	setupEventHandlers()
 	});
 
 	document.querySelectorAll(".accept-btn").forEach(button => {
-		button.addEventListener("click", (event) => acceptFriendRequest(event) );
+		button.addEventListener("click", (event) => {
+														acceptFriendRequest(event);
+														renderList();
+														showPopover("Friend request accepted", document.getElementById("popover"), 'success');
+													} );
 	} );
 
 	document.querySelectorAll(".deny-btn").forEach(button => {
-		button.addEventListener("click", (event) => denyFriendRequest(event) );
+		button.addEventListener("click", (event) => {
+														denyFriendRequest(event);
+														renderList();
+														showPopover("Friend request rejected", document.getElementById("popover"));
+													} );
 	} );
 }
 

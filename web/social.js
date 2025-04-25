@@ -1,9 +1,10 @@
 import {main} from "./index.js"
 import {acceptFriendRequest} from './friend_requests.js'
 import {denyFriendRequest} from './friend_requests.js'
+import { renderMatchHistory, renderTournamentHistory } from "./profile.js";
 import {updateAccessTkn} from './utils.js'
 import {getOwnUserData} from './utils.js'
-import { renderMatchHistory, renderTournamentHistory } from "./profile.js";
+import {showPopover} from './utils.js'
 
 "use strict";
 
@@ -25,6 +26,8 @@ async function	sendFriendRequest(userID)
 {
 	updateAccessTkn();
 
+	let playerCardControlsCol = document.getElementById("playerCardControlsCol");
+
 	try
 	{
 		let response = await fetch("management/management/friends/request", {
@@ -39,12 +42,17 @@ async function	sendFriendRequest(userID)
 		if (!response.ok)
 			throw new Error("Failed to send friend request");
 
-		renderUserProfile(userID);
+		playerCardControlsCol.innerHTML = `
+				<button id="frSentBtn" class="btn btn-sm btn-outline-secondary disabled mt-2">
+					<i class="bi-person-fill-add mt-2"></i>
+				</button>
+		`;
+
+		showPopover("Friend request sent", playerCardControlsCol);
 	}
 	catch (error)
 	{
-		console.log(error);
-		return ;
+		showPopover("Failed to send friend request", playerCardControlsCol, 'danger');
 	}
 
 }
@@ -54,8 +62,32 @@ function	addRequestSentBtn()
 	let controlsCol = document.getElementById("playerCardControlsCol");
 
 	controlsCol.innerHTML = `
-		<button class="btn btn-sm btn-outline-secondary disabled mt-3">FRIEND REQUEST SENT</button>
+				<button class="btn btn-sm btn-outline-secondary disabled mt-2">
+					<i class="bi-person-fill-add mt-2"></i>
+				</button>
 	`;
+}
+
+function addFriendConfirmedBtn()
+{
+	document.getElementById("playerCardControlsCol").innerHTML = `
+			<button id="friendConfirmedBtn" class="btn btn-sm btn-outline-primary mt-2" aria-disabled="true">
+				<i class="bi-people-fill mt-2"></i>
+			</button>
+	`;
+
+	let friendConfirmedBtn = document.getElementById("friendConfirmedBtn");
+	friendConfirmedBtn.addEventListener('mouseenter', () => {
+											friendConfirmedBtn.style.color = 'var(--bs-light)';
+											friendConfirmedBtn.style.backgroundColor = 'var(--bs-primary)';
+											friendConfirmedBtn.style.borderColor = 'var(--bs-primary)';
+	});
+	friendConfirmedBtn.addEventListener('mouseleave', () => {
+											friendConfirmedBtn.style.color = ''; // resets to original
+											friendConfirmedBtn.style.backgroundColor = '';
+											friendConfirmedBtn.style.borderColor = ''; // resets to original
+	});
+	friendConfirmedBtn.style.cursor = 'default';
 }
 
 async function	renderPlayerCard(userID)
@@ -108,13 +140,56 @@ async function	renderPlayerCard(userID)
 		let id = pendingRequestID;
 
 		controlsCol.innerHTML = `
-			<small class="mt-2 me-2">${userData.username}<br>has sent you a friend request</small>
-			<button id="acceptBtn" data-id="${id}" class="btn btn-sm btn-outline-success me-2 mt-3"><i data-id="${id}" class="bi-check-lg"></i></button>
-			<button id="denyBtn" data-id="${id}" class="btn btn-sm btn-outline-danger mt-3"><i data-id="${id}" class="bi-x-lg"></i></button>
+			<button id="acceptBtn" data-id="${id}" class="btn btn-sm btn-outline-light me-1 mt-2">
+				<i data-id="${id}" class="bi-check-lg"></i>
+			</button>
+			<button id="denyBtn" data-id="${id}" class="btn btn-sm btn-outline-light mt-2 me-2">
+				<i data-id="${id}" class="bi-x-lg"></i>
+			</button>
+			<button class="btn btn-sm btn-primary disabled mt-2">
+				<i class="bi-person-fill-add"></i>
+			</button>
 		`;
 
-		document.getElementById("acceptBtn").addEventListener("click", (event) => acceptFriendRequest(event) );
-		document.getElementById("denyBtn").addEventListener("click", (event) => denyFriendRequest(event) );
+
+		let acceptBtn = document.getElementById("acceptBtn");
+		let denyBtn = document.getElementById("denyBtn");
+
+		acceptBtn.addEventListener("click", (event) => { 
+												acceptFriendRequest(event);
+												addFriendConfirmedBtn();
+												showPopover("Friend request accepted", controlsCol, 'success');
+											} );
+
+		acceptBtn.addEventListener('mouseenter', () => {
+												acceptBtn.style.color = 'var(--bs-success)';
+												acceptBtn.style.backgroundColor = 'transparent';
+												acceptBtn.style.borderColor = 'var(--bs-success)';
+		});
+		acceptBtn.addEventListener('mouseleave', () => {
+												acceptBtn.style.color = ''; // resets to original
+												acceptBtn.style.backgroundColor = 'transparent';
+												acceptBtn.style.borderColor = ''; // resets to original
+		});
+
+
+		denyBtn.addEventListener("click", (event) => { 
+												denyFriendRequest(event);
+												addFriendRequestBtn(userID); 
+												showPopover("Friend request rejected", controlsCol);
+											} );
+
+		denyBtn.addEventListener('mouseenter', () => {
+												denyBtn.style.color = 'var(--bs-danger)';
+												denyBtn.style.backgroundColor = 'transparent';
+												denyBtn.style.borderColor = 'var(--bs-danger)';
+		});
+		denyBtn.addEventListener('mouseleave', () => {
+												denyBtn.style.color = ''; // resets to original
+												denyBtn.style.backgroundColor = 'transparent';
+												denyBtn.style.borderColor = ''; // resets to original
+		});
+
 
 	}
 
@@ -158,10 +233,26 @@ async function	renderPlayerCard(userID)
 		let controlsCol = document.getElementById("playerCardControlsCol");
 
 		controlsCol.innerHTML = `
-			<button id="friendRequestBtn" data-id="${userID}" class="btn btn-sm btn-outline-primary mt-3">ADD FRIEND</button>
+			<button id="friendRequestBtn" data-id="${userID}" class="btn btn-sm btn-outline-light mt-2">
+				<i class="bi-person-fill-add"> </i>
+			</button>
 		`;
 
-		document.getElementById("friendRequestBtn").onclick = (event) => sendFriendRequest(userID);
+		let friendRequestBtn = document.getElementById("friendRequestBtn");
+		
+		friendRequestBtn.addEventListener('mouseenter', () => {
+		    friendRequestBtn.style.color = 'var(--bs-primary)';
+		    friendRequestBtn.style.backgroundColor = 'transparent';
+		    friendRequestBtn.style.borderColor = 'var(--bs-primary)';
+		  });
+
+		  friendRequestBtn.addEventListener('mouseleave', () => {
+		    friendRequestBtn.style.color = ''; // resets to original
+		    friendRequestBtn.style.borderColor = ''; // resets to original
+		  });
+
+
+		friendRequestBtn.onclick = (event) => sendFriendRequest(userID);
 	}
 
 	function	addOnlineStatus(status)
@@ -185,12 +276,20 @@ async function	renderPlayerCard(userID)
 		let playerCardHtml = await response.text();
 		playerCardContainer.innerHTML = playerCardHtml;
 
+		document.getElementById("userPfp").parentElement.classList.add("pe-none");
+		document.getElementById("userPfp").parentElement.setAttribute("aria-disabled", true);
+
+		document.getElementById("userNameDisplay").classList.add("pe-none");
+		document.getElementById("userNameDisplay").setAttribute("aria-disabled", true);
+
 		let userData = await getUserData(userID);
-		console.log(userData);
+
+		let imgSrc = userData.avatar;
+		let userName = userData.username;
+		let motto = userData.motto;
 
 		addOnlineStatus(userData.online);
 
-		//	MUST ALSO CHECK IF FRIEND REQUEST HAS BEEN SENT TO THIS USER
 		if (await pendingFriendRequest(userID) )
 			addFriendRequestResponseBtns(userData);
 		else if (userData.request_sent)
@@ -198,15 +297,9 @@ async function	renderPlayerCard(userID)
 		else if (!(await userIsFriend(userID) ))
 			addFriendRequestBtn(userID);
 		else
-		{
-			document.getElementById("acctSettingsBtn").style.opacity = 0;
-			document.getElementById("acctSettingsBtn").classList.add("disabled");
-		}
+			addFriendConfirmedBtn();
 
 
-		let imgSrc = userData.avatar;
-		let userName = userData.username;
-		let motto = userData.motto;
 
 		let pfp = document.getElementById("userPfp");
 
