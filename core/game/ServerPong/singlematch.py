@@ -125,6 +125,10 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 					'initial': False,
 				}
 			)
+			await self.channel_layer.group_discard(
+				user_room,
+				self.channel_name,
+			)
 			expire_user_info(self.user_id)
 		elif is_user_in_queue(self.user_id, MATCH_MODE):
 			remove_user_from_queue(self.user_id, MATCH_MODE)
