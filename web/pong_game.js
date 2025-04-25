@@ -16,25 +16,27 @@ function    renderPage()
 {
     let transcendenceApp = document.getElementById("mainContainer");
     transcendenceApp.innerHTML = `
-        <div class="row">
-            <div class="col text-center mt-lg-5">
-                <h3 id="p1">player1</h3>
+        <div class="d-flex flex-column justify-content-center align-items-center">
+            <div class="row w-75 h-75">
+                <div class="col text-center mt-lg-5">
+                    <h3 class="pe-none display-3" id="p1">player1</h3>
+                </div>
+                <div class="col text-center mt-lg-5">
+                    <h3 class="pe-none display-2" id="p1_score">0</h3>
+                </div>
+                <div class="col text-center mt-lg-5">
+                    <h3 class="pe-none display-1">-</h3>
+                </div>
+                <div class="col text-center mt-lg-5">
+                    <h3 class="pe-none display-2" id="p2_score">0</h3>
+                </div>
+                <div class="col text-center mt-lg-5">
+                    <h3 class="pe-none display-3" id="p2">player2</h3>
+                </div>
             </div>
-            <div class="col text-center mt-lg-5">
-                <h3 id="p1_score">0</h3>
+            <div class="row">
+                <canvas style="background: black;">Game Canvas</canvas><!--BACKGROUND COLOR MUST BE SET WITH GAME SETTINGS-->
             </div>
-            <div class="col text-center mt-lg-5">
-                <h3>-</h3>
-            </div>
-            <div class="col text-center mt-lg-5">
-                <h3 id="p2_score">0</h3>
-            </div>
-            <div class="col text-center mt-lg-5">
-                <h3 id="p2">player2</h3>
-            </div>
-        </div>
-        <div class="row">
-            <canvas style="background: black;">Game Canvas</canvas><!--BACKGROUND COLOR MUST BE SET WITH GAME SETTINGS-->
         </div>
     `;
     transcendenceApp.style.height = window.innerHeight;
@@ -42,6 +44,7 @@ function    renderPage()
 
 export function renderPongGame(gameMode)
 {
+    document.getElementById("viewRow").innerHTML = "";
     renderPage();
 
     let canvas = document.querySelector("canvas");

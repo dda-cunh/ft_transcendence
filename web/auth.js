@@ -1,7 +1,7 @@
-import {App} from './app.js'
 import { main } from "./index.js";
-import {clearErrFields} from './utils.js'
 import {getUserData} from './app.js'
+import {clearPopovers} from './utils.js'
+import {showPopover} from './utils.js'
 
 "use strict";
 
@@ -23,9 +23,10 @@ async function	renderPage()
 	}
 	catch (error)
 	{
-		mainContainer.innerHTML = `<p>${error}</p>`;
+		mainContainer.innerHTML = `<p>${error.toString().slice(7)}</p>`;
 	}
 }
+
 
 	/*	EVENT HANDLERS	*/
 async function	doAuth(creds, dir)
@@ -93,17 +94,14 @@ async function	registerUser(event)
 	}
 	catch (error)
 	{
-		clearErrFields();
-		if (errField !== undefined)
-		{
+		clearPopovers();
+		if (errField === undefined)
+			errField = "registerUserBtn";
 
 			let	errElem = document.getElementById(errField);
 			errElem.classList.add("is-invalid");
-			errElem.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">"+error+"</div>")
+			showPopover(error.toString().slice(7), errElem.parentElement, 'danger');
 			event.stopPropagation();
-		}
-		else
-			alert(error);
 	}
 }
 
@@ -167,16 +165,14 @@ async function	loginUser(event)
 	}
 	catch(error)
 	{
-		clearErrFields();
-		if (errField !== undefined)
-		{
-			let	errElem = document.getElementById(errField);
-			errElem.classList.add("is-invalid");
-			errElem.insertAdjacentHTML("afterend", "<div id=\"errMsg\" class=\"invalid-feedback\">" + error + "</div>");
-			event.stopPropagation();
-		}
-		else
-			alert(error);
+		clearPopovers();
+		if (errField === undefined)
+			errField = "loginBtn"
+
+		let	errElem = document.getElementById(errField);
+		errElem.classList.add("is-invalid");
+		showPopover(error.toString().slice(7), errElem.parentElement, 'danger');
+		event.stopPropagation();
 	}
 }
 
@@ -297,12 +293,17 @@ export async function	verify2FA(event)
 }
 
 
+
 	/*	MAIN FUNCTION	*/
 export async function	renderAuth()
 {
 	sessionStorage.setItem("currentView", "home");
 
+	document.getElementById("mainContainer").innerHTML = "";
+	document.getElementById("viewRow").innerHTML = "";
+
 	await renderPage();
+
 
 	document.getElementById("loginForm").onsubmit = (event) => { loginUser(event) };
 	document.getElementById("registerForm").onsubmit = (event) => { registerUser(event) };
