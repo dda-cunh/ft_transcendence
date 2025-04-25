@@ -18,19 +18,19 @@ function    renderPage()
     transcendenceApp.innerHTML = `
         <div class="row">
             <div class="col text-center mt-lg-5">
-                <h3 id="p1">player1</h3>
+                <h3 class="pe-none display-3" id="p1">player1</h3>
             </div>
             <div class="col text-center mt-lg-5">
-                <h3 id="p1_score">0</h3>
+                <h3 class="pe-none display-2" id="p1_score">0</h3>
             </div>
             <div class="col text-center mt-lg-5">
-                <h3>-</h3>
+                <h3 class="pe-none display-1">-</h3>
             </div>
             <div class="col text-center mt-lg-5">
-                <h3 id="p2_score">0</h3>
+                <h3 class="pe-none display-2" id="p2_score">0</h3>
             </div>
             <div class="col text-center mt-lg-5">
-                <h3 id="p2">player2</h3>
+                <h3 class="pe-none display-3" id="p2">player2</h3>
             </div>
         </div>
         <div class="row">
