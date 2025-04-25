@@ -166,15 +166,9 @@ async function	changeView()
 	}
 }
 
-let initialLoad = true;
 
 export function	handleHistoryPopState(event)
 {
-	if (initialLoad)
-	{
-		initialLoad = false;
-		return ;
-	}
 	if (!event || !event.state)
 		return ;
 	let hist = event.state
