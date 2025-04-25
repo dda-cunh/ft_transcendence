@@ -1,6 +1,6 @@
 import { renderMatchHistory } from "./profile.js";
 
-function drawAxes() {
+export function drawAxes() {
     const svg = document.getElementById('Graph');
     let axisLength = 100;
     const axes = [
@@ -202,7 +202,7 @@ export async function renderToggableGraph(data, userID, elem)
     let won = 0, lost = 0, scored = 0, suffered = 0;
 	for (const entry of data) {
         let id = entry.player1;
-        let result = await getUserData(id);
+        let winner = await getUserData(entry.winner);
         let p1_score = 0;
         let p2_score = 0;
         if (entry.player1 !== userID)
@@ -221,18 +221,17 @@ export async function renderToggableGraph(data, userID, elem)
             p2_score = entry.p2_score;
         }
 
+        let resultColor = "light";
         if (entry.winner === userID) {
-        won++;
+            resultColor = "success";
+            won++;
         } else
-        lost++;
+        {
+           resultColor = "danger";
+            lost++;
+        }
 
         let opponent = await getUserData(id);
-        let resultColor = "success";
-        if (entry.winner === id)
-        {
-        		resultColor = "danger";
-                result = opponent;
-        }
 
         const date = new Date(entry.ended_at);
         const formattedDate = date.toLocaleString();
@@ -250,18 +249,18 @@ export async function renderToggableGraph(data, userID, elem)
                     </span>
                 </span>
             </td>
-            <td class="col text-${resultColor}">
-
+            <td class="col pe-none text-${resultColor}">
+            
+            <!--
             <span class="pe-none">${p1_score} <strong class="fw-bolder">-</strong> ${p2_score}</span>
 
-            <!--
-                <span id="userpoints" class="pe-none">${p1_score}</span>
-                <span class="pe-none"> - </span>
-                <span id="opponentpoints" class="pe-none">${p2_score}</span>
             -->
+                <span id="userpoints">${p1_score}</span>
+                <span> - </span>
+                <span id="opponentpoints">${p2_score}</span>
             </td>
             <td onmouseenter="showOpts(this)" onmouseleave="hideOpts(this)" class="col">
-                <span class="allWinners pe-none">${result.username}</span>
+                <span class="allWinners pe-none">${winner.username}</span>
                 <span class="position-relative graph-select d-none">
                     <span class="position-absolute">
                         <div class="d-flex flex-column">
