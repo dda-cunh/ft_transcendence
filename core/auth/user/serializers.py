@@ -36,27 +36,24 @@ class TwoFactorTokenObtainSerializer(TokenObtainPairSerializer):
     otp_token = serializers.CharField(write_only=True, required=False, allow_blank=True)
 
     def validate(self, attrs):
-        # standard username/password auth
-        user = authenticate(
-            username=attrs['username'],
-            password=attrs['password']
-        )
-        if not user:
-            raise serializers.ValidationError("Invalid credentials")
+        # 1) First let the base class authenticate username+password
+        data = super().validate(attrs)
+        user = self.user  # TokenObtainPairSerializer sets this
 
-        # if 2FA is enabled, require & verify otp_token
+        # 2) If the user has 2FA turned on, require & verify the OTP
         if user.otp_enabled:
             otp = attrs.get('otp_token', '').strip()
             if not otp:
-                return {'TwoFA': "Enter code" }
-            secret = (user.otp_secret or '').strip()
+                raise serializers.ValidationError(
+                    {'otp_token': 'This field is required when 2FA is enabled.'},
+                    code='required'
+                )
+
             device = TOTPDevice.objects.filter(user=user, confirmed=True).first()
             if not device or not device.verify_token(otp):
-                raise ValidationError("Invalid 2FA code")
+                raise serializers.ValidationError(
+                    {'otp_token': 'Invalid 2FA code.'},
+                    code='invalid'
+                )
 
-        # call super to get tokens
-        data = super().get_token(user)
-        return {
-            'refresh': str(data),
-            'access': str(data.access_token),
-        }
+        return data

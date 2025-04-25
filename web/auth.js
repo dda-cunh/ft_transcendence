@@ -123,9 +123,21 @@ async function	loginUser(event)
 	{
 		let responseData = await doAuth(creds, "auth/");
 
+
 		if (!responseData.ok)
 		{
 			let errKey = Object.keys(responseData)[0];
+			if (errKey === "otp_token") {
+				document.getElementById("login2FA").classList.remove("d-none");
+				// // Optionally show the error message under the OTP field:
+				const otpField = document.getElementById("login2FAcode");
+				otpField.classList.add("is-invalid");
+				otpField.insertAdjacentHTML(
+				  "afterend",
+				  `<div class="invalid-feedback">${responseData[errKey]}</div>`
+				);
+				return;
+			}
 			switch (errKey)
 			{
 				case "username":
