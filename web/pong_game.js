@@ -42,6 +42,7 @@ function    renderPage()
 
 export function renderPongGame(gameMode)
 {
+    document.getElementById("viewRow").innerHTML = "";
     renderPage();
 
     let canvas = document.querySelector("canvas");
