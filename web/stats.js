@@ -130,8 +130,8 @@ export function adjust(axs)
 			adjDraws++
 		else
 			adjLosses++
-        adjScored += parseInt(checkboxes[i].parentElement.parentElement.children[2].children[0].innerHTML)
-        adjSuffered += parseInt(checkboxes[i].parentElement.parentElement.children[2].children[2].innerHTML)
+        adjScored += parseInt(checkboxes[i].parentElement.parentElement.children[2].children[0].children[0].innerHTML)
+        adjSuffered += parseInt(checkboxes[i].parentElement.parentElement.children[2].children[0].children[2].innerHTML)
 	}
 	document.getElementById("wins").innerHTML = adjWins
 	document.getElementById("scored").innerHTML = adjScored
@@ -249,15 +249,17 @@ export async function renderToggableGraph(data, userID, elem)
                     </span>
                 </span>
             </td>
-            <td class="col pe-none text-${resultColor}">
+            <td class="col text-${resultColor}">
             
             <!--
             <span class="pe-none">${p1_score} <strong class="fw-bolder">-</strong> ${p2_score}</span>
 
             -->
-                <span id="userpoints">${p1_score}</span>
-                <span> - </span>
-                <span id="opponentpoints">${p2_score}</span>
+                <div class="pe-none">
+                    <span id="userpoints">${p1_score}</span>
+                    <span> - </span>
+                    <span id="opponentpoints">${p2_score}</span>
+                </div>
             </td>
             <td onmouseenter="showOpts(this)" onmouseleave="hideOpts(this)" class="col">
                 <span class="allWinners pe-none">${winner.username}</span>
