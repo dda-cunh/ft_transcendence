@@ -203,13 +203,13 @@ export async function renderToggableGraph(data, userID, elem)
         return;
     let won = 0, lost = 0, scored = 0, suffered = 0;
 	for (const entry of data) {
-        let id = entry.player1;
+        let id = entry.player2;
         let winner = await getUserData(entry.winner);
         let p1_score = 0;
         let p2_score = 0;
         if (entry.player1 !== userID)
         {
-            id = entry.player2;
+            id = entry.player1;
             scored += entry.p2_score;
             suffered += entry.p1_score;
             p1_score = entry.p2_score;
