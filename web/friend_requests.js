@@ -51,8 +51,8 @@ async function	renderList()
 							</a>
 						</td data-id="${entry.sender}">
 						<td data-id="${entry.sender}">
-							<button id="acceptBtn" class="btn btn-outline-success accept-btn" data-id="${entry.id}">ACCEPT</button>
-							<button class="btn btn-outline-danger deny-btn" data-id="${entry.id}">DENY</button>
+							<button id="acceptBtn" class="btn btn-outline-light accept-btn" data-id="${entry.id}">ACCEPT</button>
+							<button id="denyBtn" class="btn btn-outline-light deny-btn" data-id="${entry.id}">DENY</button>
 						</td>
 					</tr>
 				`;
@@ -62,13 +62,25 @@ async function	renderList()
 			let acceptBtn = document.getElementById("acceptBtn");
 			acceptBtn.addEventListener('mouseenter', () => {
 													acceptBtn.style.color = 'var(--bs-success)';
-													acceptBtn.style.backgroundColor = 'var(--bs-light)';
+													acceptBtn.style.backgroundColor = 'transparent';
 													acceptBtn.style.borderColor = 'var(--bs-success)';
 			});
 			acceptBtn.addEventListener('mouseleave', () => {
 													acceptBtn.style.color = ''; // resets to original
 													acceptBtn.style.backgroundColor = '';
 													acceptBtn.style.borderColor = ''; // resets to original
+			});
+
+			let denyBtn = document.getElementById("denyBtn");
+			denyBtn.addEventListener('mouseenter', () => {
+													denyBtn.style.color = 'var(--bs-danger)';
+													denyBtn.style.backgroundColor = 'transparent';
+													denyBtn.style.borderColor = 'var(--bs-danger)';
+			});
+			denyBtn.addEventListener('mouseleave', () => {
+													denyBtn.style.color = ''; // resets to original
+													denyBtn.style.backgroundColor = '';
+													denyBtn.style.borderColor = ''; // resets to original
 			});
 		}
 	}

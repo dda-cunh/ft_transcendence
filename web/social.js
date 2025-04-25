@@ -140,14 +140,14 @@ async function	renderPlayerCard(userID)
 		let id = pendingRequestID;
 
 		controlsCol.innerHTML = `
-			<button class="btn btn-sm btn-primary disabled mt-2 me-2">
-				<i class="bi-person-fill-add"></i>
-			</button>
 			<button id="acceptBtn" data-id="${id}" class="btn btn-sm btn-outline-light me-1 mt-2">
 				<i data-id="${id}" class="bi-check-lg"></i>
 			</button>
-			<button id="denyBtn" data-id="${id}" class="btn btn-sm btn-outline-danger mt-2">
+			<button id="denyBtn" data-id="${id}" class="btn btn-sm btn-outline-light mt-2 me-2">
 				<i data-id="${id}" class="bi-x-lg"></i>
+			</button>
+			<button class="btn btn-sm btn-primary disabled mt-2">
+				<i class="bi-person-fill-add"></i>
 			</button>
 		`;
 
@@ -160,6 +160,7 @@ async function	renderPlayerCard(userID)
 												addFriendConfirmedBtn();
 												showPopover("Friend request accepted", controlsCol, 'success');
 											} );
+
 		acceptBtn.addEventListener('mouseenter', () => {
 												acceptBtn.style.color = 'var(--bs-success)';
 												acceptBtn.style.backgroundColor = 'transparent';
@@ -167,14 +168,28 @@ async function	renderPlayerCard(userID)
 		});
 		acceptBtn.addEventListener('mouseleave', () => {
 												acceptBtn.style.color = ''; // resets to original
+												acceptBtn.style.backgroundColor = 'transparent';
 												acceptBtn.style.borderColor = ''; // resets to original
 		});
+
 
 		denyBtn.addEventListener("click", (event) => { 
 												denyFriendRequest(event);
 												addFriendRequestBtn(userID); 
 												showPopover("Friend request rejected", controlsCol);
 											} );
+
+		denyBtn.addEventListener('mouseenter', () => {
+												denyBtn.style.color = 'var(--bs-danger)';
+												denyBtn.style.backgroundColor = 'transparent';
+												denyBtn.style.borderColor = 'var(--bs-danger)';
+		});
+		denyBtn.addEventListener('mouseleave', () => {
+												denyBtn.style.color = ''; // resets to original
+												denyBtn.style.backgroundColor = 'transparent';
+												denyBtn.style.borderColor = ''; // resets to original
+		});
+
 
 	}
 

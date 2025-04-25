@@ -59,10 +59,22 @@ async function renderPlayerCard()
 		playerCardContainer.innerHTML = playerCardHtml;
 
 		document.getElementById("playerCardControlsCol").innerHTML = `
-			<button id="acctSettingsBtn" type="button" class="btn btn-sm btn-outline-light mt-2">
+			<button id="acctSettingsBtn" type="button" class="btn btn-sm btn-outline-secondary mt-2">
 				<i class="bi-gear-fill"></i>
 			</button>
 		`
+
+		let acctSettingsBtn = document.getElementById("acctSettingsBtn");
+		acctSettingsBtn.addEventListener('mouseenter', () => {
+												acctSettingsBtn.style.color = 'var(--bs-light)';
+												acctSettingsBtn.style.backgroundColor = 'transparent';
+												acctSettingsBtn.style.borderColor = 'var(--bs-light)';
+		});
+		acctSettingsBtn.addEventListener('mouseleave', () => {
+												acctSettingsBtn.style.color = ''; // resets to original
+												acctSettingsBtn.style.backgroundColor = '';
+												acctSettingsBtn.style.borderColor = ''; // resets to original
+		});
 
 		let userData = await getOwnUserData();
 
