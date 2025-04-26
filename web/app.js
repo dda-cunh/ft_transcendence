@@ -101,7 +101,7 @@ async function renderPlayerCard()
 	}
 	catch (error)
 	{
-		playerCardContainer.innerHTML = `<p>${error}</p>`;
+		console.log(error);
 	}
 }
 
@@ -122,14 +122,14 @@ async function	renderView()
 	}
 	catch(error)
 	{
-		viewRow.innerHTML = `<p>${error}</p>`;
+		console.log(error);
 	}
 }
 
 async function renderPage() 
 {
 	await renderNavbar();
-	if (!sessionStorage.getItem("currentView").startsWith("user#"))
+	if (sessionStorage.getItem("currentView") && !sessionStorage.getItem("currentView").startsWith("user#"))
 		await renderPlayerCard();
 }
 
@@ -146,13 +146,14 @@ function	logoutUser()
 async function	changeView()
 {
 	let currentView = sessionStorage.getItem("currentView");
-	if (!currentView.startsWith("user#") && currentView !== "game")
+	if (currentView && !currentView.startsWith("user#") && currentView !== "game")
 		await renderView();
 
 
 	if (history.state && history.state.view !== currentView)
 		history.pushState({view: currentView}, document.title, location.href);
 
+	if (!currentView) return ;
 	switch (currentView)
 	{
 		case ("home"):
@@ -192,7 +193,7 @@ export function	handleHistoryPopState(event)
 	let hist = event.state
 	if (hist && hist.view !== sessionStorage.getItem("currentView") )
 	{
-		if (sessionStorage.getItem("currentView") === "game" && socket)
+		if (sessionStorage.getItem("currentView") && sessionStorage.getItem("currentView") === "game" && socket)
 			socket.close();
 		sessionStorage.setItem("currentView", hist.view);
 		main();
@@ -210,7 +211,7 @@ function	setupEventHandlers(elems)
 {
 	let currentView = sessionStorage.getItem("currentView");
 		/*	NAVBAR	*/
-	if (currentView === "game")
+	if (!currentView || currentView === "game")
 		return ;
 
 	if (elems === "navbar")
@@ -241,7 +242,7 @@ function	setupEventHandlers(elems)
 
 
 		/*	PLAYER CARD	*/
-	if (currentView.startsWith("user#"))
+	if (!currentView || currentView.startsWith("user#"))
 		return
 
 	if (elems === "playerCard")
