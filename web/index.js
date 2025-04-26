@@ -1,16 +1,7 @@
 import {App} from './app.js'
-import {renderAuth, enable2FA, toggle2FA, verify2FA} from './auth.js'
+import {renderAuth} from './auth.js'
 import {updateAccessTkn} from './utils.js'
-import {showOpts, hideOpts, calcoords, adjust, toggleGraph} from './stats.js'
 
-window.enable2FA = enable2FA;
-window.verify2FA = verify2FA;
-window.toggle2FA = toggle2FA;
-window.showOpts = showOpts
-window.hideOpts = hideOpts
-window.adjust = adjust
-window.calcoords = calcoords
-window.toggleGraph = toggleGraph
 
 "use strict";
 

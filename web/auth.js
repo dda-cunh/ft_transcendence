@@ -229,6 +229,8 @@ export async function	enable2FA()
 
 		document.getElementById("chg2FAForm").innerHTML = page2fa;
 		document.getElementById("twofaImg").src = `data:image/png;base64,${image}`;
+
+		document.getElementById("verify2FAForm").onsubmit = (event) => { verify2FA(event) };
 	}
 	catch (error)
 	{
