@@ -85,7 +85,7 @@ export async function connectWebSocket(mode) {
           document.getElementById("p1").innerText = gameConstants.p1_name;
         if (document.querySelectorAll("#p2")[0])
           document.getElementById("p2").innerText = gameConstants.p2_name;
-        if (gmode === "local" && ai)
+        if (gmode === "local" && ai && !playerAi)
           playerAi = new PongAI(gameConstants);
       }
     // In socket.onmessage handler:
@@ -116,6 +116,14 @@ export async function connectWebSocket(mode) {
       });
       document.getElementById("mainContainer").append(btn);
     }
+    keyState = {
+      w: false,
+      s: false,
+      ArrowUp: false,
+      ArrowDown: false,
+      move: "IDLE",
+      moveLocal: "IDLE", // p2 in local mode
+    };
   };
 
   socket.onerror = function(event) {
