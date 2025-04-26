@@ -1,7 +1,7 @@
 .SILENT:
 DOCKER_COMPOSE		=	docker compose
 
-COMPOSE_FILE_PATH	=	./core/docker-compose.yaml
+COMPOSE_FILE_PATH	=	./docker-compose.yaml
 
 COMPOSE				=	${DOCKER_COMPOSE} -f ${COMPOSE_FILE_PATH}
 
@@ -41,7 +41,7 @@ bash_into:
 			fi
 
 logs:
-			${COMPOSE} logs -t
+			${COMPOSE} logs -t --since 2m
 
 down:
 			${COMPOSE} down
