@@ -1,10 +1,12 @@
 import { main } from "./index.js";
 import { updateAccessTkn } from "./utils.js";
 import {handleHistoryPopState} from './app.js'
+import PongAI from "./pongAI.js";
 
+export let gameConstants = {};
+export let gameState = null;
 export let socket = null;
-let gameConstants = {};
-let gameState = null;
+
 let gmode = null;
 let keyState = {
   w: false,
@@ -16,6 +18,7 @@ let keyState = {
 };
 
 let half_w = 0, half_h = 0;
+let ai = false, playerAi = null;
 
 
 function adaptMode(mode) {
@@ -35,8 +38,14 @@ function adaptMode(mode) {
 export async function connectWebSocket(mode) {
   // mode depends on the clicked button; send 'local', 'remote' or 'tournament'
   gmode = adaptMode(mode);
+  if (mode === "Local Multiplayer")
+    ai = true;
   mode = gmode;
   if (socket) socket.close();
+  if (playerAi) {
+    playerAi.destroy();
+    playerAi = null;
+  }
   updateAccessTkn();
   document.cookie = "access=" + sessionStorage.getItem("access") + "; path=/; Secure";
   let wsUrl = `wss://${window.location.hostname}/ws/${mode}pong/`;
@@ -61,6 +70,7 @@ export async function connectWebSocket(mode) {
 
   socket.onmessage = function(event) {
     const data = JSON.parse(event.data);
+  
     window.requestIdleCallback( () => {
       if (data && data.message) {
         if (document.querySelectorAll(".msg-container")[0])
@@ -75,12 +85,15 @@ export async function connectWebSocket(mode) {
           document.getElementById("p1").innerText = gameConstants.p1_name;
         if (document.querySelectorAll("#p2")[0])
           document.getElementById("p2").innerText = gameConstants.p2_name;
+        if (gmode === "local" && ai)
+          playerAi = new PongAI(gameConstants);
       }
+    // In socket.onmessage handler:
       if (data && data.gamestate) {
         gameState = data.gamestate;
+        if (playerAi) playerAi.update(gameState); // 🟢 Add this line
         drawFrame();
       }
-
       handleHistoryPopState();
     } );
   };
@@ -90,9 +103,13 @@ export async function connectWebSocket(mode) {
     gameState = null;
     unloadControls();
     setTimeout(() => {
-      main();
+      if (sessionStorage.getItem("currentView") && sessionStorage.getItem("currentView") === "game")
+      {
+        sessionStorage.setItem("currentView", "home");
+        main();
+      }
     }, 3000);
-    sessionStorage.setItem("currentView", "home");
+    playerAi = null;
   };
 
   socket.onerror = function(event) {
