@@ -62,7 +62,7 @@ async def local_monitor_room(self):
 	if r.exists(f"keystate_p2_{self.user_id}"):
 		r.delete(f"keystate_p2_{self.user_id}")
 	await self.send(text_data=json.dumps({
-		'message': 'Game ended. Leaving room...',
+		'message': 'Game ended.',
 	}))
 	del self.task
 	await self.close()
@@ -231,7 +231,7 @@ async def monitor_room(room_name, channel_layer):
 			room_name,
 			{
 				'type': 'room_message',
-				'message': f'Winner: {winner}!. Game ended. Leaving room...',
+				'message': f'Winner: {winner}!. Game ended.',
 				'close': True,
 				'gamestate': False,
 				'initial': False,
@@ -250,7 +250,7 @@ async def monitor_room(room_name, channel_layer):
 		room_name,
 		{
 			'type': 'room_message',
-			'message': f'Winner: {winner}!. Game ended. Leaving room...',
+			'message': f'Winner: {winner}!. Game ended.',
 			'close': True,
 			'gamestate': False,
 			'initial': False,
