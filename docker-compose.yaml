@@ -1,7 +1,7 @@
 x-common-conf: &common
   networks:
     - transcendence
-  env_file: ".env"
+  env_file: "./core/.env"
   restart: on-failure
 
 networks:
@@ -28,27 +28,27 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: ../web
+      device: ./web/
       o: bind
 
 services:
   postgresql:
     container_name: postgresql
-    build: ./postgresql
+    build: ./core/postgresql
     volumes:
       - db_data:/var/lib/postgresql/data
     <<: *common
 
   redis:
     container_name: redis
-    build: ./redis
+    build: ./core/redis
     volumes:
       - redis_data:/data
     <<: *common
 
   gunicorn-base:
     container_name: gunicorn-base
-    build: ./gunicorn-base
+    build: ./core/gunicorn-base
     image: gunicorn-base
     depends_on:
       - postgresql
@@ -56,34 +56,45 @@ services:
 
   auth:
     container_name: auth
-    build: ./auth
+    build: ./core/auth
     depends_on:
       - gunicorn-base
     volumes:
-      - ./auth/:/service
+      - ./core/auth/:/service
     <<: *common
 
   management:
     container_name: management
-    build: ./management
+    build: ./core/management
     depends_on:
       - auth
     volumes:
-      - ./management/:/service
-      - ./auth/user/:/service/user
+      - ./core/management/:/service
+      - ./core/auth/user/:/service/user
+    <<: *common
+
+  game:
+    container_name: game
+    build: ./core/game
+    depends_on:
+      - management
+      - redis
+    volumes:
+      -  ./core/game/:/service
+      -  ./core/auth/user/:/service/user
     <<: *common
 
   nginx:
     container_name: nginx
-    build: ./nginx     
+    build: ./core/nginx     
     depends_on:
       - game
-      - management
     networks:
       - transcendence
+
   nginx_frontend:
     container_name: nginx_frontend
-    build: ./nginx_frontend
+    build: ./core/nginx_frontend
     ports:     
       - "80:80"
       - "443:443"  
@@ -93,14 +104,3 @@ services:
       - nginx
     networks:
       - transcendence
-
-  game:
-    container_name: game
-    build: ./game
-    depends_on:
-      - auth
-      - redis
-    volumes:
-      - ./game/:/service
-      - ./auth/user/:/service/user
-    <<: *common

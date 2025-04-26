@@ -20,10 +20,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-hpe9gej+n7@4az&-p()=&1q+j$0cx8e5gw5*cwt#6og6w06axh'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG =  os.environ['DEBUG']
 
 ALLOWED_HOSTS = [os.environ['DOMAIN__NAME'], 'game']
 
