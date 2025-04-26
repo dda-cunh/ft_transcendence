@@ -97,7 +97,6 @@ async function renderPlayerCard()
 			</style>
 		`;
 
-//		bindElemHover(document.getElementById());
 
 		let userData = await getOwnUserData();
 
@@ -273,11 +272,7 @@ function	setupEventHandlers(elems)
 export async function	App()
 {
 	if (sessionStorage.getItem("currentView") !== "game")
-	{
-		console.log(sessionStorage.getItem("currentView"));
 		await renderPage();
-		//setupEventHandlers();
-	}
 
 	changeView();
 }
