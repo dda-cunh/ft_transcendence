@@ -1,6 +1,7 @@
 import { renderUserProfile } from './social.js'
 import { changeProfile } from './social.js'
 import { updateAccessTkn } from './utils.js';
+import { renderToggableGraph } from './stats.js'
 
 
 "use strict";
@@ -14,6 +15,7 @@ async function	getUserData(userID)
 
 async function renderGameEntries(data, userID, dest) {
 	let played = 0, won = 0, lost = 0;
+
 	for (const entry of data) {
 	  played++;
 	  let id = entry.player1;
@@ -28,6 +30,8 @@ async function renderGameEntries(data, userID, dest) {
 	  } else
 		lost++;
 	  
+	  let color = (result === "won") ? "success": "danger";
+
 	  let opponent = await getUserData(id);
 
 	  const date = new Date(entry.ended_at);
@@ -36,7 +40,7 @@ async function renderGameEntries(data, userID, dest) {
 	  let row = `<tr data-id="${id}" class="history-link cursor-pointer" style="cursor: pointer;">
 		<td data-id="${id}" class="cursor-pointer">${formattedDate}</td>
 		<td data-id="${id}" class="cursor-pointer">${opponent.username}</td>
-		<td data-id="${id}" class="cursor-pointer">${entry.p1_score} - ${entry.p2_score}</td>
+		<td data-id="${id}" class="cursor-pointer text-${color}">${entry.p1_score} - ${entry.p2_score}</td>
 		<td data-id="${id}" class="cursor-pointer">${result}</td>
 	  </tr>`;
   
@@ -98,7 +102,7 @@ async function getPersonalID()
 }
 
 /* GET MATCH HISTORY */
-export async function renderMatchHistory(userID)
+export async function renderMatchHistory(userID, stats)
 {
 	try
 	{
@@ -116,11 +120,14 @@ export async function renderMatchHistory(userID)
 			return
 
 		let dest = document.querySelector("#matchHistory");
-		if (!dest)
+		if (!dest && !stats)
 			return
 
 		let data = await response.json();
-		await renderGameEntries(data, id, dest);
+		if (!stats)
+			await renderGameEntries(data, id, dest);
+		else
+			await renderToggableGraph(data, id, "matchStats")
 	}
 	catch(error)
 	{
@@ -180,7 +187,6 @@ export async function renderFriendsList()
 			return
 		let data = await response.json();
 		data.forEach(entry => {
-			console.log(entry);
 			let statusColor = entry.online ? "success" : "secondary";
             let row = `<tr data-id="${entry.id}" class="profile-link cursor-pointer" style="cursor: pointer;">
 				<td data-id="${entry.id}" class="cursor-pointer">
@@ -210,7 +216,7 @@ export async function	renderProfile()
 {
 	updateAccessTkn();
 	await renderFriendsList();
-	await renderMatchHistory(null);
+	await renderMatchHistory(null, false);
 	await renderTournamentHistory(null);
 	document.querySelectorAll(".profile-link").forEach(link => {
 		link.addEventListener("click", (event) => renderUserProfile(event.target.dataset.id) );

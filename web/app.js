@@ -6,11 +6,26 @@ import {renderFriendRequests} from './friend_requests.js'
 import {renderAcctSettings} from './account_settings.js'
 import {renderUserProfile} from './social.js'
 import {getOwnUserData} from './utils.js'
+import { renderStats } from "./stats.js";
+import {renderPongGame} from './pong_game.js'
+import {socket} from './socket.js'
 
 
 "use strict";
 
 
+export async function	getUserData()
+{
+	let response = await fetch("management/management/user/", {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": "Bearer " + sessionStorage.getItem("access"),
+		}
+	});
+
+	return (await response.json() );
+}
 
 	/*	PAGE RENDERING	*/
 async function renderNavbar()
@@ -34,6 +49,8 @@ async function renderNavbar()
 		navLinks.forEach((link) => {
 				link.addEventListener("click", () => bsCollapse.toggle());
 		} );
+
+		setupEventHandlers("navbar");
 	}
 	catch (error)
 	{
@@ -55,9 +72,20 @@ async function renderPlayerCard()
 		let playerCardHtml = await response.text();
 		playerCardContainer.innerHTML = playerCardHtml;
 
-		let userData = await getOwnUserData();
+		document.getElementById("playerCardControlsCol").innerHTML = `
+			<button id="acctSettingsBtn" type="button" class="btn btn-sm btn-outline-secondary mt-2">
+				<i class="bi-gear-fill"></i>
+			</button>
+			<style>
+				#acctSettingsBtn:hover {
+					color: var(--bs-light);
+					background-color: transparent;
+					border-color: var(--bs-light);
+				}
+			</style>
+		`
 
-		console.log(userData);
+		let userData = await getOwnUserData();
 
 		let imgSrc = userData.avatar;
 		let userName = userData.username;
@@ -69,9 +97,7 @@ async function renderPlayerCard()
 		document.getElementById("userNameDisplay").innerText = userName;
 		document.getElementById("mottoDisplay").innerText = `"` + motto + `"`;
 
-		let pfpHeight = document.getElementById("pfpContainer").offsetHeight;
-		pfp.style.height = `${pfpHeight}px`;
-		pfp.style.width = `${pfpHeight}px`;
+		setupEventHandlers("playerCard");
 	}
 	catch (error)
 	{
@@ -120,11 +146,11 @@ function	logoutUser()
 async function	changeView()
 {
 	let currentView = sessionStorage.getItem("currentView");
-	if (!currentView.startsWith("user#"))
+	if (!currentView.startsWith("user#") && currentView !== "game")
 		await renderView();
 
 
-	if (history.state?.view !== currentView)
+	if (history.state && history.state.view !== currentView)
 		history.pushState({view: currentView}, document.title, location.href);
 
 	switch (currentView)
@@ -138,8 +164,14 @@ async function	changeView()
 		case ("friend_requests"):
 			renderFriendRequests();
 			break ;
+		case ("stats"):
+			await renderStats();
+			break ;
 		case ("account_settings"):
 			renderAcctSettings();
+			break ;
+		case ("game"):
+			renderPongGame(sessionStorage.getItem("gameMode"));
 			break ;
 		default:
 			renderUserProfile(currentView.split("#").pop());
@@ -148,54 +180,75 @@ async function	changeView()
 
 let initialLoad = true;
 
-window.addEventListener("popstate", function(event) {
+export function	handleHistoryPopState(event)
+{
 	if (initialLoad)
 	{
 		initialLoad = false;
 		return ;
 	}
-
-	if (event.state?.view && history.state?.view !== sessionStorage.getItem("currentView") )
+	if (!event || !event.state)
+		return ;
+	let hist = event.state
+	if (hist && hist.view !== sessionStorage.getItem("currentView") )
 	{
-		sessionStorage.setItem("currentView", event.state.view);
+		if (sessionStorage.getItem("currentView") === "game" && socket)
+			socket.close();
+		sessionStorage.setItem("currentView", hist.view);
 		main();
 	}
-} );
+}
+
+window.addEventListener("popstate", (event) => handleHistoryPopState(event) );
 
 
 document.addEventListener("DOMContentLoaded", () => {
 	history.replaceState({view: sessionStorage.getItem("currentView")}, document.title, location.href);
 } );
 
-function	setupEventHandlers()
+function	setupEventHandlers(elems)
 {
+	let currentView = sessionStorage.getItem("currentView");
 		/*	NAVBAR	*/
-	document.getElementById("titleHeader").onclick = function() {
-			sessionStorage.setItem("currentView", "home");
-			main();
-	};
+	if (currentView === "game")
+		return ;
 
-	document.getElementById("homeBtn").onclick = function() {
+	if (elems === "navbar")
+	{
+		document.getElementById("titleHeader").onclick = function() {
 			sessionStorage.setItem("currentView", "home");
 			main();
-	};
-	document.getElementById("profileBtn").onclick = function() {
-			sessionStorage.setItem("currentView", "profile");
+		};
+
+		document.getElementById("homeBtn").onclick = function() {
+				sessionStorage.setItem("currentView", "home");
+				main();
+		};
+		document.getElementById("profileBtn").onclick = function() {
+				sessionStorage.setItem("currentView", "profile");
+				main();
+		};
+		document.getElementById("friendRequestsBtn").onclick = function() {
+				sessionStorage.setItem("currentView", "friend_requests");
+				main();
+		};
+		document.getElementById("statsBtn").onclick = function() {
+			sessionStorage.setItem("currentView", "stats");
 			main();
-	};
-	document.getElementById("friendRequestsBtn").onclick = function() {
-			sessionStorage.setItem("currentView", "friend_requests");
-			main();
-	};
-	document.getElementById("logoutBtn").onclick = () => logoutUser();
+		};
+		document.getElementById("logoutBtn").onclick = () => logoutUser();
+	}
 
 
 		/*	PLAYER CARD	*/
-	if (!sessionStorage.getItem("currentView").startsWith("user#"))
-	{			
+	if (currentView.startsWith("user#"))
+		return
+
+	if (elems === "playerCard")
+	{
 		document.getElementById("acctSettingsBtn").onclick = function() {
-				sessionStorage.setItem("currentView", "account_settings");
-				main();
+			sessionStorage.setItem("currentView", "account_settings");
+			main();
 		};
 		document.getElementById("userPfp").onclick = function() {
 				sessionStorage.setItem("currentView", "profile");
@@ -210,8 +263,11 @@ function	setupEventHandlers()
 
 export async function	App()
 {
-	await renderPage();
-	setupEventHandlers();
+	if (sessionStorage.getItem("currentView") !== "game")
+	{
+		await renderPage();
+		//setupEventHandlers();
+	}
 
 	changeView();
 }

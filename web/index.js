@@ -1,7 +1,16 @@
-import {renderAuth} from './auth.js'
 import {App} from './app.js'
+import {renderAuth, enable2FA, toggle2FA, verify2FA} from './auth.js'
 import {updateAccessTkn} from './utils.js'
+import {showOpts, hideOpts, calcoords, adjust, toggleGraph} from './stats.js'
 
+window.enable2FA = enable2FA;
+window.verify2FA = verify2FA;
+window.toggle2FA = toggle2FA;
+window.showOpts = showOpts
+window.hideOpts = hideOpts
+window.adjust = adjust
+window.calcoords = calcoords
+window.toggleGraph = toggleGraph
 
 "use strict";
 
@@ -13,6 +22,7 @@ function	initApp()
 	let paddleColor = sessionStorage.getItem("paddleColor");
 	let ballColor = sessionStorage.getItem("ballColor");
 	let backgroundColor = sessionStorage.getItem("backgroundColor");
+	let gameMode = sessionStorage.getItem("gameMode");
 
 	if (currentView === null)
 		sessionStorage.setItem("currentView", "home");
@@ -28,6 +38,9 @@ function	initApp()
 
 	if (backgroundColor === null)
 		sessionStorage.setItem("backgroundColor", "Black");
+
+	if (gameMode === null)
+		sessionStorage.setItem("gameMode", "friendlyMatch");
 }
 
 export async function	userIsLoggedIn()

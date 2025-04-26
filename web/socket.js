@@ -1,10 +1,12 @@
 import { main } from "./index.js";
 import { updateAccessTkn } from "./utils.js";
+import {handleHistoryPopState} from './app.js'
 import PongAI from "./pongAI.js";
 
-let socket = null;
 export let gameConstants = {};
 export let gameState = null;
+export let socket = null;
+
 let gmode = null;
 let keyState = {
   w: false,
@@ -68,29 +70,32 @@ export async function connectWebSocket(mode) {
 
   socket.onmessage = function(event) {
     const data = JSON.parse(event.data);
-    if (data && data.message) {
-      if (document.querySelectorAll(".msg-container")[0])
-        document.querySelectorAll(".msg-container")[0].innerText = data.message;
-    }
-    if (data && data.initial) {
-      gameConstants = data.initial;
-      half_w = gameConstants.canvas_w / 2;
-      half_h = gameConstants.canvas_h / 2;
+  
+    window.requestIdleCallback( () => {
+      if (data && data.message) {
+        if (document.querySelectorAll(".msg-container")[0])
+          document.querySelectorAll(".msg-container")[0].innerText = data.message;
+      }
+      if (data && data.initial) {
+        gameConstants = data.initial;
+        half_w = gameConstants.canvas_w / 2;
+        half_h = gameConstants.canvas_h / 2;
 
-      if (document.querySelectorAll("#p1")[0])
-        document.getElementById("p1").innerText = gameConstants.p1_name;
-      if (document.querySelectorAll("#p2")[0])
-        document.getElementById("p2").innerText = gameConstants.p2_name;
-      
-      if (gmode === "local" && ai)
-        playerAi = new PongAI(gameConstants);
-    }
+        if (document.querySelectorAll("#p1")[0])
+          document.getElementById("p1").innerText = gameConstants.p1_name;
+        if (document.querySelectorAll("#p2")[0])
+          document.getElementById("p2").innerText = gameConstants.p2_name;
+        if (gmode === "local" && ai)
+          playerAi = new PongAI(gameConstants);
+      }
     // In socket.onmessage handler:
-    if (data && data.gamestate) {
-      gameState = data.gamestate;
-      if (playerAi) playerAi.update(gameState); // 🟢 Add this line
-      drawFrame();
-    }
+      if (data && data.gamestate) {
+        gameState = data.gamestate;
+        if (playerAi) playerAi.update(gameState); // 🟢 Add this line
+        drawFrame();
+      }
+      handleHistoryPopState();
+    } );
   };
 
   socket.onclose = function(event) {
@@ -101,6 +106,7 @@ export async function connectWebSocket(mode) {
       main();
     }, 3000);
     playerAi = null;
+    sessionStorage.setItem("currentView", "home");
   };
 
   socket.onerror = function(event) {

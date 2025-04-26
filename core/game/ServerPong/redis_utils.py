@@ -76,6 +76,8 @@ def cancel_expiry(user_id):
 		r.persist(f"name_{user_id}")
 	if r.exists(f"user_lobby_{user_id}"):
 		r.persist(f"user_lobby_{user_id}")
+	if r.exists(f"expire_{user_id}"):
+		r.delete(f"expire_{user_id}")
 
 def get_queue_size(mode):
 	if mode == "remote":
@@ -122,3 +124,6 @@ def delete_user_info(user_id):
 		r.delete(f"name_{user_id}")
 	if r.exists(f"user_lobby_{user_id}"):
 		r.delete(f"user_lobby_{user_id}")
+	if r.exists(f"expire_{user_id}"):
+		r.delete(f"expire_{user_id}")
+	
