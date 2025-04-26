@@ -269,6 +269,7 @@ export async function	verify2FA(event)
 			headers: {
 				"Content-Type": "application/json",
 				"Authorization": "Bearer " + sessionStorage.getItem("access"),
+				"X-Requested-With": "XMLHttpRequest" 
 			},
 			body: JSON.stringify({"qrcode": resp}),
 		} );
