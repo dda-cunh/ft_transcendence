@@ -269,7 +269,7 @@ async def monitor_room(room_name, channel_layer):
 		room_name,
 		{
 			'type': 'room_message',
-			'message': f'Winner: {winner}!. Game ended. Leaving room...',
+			'message': f'Winner: {winner}!. Game ended',
 			'close': True,
 			'gamestate': False,
 			'initial': False,
