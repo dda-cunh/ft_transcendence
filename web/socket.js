@@ -103,10 +103,13 @@ export async function connectWebSocket(mode) {
     gameState = null;
     unloadControls();
     setTimeout(() => {
-      main();
+      if (sessionStorage.getItem("currentView") && sessionStorage.getItem("currentView") === "game")
+      {
+        sessionStorage.setItem("currentView", "home");
+        main();
+      }
     }, 3000);
     playerAi = null;
-    sessionStorage.setItem("currentView", "home");
   };
 
   socket.onerror = function(event) {
