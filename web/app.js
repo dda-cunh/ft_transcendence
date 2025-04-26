@@ -64,14 +64,21 @@ async function renderPlayerCard()
 
 	try
 	{
-		let response = await fetch("views/player_card.html");
+		if (!document.getElementById("userNameDisplay"))
+		{				
+			let response = await fetch("views/player_card.html");
 
-		if (!response.ok)
-			throw new Error("Error loading player card");
+			if (!response.ok)
+				throw new Error("Error loading player card");
 
-		let playerCardHtml = await response.text();
-		playerCardContainer.innerHTML = playerCardHtml;
+			let playerCardHtml = await response.text();
+			playerCardContainer.innerHTML = playerCardHtml;
+			if (sessionStorage.getItem("currentView").startsWith("user#"))
+				return ;
+		}
 
+		document.getElementById("userPfp").parentElement.classList.remove("pe-none");
+		document.getElementById("userNameDisplay").classList.remove("pe-none");
 		document.getElementById("playerCardControlsCol").innerHTML = `
 			<button id="acctSettingsBtn" type="button" class="btn btn-sm btn-outline-secondary mt-2">
 				<i class="bi-gear-fill"></i>
@@ -83,7 +90,7 @@ async function renderPlayerCard()
 					border-color: var(--bs-light);
 				}
 			</style>
-		`
+		`;
 
 		let userData = await getOwnUserData();
 
@@ -134,8 +141,7 @@ async function	playerCardNeedRender()
 	if (!displayName)
 		return (true);
 
-	if (	sessionStorage.getItem("currentView").startsWith("user#")
-			|| displayName.innerText === user.username)
+	if (displayName.innerText === user.username)
 				return (false);
 
 	return (true);
@@ -144,7 +150,7 @@ async function	playerCardNeedRender()
 async function renderPage() 
 {
 	await renderNavbar();
-	if (await playerCardNeedRender() )
+//	if (await playerCardNeedRender() )
 		await renderPlayerCard();
 }
 
@@ -281,11 +287,3 @@ export async function	App()
 	changeView();
 }
 
-
-/*
-	TO DO
-		ADD PERSISTENCE + HISTORY FOR GAME VIEW
-		FIX CANVAS RENDERING (SIZE IS ALL DUCKED UP)
-		ADD ONLINE STATUS TO PLAYER CARD OF OTHER USERS
-		PENDING SENT REQUESTS NEEDS AN ENDPOINT (TO RENDER OTHER USERS PLAYER CARD ACCORDINGLY)
-*/

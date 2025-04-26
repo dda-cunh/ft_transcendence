@@ -268,6 +268,7 @@ async function	renderPlayerCard(userID)
 
 	try
 	{
+		/*
 		let response = await fetch("views/player_card.html");
 
 		if (!response.ok)
@@ -275,7 +276,7 @@ async function	renderPlayerCard(userID)
 
 		let playerCardHtml = await response.text();
 		playerCardContainer.innerHTML = playerCardHtml;
-
+*/
 		document.getElementById("userPfp").parentElement.classList.add("pe-none");
 		document.getElementById("userPfp").parentElement.setAttribute("aria-disabled", true);
 
