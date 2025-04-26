@@ -1,4 +1,4 @@
-<div class="col-12 col-lg-10 my-2 border rounded">
+<div class="col-12 col-lg-10 my-2 border border-secondary border-hover rounded">
 	<h1 class="display-3 pe-none mt-3" aria-disabled="true">ACCOUNT SETTINGS</h1>
 	<div class="card bg-dark text-center">
 		<div class="card-header mx-auto mt-3 border-top">
@@ -30,7 +30,7 @@
 								<span class="input-group-text bg-dark text-light">
 									<span class="bi-person-fill"></span>
 								</span>
-								<input id="newUserField" type="text" class="form-control bg-dark text-light" placeholder="New Username">
+								<input id="newUserField" type="text" class="form-control bg-dark border-secondary border-hover text-light" placeholder="New Username">
 							</div>
 							<button id="chgUsernameBtn" type="submit" class="btn btn-outline-light mt-2">Confirm</button>
 						</form>
@@ -41,7 +41,7 @@
 					<div class="col-7 mx-auto">
 						<form id="changeMottoForm">
 							<div class="input-group my-2" data-bs-placement="right" data-bs-content=" ">
-								<input id="newMottoField" type="text" class="form-control bg-dark text-light" placeholder="New Motto"></textarea>
+								<input id="newMottoField" type="text" class="form-control border-secondary border-hover bg-dark text-light" placeholder="New Motto"></textarea>
 							</div>
 							<button id="chgMottoBtn" type="submit" class="btn btn-outline-light mt-2" data-bs-placement="right" data-bs-content=" ">Confirm</button>
 						</form>
@@ -75,21 +75,21 @@
 								<span class="input-group-text bg-dark text-light">
 									<span class="bi-lock-fill"></span>
 								</span>
-								<input id="oldPasswordField" type="password" class="form-control bg-dark text-light" placeholder="Old Password">
+								<input id="oldPasswordField" type="password" class="form-control border-secondary border-hover bg-dark text-light" placeholder="Old Password">
 							</div>
 							<!--NEW PASSWORD-->
 							<div class="input-group my-2" data-bs-placement="right" data-bs-content=" ">
 								<span class="input-group-text bg-dark text-light">
 									<span class="bi-lock-fill"></span>
 								</span>		
-								<input id="newPasswordField" type="password" class="form-control bg-dark text-light" placeholder="New Password">
+								<input id="newPasswordField" type="password" class="form-control border-secondary border-hover bg-dark text-light" placeholder="New Password">
 							</div>
 							<!--CONFIRM NEW PASSWORD-->
 							<div class="input-group my-2" data-bs-placement="right" data-bs-content=" ">
 								<span class="input-group-text bg-dark text-light">
 									<span class="bi-lock-fill"></span>
 								</span>
-								<input id="confirmPasswordField" type="password" class="form-control bg-dark text-light" placeholder="Confirm New Password">
+								<input id="confirmPasswordField" type="password" class="form-control border-secondary border-hover bg-dark text-light" placeholder="Confirm New Password">
 							</div>
 							<div data-bs-placement="right" data-bs-content=" ">
 								<button id="chgPasswdBtn" type="submit" class="btn btn-outline-light mt-2">Confirm</button>
@@ -114,6 +114,12 @@
 	#chgPasswdForm .form-control::placeholder {
 		color: white;
 		opacity: 0.75;
+	}
+
+	.border-hover:hover {
+		color: var(--bs-light);
+		background-color: transparent;
+		border-color: var(--bs-light) !important;
 	}
 
 </style>
