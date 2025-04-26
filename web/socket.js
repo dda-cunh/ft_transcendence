@@ -100,15 +100,15 @@ export async function connectWebSocket(mode) {
 
   socket.onclose = function(event) {
     console.log('WebSocket connection closed');
-    gameState = null;
     unloadControls();
     setTimeout(() => {
-      if (sessionStorage.getItem("currentView") && sessionStorage.getItem("currentView") === "game")
+    if (!gameState && sessionStorage.getItem("currentView") && sessionStorage.getItem("currentView") === "game")
       {
         sessionStorage.setItem("currentView", "home");
         main();
       }
     }, 3000);
+    gameState = null;
     playerAi = null;
   };
 
