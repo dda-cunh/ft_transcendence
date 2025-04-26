@@ -73,9 +73,9 @@ async function renderPlayerCard()
 
 			let playerCardHtml = await response.text();
 			playerCardContainer.innerHTML = playerCardHtml;
-			if (sessionStorage.getItem("currentView").startsWith("user#"))
-				return ;
 		}
+		if (sessionStorage.getItem("currentView").startsWith("user#"))
+			return ;
 
 		document.getElementById("userPfp").parentElement.classList.remove("pe-none");
 		document.getElementById("userNameDisplay").classList.remove("pe-none");

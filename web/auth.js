@@ -198,6 +198,8 @@ export async function	toggle2FA()
 	}
 }
 
+//	MUST GIVE OPTION TO DISABLE 2FA
+//	ALSO, MAYBE REQUIRE PASSWORD...
 export async function	enable2FA()
 {
 	try
