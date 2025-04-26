@@ -1,4 +1,4 @@
-<div class="col-12 col-lg-10 mt-2 py-2 border rounded">
+<div class="col-12 col-lg-10 mt-2 py-2 border border-secondary border-hover rounded">
     <h3 class="m-2 mt-3 px-2 text-custom text-center text-bold display-3 pe-none">STATS</h3>
     <div class="w-100 py-3 d-flex flex-row align-items-center">
         <p class="w-100 fs-5 d-inline w-50 text-center pe-none strong">Wins | <span id="wins">0</span></p>
@@ -59,11 +59,22 @@
     .graph-opts {
         display: inline-block;
         margin-left: 10px !important;
-        border: 1.5px solid lightgreen;
+        border: 1.5px solid white;
         padding: 0 1.5px !important;
         font-size: 14px;
+        cursor: pointer;
     }
-    .graph-opts:last-child {
-	    border: 1.5px solid lightsalmon;
+    .graph-opts:hover {
+        border: 1.5px solid green;
+        color: 1.5px solid green;
+    }
+    .graph-opts:last-child:hover {
+	    border: 1.5px solid red;
+        color: 1.5px solid red;
+    }
+    .border-hover:hover {
+        color: var(--bs-light);
+        background-color: transparent;
+        border-color: var(--bs-light) !important;
     }
 </style>

@@ -1,4 +1,4 @@
-<div class="col col-lg-10 mt-2 py-2 border rounded">
+<div class="col col-lg-10 mt-2 py-2 border border-secondary border-hover rounded">
 	<h1 class="display-3 pe-none mt-3" aria-disabled="true">FRIEND REQUESTS</h1>
 	<div class="position-relative" style="height: 350px; overflow-x: auto;">
 		<table class="table table-responsive table-borderless table-hover table-dark fw-bolder align-middle">
@@ -9,3 +9,10 @@
 		</table>
 	</div>
 </div>
+<style>
+	.border-hover:hover {
+		color: var(--bs-light);
+		background-color: transparent;
+		border-color: var(--bs-light) !important;
+	}
+</style>

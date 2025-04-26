@@ -17,7 +17,7 @@ function    renderPage()
     let transcendenceApp = document.getElementById("mainContainer");
     transcendenceApp.innerHTML = `
         <div class="d-flex flex-column justify-content-center align-items-center">
-            <div class="row w-75 h-75">
+            <div class="row w-75 h-75 border border-secondary border-hover rounded">
                 <div class="col text-center mt-lg-5">
                     <h3 class="pe-none display-3" id="p1">player1</h3>
                 </div>
@@ -38,6 +38,13 @@ function    renderPage()
                 <canvas style="background: black;">Game Canvas</canvas><!--BACKGROUND COLOR MUST BE SET WITH GAME SETTINGS-->
             </div>
         </div>
+        <style>
+            .border-hover:hover {
+                color: var(--bs-light);
+                background-color: transparent;
+                border-color: var(--bs-light) !important;
+            }
+        </style>
     `;
     transcendenceApp.style.height = window.innerHeight;
 }
@@ -54,5 +61,5 @@ export function renderPongGame(gameMode)
 
     let mode = gameMode === "tournament" ? "tournament" : sessionStorage.getItem("matchType");
     console.log(mode)
-    connectWebSocket(mode);
+//    connectWebSocket(mode);
 }

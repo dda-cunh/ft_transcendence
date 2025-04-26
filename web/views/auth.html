@@ -3,8 +3,8 @@
 		<h1 class="display-5 fw-bolder text-center">TRANSCENDENCE</h1>
 	</div>
 </div>
-<div class="row">
-	<div class="col mt-5 pt-5">
+<div class="row justify-content-center">
+	<div id="authContainer" class="col-12 col-lg-10 mt-5 border border-secondary rounded">
 		<div class="card bg-dark text-center">
 			<div class="card-header mx-auto">
 				<ul class="nav nav-tabs card-header-tabs">
@@ -22,16 +22,16 @@
 						<div class="col-7 col-lg-3 mx-auto">
 							<form id="loginForm">
 								<div class="input-group" data-bs-placement="right" data-bs-content=" ">
-									<span class="input-group-text bg-dark text-light">
-										<span class="bi-person-fill"></span>
+									<span class="input-group-text bg-dark text-light border-light">
+										<span id="loginUserFieldIcon"class="bi-person-fill"></span>
 									</span>
-									<input id="loginUserField" type="text" class="form-control bg-dark text-light" placeholder="Username">
+									<input id="loginUserField" type="text" class="form-control border-secondary border-hover bg-dark text-light" placeholder="Username">
 								</div>
 								<div class="input-group mt-1"  data-bs-placement="right" data-bs-content=" ">
 									<span class="input-group-text bg-dark text-light">
 										<span class="bi-lock-fill"></span>
 									</span>
-									<input id="loginPasswordField" type="password" class="form-control bg-dark text-light" placeholder="Password">
+									<input id="loginPasswordField" type="password" class="form-control border-secondary border-hover bg-dark text-light" placeholder="Password">
 								</div>
 								<div id="login2FA" class="input-group mt-1 d-none" data-bs-placement="right" data-bs-content=" ">
 									<span class="input-group-text bg-dark text-light">
@@ -40,7 +40,7 @@
 									<input id="login2FAcode" type="text" class="form-control bg-dark text-light" placeholder="2FA code">
 								</div>
 								<div data-bs-placement="right" data-bs-content=" ">
-									<button id="loginBtn" type="submit" class="btn btn-outline-light mt-2">Login</button>
+									<button id="loginBtn" type="submit" class="btn btn-outline-secondary mt-2">Login</button>
 								</div>
 							</form>
 						</div>
@@ -52,22 +52,22 @@
 									<span class="input-group-text bg-dark text-light">
 										<span class="bi-person-fill"></span>
 									</span>
-									<input id="registerUserField" type="text" class="form-control bg-dark text-light" id="registerUser" placeholder="Username">
+									<input id="registerUserField" type="text" class="form-control border-secondary border-hover bg-dark text-light" id="registerUser" placeholder="Username">
 								</div>
 								<div class="input-group mt-1"  data-bs-placement="right" data-bs-content=" ">
 									<span class="input-group-text bg-dark text-light">
 										<span class="bi-lock-fill"></span>
 									</span>
-									<input id="registerPasswordField" type="password" class="form-control bg-dark text-light" id="registerPassword" placeholder="Password">
+									<input id="registerPasswordField" type="password" class="form-control border-secondary border-hover bg-dark text-light" id="registerPassword" placeholder="Password">
 								</div>
 								<div class="input-group mt-1"  data-bs-placement="right" data-bs-content=" ">
 									<span class="input-group-text bg-dark text-light">
 										<span class="bi-lock-fill"></span>
 									</span>
-									<input id="confirmPasswordField" type="password" class="form-control bg-dark text-light" id="confirmPassword" placeholder="Confirm Password">
+									<input id="confirmPasswordField" type="password" class="form-control border-secondary border-hover bg-dark text-light" id="confirmPassword" placeholder="Confirm Password">
 								</div>
 								<div data-bs-placement="right" data-bs-content=" ">
-									<button id="registerUserBtn" type="submit" class="btn btn-outline-light mt-2">Register</button>
+									<button id="registerUserBtn" type="submit" class="btn btn-outline-secondary mt-2">Register</button>
 								</div>
 							</form>
 						</div>
@@ -78,12 +78,32 @@
 	</div>
 </div>
 <style>
-	#loginForm .form-control::placeholder {
+	#loginForm .form-control:hover::placeholder {
 		color: white;
 		opacity: 0.75;
 	}
-	#registerForm .form-control::placeholder {
+	#registerForm .form-control:hover::placeholder {
 		color: white;
 		opacity: 0.75;		
+	}
+	#authContainer:hover {
+		color: var(--bs-light);
+		background-color: transparent;
+		border-color: var(--bs-light) !important;
+	}
+	#loginBtn:hover {
+		color: var(--bs-light);
+		background-color: transparent;
+		border-color: var(--bs-light) !important;
+	}
+	#registerUserBtn:hover {
+		color: var(--bs-success);
+		background-color: transparent;
+		border-color: var(--bs-success) !important;
+	}
+	.border-hover:hover {
+		color: var(--bs-light);
+		background-color: transparent;
+		border-color: var(--bs-light) !important;
 	}
 </style>

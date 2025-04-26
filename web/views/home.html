@@ -1,4 +1,4 @@
-<div class="col-12 col-lg-5 mx-lg-1 my-2 border">
+<div id="menuContainer" class="col-12 col-lg-5 mx-lg-1 my-2 border border-secondary rounded">
 	<div class="row">
 		<div class="col-12">
 			<h1 class="display-3 mt-4 pe-none">PLAY PONG</h1>
@@ -11,7 +11,7 @@
 		</div>
 	</div>
 </div>
-<div class="col-12 col-lg-5 mx-lg-1 my-2 px-5 border">
+<div id="settingsContainer" class="col-12 col-lg-5 mx-lg-1 my-2 px-5 border border-secondary rounded">
 	<h1 class="display-3 mt-4 pe-none">SETTINGS</h1>
 	<div class="row my-1 justify-content-center">
 		<div class="col col-lg-10 mt-4">
@@ -60,3 +60,15 @@
 		</div>
 	</div>
 </div>
+<style>
+	#menuContainer:hover {
+		color: var(--bs-light);
+		background-color: transparent;
+		border-color: var(--bs-light) !important;
+	}
+	#settingsContainer:hover {
+		color: var(--bs-light);
+		background-color: transparent;
+		border-color: var(--bs-light) !important;		
+	}
+</style>
