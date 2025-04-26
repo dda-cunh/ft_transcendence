@@ -118,3 +118,17 @@ export function	setElemHoverColors(elem, fgColor, bgColor, borderColor)
 												elem.style.borderColor = '';
 		} );
 }
+
+export function	bindElemHover(eventElem, targetElem, fgColor, bgColor, borderColor)
+{
+	eventElem.addEventListener('mouseenter', () => {
+												targetElem.style.color = `var(--bs-${fgColor})`;
+												targetElem.style.backgroundColor = `var(--bs-${bgColor})`;
+												targetElem.style.borderColor = `var(--bs-${borderColor})`;
+		} );
+	eventElem.addEventListener('mouseleave', () => {
+												targetElem.style.color = '';
+												targetElem.style.backgroundColor = '';
+												targetElem.style.borderColor = '';
+		} );
+}

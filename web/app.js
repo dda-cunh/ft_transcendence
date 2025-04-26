@@ -6,6 +6,7 @@ import {renderFriendRequests} from './friend_requests.js'
 import {renderAcctSettings} from './account_settings.js'
 import {renderUserProfile} from './social.js'
 import {getOwnUserData} from './utils.js'
+import {bindElemHover} from './utils.js'
 import { renderStats } from "./stats.js";
 import {renderPongGame} from './pong_game.js'
 import {socket} from './socket.js'
@@ -93,6 +94,8 @@ async function renderPlayerCard()
 				}
 			</style>
 		`;
+
+//		bindElemHover(document.getElementById());
 
 		let userData = await getOwnUserData();
 
