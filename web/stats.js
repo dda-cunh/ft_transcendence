@@ -36,7 +36,6 @@ export function calcoords(wins, scored, losses, suffered, axs)
 	const centerX = 100;
 	const centerY = 100;
 	const axisLength = 100;
-	const globalMaxSum = 80;
 
 	const axes = [
 		{ x: 0, y: -axisLength }, // Top
@@ -71,6 +70,8 @@ export function calcoords(wins, scored, losses, suffered, axs)
 
 	if (axs)
 		drawAxes();
+
+    let globalMaxSum = Math.max(wins, scored, losses, suffered);
 
 	const p1 = drawPoint(wins, 0, 0, 0);
 	const p2 = drawPoint(0, scored, 0, 0);
