@@ -126,10 +126,25 @@ async function	renderView()
 	}
 }
 
+async function	playerCardNeedRender()
+{
+	let displayName = document.getElementById("userNameDisplay");
+	let user = await getOwnUserData();
+
+	if (!displayName)
+		return (true);
+
+	if (	sessionStorage.getItem("currentView").startsWith("user#")
+			|| displayName.innerText === user.username)
+				return (false);
+
+	return (true);
+}
+
 async function renderPage() 
 {
 	await renderNavbar();
-	if (!sessionStorage.getItem("currentView").startsWith("user#"))
+	if (await playerCardNeedRender() )
 		await renderPlayerCard();
 }
 
