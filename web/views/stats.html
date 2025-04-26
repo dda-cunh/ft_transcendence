@@ -59,12 +59,18 @@
     .graph-opts {
         display: inline-block;
         margin-left: 10px !important;
-        border: 1.5px solid lightgreen;
+        border: 1.5px solid white;
         padding: 0 1.5px !important;
         font-size: 14px;
+        cursor: pointer;
     }
-    .graph-opts:last-child {
-	    border: 1.5px solid lightsalmon;
+    .graph-opts:hover {
+        border: 1.5px solid green;
+        color: 1.5px solid green;
+    }
+    .graph-opts:last-child:hover {
+	    border: 1.5px solid red;
+        color: 1.5px solid red;
     }
     .border-hover:hover {
         color: var(--bs-light);
