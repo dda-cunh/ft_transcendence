@@ -10,7 +10,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from ServerPong.constants import REDIS_URL, TIMEOUT
 from ServerPong.redis_utils import *
 from ServerPong.utils import asyncGet, AsyncGetData, validate_user_token, validate_mode
-from ServerPong.room_monitor import start_monitor
+from ServerPong.room_monitor import start_monitor, send_initial_after_reconnect
 
 class TournamentConsumer(AsyncWebsocketConsumer):
 
@@ -36,6 +36,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				warnChannel,
 				self.channel_name,
 			)
+			initial = await send_initial_after_reconnect(user_room)
 			await self.channel_layer.group_send(
 				warnChannel,
 				{
@@ -43,7 +44,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					'message': 'Reconnected to peer!',
 					'gamestate': False,
 					'close': False,
-					'initial': False,
+					'initial': initial,
 				}
 			)
 			cancel_expiry(self.user_id)

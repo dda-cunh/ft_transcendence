@@ -9,7 +9,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from ServerPong.constants import REDIS_URL, TIMEOUT
 from ServerPong.redis_utils import *
 from ServerPong.utils import asyncGet, AsyncGetData, validate_user_token, validate_mode
-from ServerPong.room_monitor import local_monitor_room, start_monitor
+from ServerPong.room_monitor import local_monitor_room, start_monitor, send_initial_after_reconnect
 
 
 class LocalPongConsumer(AsyncWebsocketConsumer):
@@ -61,6 +61,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 				user_room,
 				self.channel_name,
 			)
+			initial = await send_initial_after_reconnect(user_room)
 			await self.channel_layer.group_send(
 				user_room,
 				{
@@ -68,7 +69,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 					'message': 'Reconnected to peer!',
 					'gamestate': False,
 					'close': False,
-					'initial': False,
+					'initial': initial,
 				}
 			)
 			cancel_expiry(self.user_id)

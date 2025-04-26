@@ -91,7 +91,7 @@ export async function connectWebSocket(mode) {
     // In socket.onmessage handler:
       if (data && data.gamestate) {
         gameState = data.gamestate;
-        if (playerAi) playerAi.update(gameState); // 🟢 Add this line
+        if (playerAi) playerAi.update(gameState);
         drawFrame();
       }
       handleHistoryPopState();

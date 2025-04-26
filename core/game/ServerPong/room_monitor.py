@@ -8,6 +8,25 @@ from ServerPong.game_utils import *
 
 room_tasks = {}
 
+async def send_initial_after_reconnect(room_name):
+	users_raw = r.get(room_name)
+	if not users_raw:
+		return
+	users = json.loads(users_raw)
+	userName = r.get(f"name_{users[0]}")
+	opponentName = r.get(f"name_{users[-1]}")
+	initial = {
+		'canvas_w': CANVAS_W,
+		'canvas_h': CANVAS_H,
+		'paddle_w': PADDLE_WIDTH,
+		'paddle_h': int(PADDLE_HEIGHT),
+		'ball_rad': int(BALL_SIZE * 0.5),
+		'p1_name': userName,
+		'p2_name': opponentName,
+	}
+	return initial
+
+
 async def local_monitor_room(self):
 	userName = "p1"
 	opponentName = "p2"
