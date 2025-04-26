@@ -41,12 +41,12 @@ async function	renderList()
 				let row = `
 					<tr data-id="${entry.sender}">
 						<td data-id="${entry.sender}">
-							<a data-id="${entry.sender}" class="profile-link" href="#">
+							<a data-id="${entry.sender}" class="profile-link" href="javascript:void(0)">
 								<img data-id="${entry.sender}" style="object-fit: cover; height: 75px; width: 75px;" class="img-fluid rounded-circle" src="/management/media/avatars/${entry.sender_avatar.split("/").pop()}" alt="${entry.sender_username}'s avatar" />
 							</a>
 						</td>
 						<td data-id="${entry.sender}">
-							<a data-id="${entry.sender}" class="profile-link display-6 link-light link-underline link-underline-opacity-0 link-opacity-75-hover" href="#">
+							<a data-id="${entry.sender}" class="profile-link display-6 link-light link-underline link-underline-opacity-0 link-opacity-75-hover" href="javascript:void(0)">
 								${entry.sender_username}
 							</a>
 						</td data-id="${entry.sender}">

@@ -22,25 +22,25 @@
 						<div class="col-7 col-lg-3 mx-auto">
 							<form id="loginForm">
 								<div class="input-group" data-bs-placement="right" data-bs-content=" ">
-									<span class="input-group-text">
+									<span class="input-group-text bg-dark text-light">
 										<span class="bi-person-fill"></span>
 									</span>
-									<input id="loginUserField" type="text" class="form-control" placeholder="Username">
+									<input id="loginUserField" type="text" class="form-control bg-dark text-light" placeholder="Username">
 								</div>
 								<div class="input-group mt-1"  data-bs-placement="right" data-bs-content=" ">
-									<span class="input-group-text">
+									<span class="input-group-text bg-dark text-light">
 										<span class="bi-lock-fill"></span>
 									</span>
-									<input id="loginPasswordField" type="password" class="form-control" placeholder="Password">
+									<input id="loginPasswordField" type="password" class="form-control bg-dark text-light" placeholder="Password">
 								</div>
-								<div id="login2FA" class="input-group mt-1 d-none">
-									<span class="input-group-text">
-										<span class="bi-lock-fill"></span>
+								<div id="login2FA" class="input-group mt-1 d-none" data-bs-placement="right" data-bs-content=" ">
+									<span class="input-group-text bg-dark text-light">
+										<span class="bi-lock-fill bg-dark text-light"></span>
 									</span>
-									<input id="login2FAcode" type="text" class="form-control" placeholder="2FA code">
+									<input id="login2FAcode" type="text" class="form-control bg-dark text-light" placeholder="2FA code">
 								</div>
 								<div data-bs-placement="right" data-bs-content=" ">
-									<button id="loginBtn" type="submit" class="btn btn-primary mt-2">Login</button>
+									<button id="loginBtn" type="submit" class="btn btn-outline-light mt-2">Login</button>
 								</div>
 							</form>
 						</div>
@@ -49,25 +49,25 @@
 						<div class="col-7 col-lg-3 mx-auto">
 							<form id="registerForm">
 								<div class="input-group"  data-bs-placement="right" data-bs-content=" ">
-									<span class="input-group-text">
+									<span class="input-group-text bg-dark text-light">
 										<span class="bi-person-fill"></span>
 									</span>
-									<input id="registerUserField" type="text" class="form-control" id="registerUser" placeholder="Username">
+									<input id="registerUserField" type="text" class="form-control bg-dark text-light" id="registerUser" placeholder="Username">
 								</div>
 								<div class="input-group mt-1"  data-bs-placement="right" data-bs-content=" ">
-									<span class="input-group-text">
+									<span class="input-group-text bg-dark text-light">
 										<span class="bi-lock-fill"></span>
 									</span>
-									<input id="registerPasswordField" type="password" class="form-control" id="registerPassword" placeholder="Password">
+									<input id="registerPasswordField" type="password" class="form-control bg-dark text-light" id="registerPassword" placeholder="Password">
 								</div>
 								<div class="input-group mt-1"  data-bs-placement="right" data-bs-content=" ">
-									<span class="input-group-text">
+									<span class="input-group-text bg-dark text-light">
 										<span class="bi-lock-fill"></span>
 									</span>
-									<input id="confirmPasswordField" type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password">
+									<input id="confirmPasswordField" type="password" class="form-control bg-dark text-light" id="confirmPassword" placeholder="Confirm Password">
 								</div>
 								<div data-bs-placement="right" data-bs-content=" ">
-									<button id="registerUserBtn" type="submit" class="btn btn-success mt-2">Register</button>
+									<button id="registerUserBtn" type="submit" class="btn btn-outline-light mt-2">Register</button>
 								</div>
 							</form>
 						</div>
@@ -77,3 +77,13 @@
 		</div>
 	</div>
 </div>
+<style>
+	#loginForm .form-control::placeholder {
+		color: white;
+		opacity: 0.75;
+	}
+	#registerForm .form-control::placeholder {
+		color: white;
+		opacity: 0.75;		
+	}
+</style>
