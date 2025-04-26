@@ -4,7 +4,7 @@ export default class PongAI {
     this.ballPhysics = new BallPhysics(gameConstants);
     this.currentDirection = null;
     this.isActive = true;
-    this.accuracy = 1;
+    this.accuracy = 0.85;
     this.aiDelay = 1000;
     this.lastKnownBall = null;
     this.predictedSpeed = null;
@@ -16,7 +16,6 @@ export default class PongAI {
 
     const currentTime = Date.now();
     if (currentTime - this.lastProcessedTime < this.aiDelay) return;
-    
     this.lastProcessedTime = currentTime;
     const observedBall = {
       x: gameState.ball.x,
@@ -132,6 +131,7 @@ class BallPhysics {
       virtualX += speed.x * timeToWall;
       virtualY += currentSpeedY * timeToWall;
       currentSpeedY *= -1;
+      this.lastKnownBall = {x: virtualX, y: virtualY} 
       virtualY = Math.max(0, Math.min(virtualY, this.constants.canvas_h));
     }
 
