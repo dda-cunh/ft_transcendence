@@ -80,7 +80,7 @@ async function renderPlayerCard()
 			&& sessionStorage.getItem("currentView").startsWith("user#")))
 			return ;
 
-		document.getElementById("userPfp").parentElement.classList.remove("pe-none");
+		document.getElementById("userPfp").parentElement.style.setProperty("cursor","pointer");
 		document.getElementById("userNameDisplay").classList.remove("pe-none");
 
 		document.getElementById("onlineStatusCol").innerHTML = "";

@@ -233,8 +233,10 @@ async function	renderPlayerCard(userID)
 
 	try
 	{
-		document.getElementById("userPfp").parentElement.style.setProperty("cursor","default");
-		document.getElementById("userPfp").parentElement.setAttribute("aria-disabled", true);
+		let userPfp = document.getElementById("userPfp");
+		userPfp.parentElement.style.setProperty("cursor","default");
+		userPfp.onclick="";
+		userPfp.parentElement.setAttribute("aria-disabled", true);
 
 		document.getElementById("userNameDisplay").classList.add("pe-none");
 		document.getElementById("userNameDisplay").setAttribute("aria-disabled", true);
