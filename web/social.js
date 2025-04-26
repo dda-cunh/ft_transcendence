@@ -144,13 +144,15 @@ async function	renderPlayerCard(userID)
 			</button>
 		`;
 
-
 		let acceptBtn = document.getElementById("acceptBtn");
 		let denyBtn = document.getElementById("denyBtn");
 
+
 		acceptBtn.addEventListener("click", (event) => { 
+												console.log(event.target.dataset);
 												acceptFriendRequest(event);
 												addFriendConfirmedBtn();
+												renderPlayerProfile(userData.id);
 												showPopover("Friend request accepted", controlsCol, 'success');
 											} );
 
@@ -248,6 +250,7 @@ async function	renderPlayerCard(userID)
 		let motto = userData.motto;
 
 		addOnlineStatus(userData.online);
+
 
 		if (await pendingFriendRequest(userID) )
 			addFriendRequestResponseBtns(userData);
