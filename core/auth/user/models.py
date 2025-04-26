@@ -11,6 +11,10 @@ def validate_username(value):
     if not re.match('^[a-zA-Z0-9_]+$', value):  
         raise ValidationError('Username must only contain letters, numbers, and underscores.')
 
+def validate_motto(value):
+    if not re.match('^[a-zA-Z0-9_]+$', value):  
+        raise ValidationError('Motto must only contain letters, numbers, and underscores.')
+
 class UserManager(BaseUserManager):
     def create_user(self, username, password, **extra_fields):
         if not username:
@@ -39,7 +43,8 @@ class User(AbstractBaseUser):
     motto = models.CharField(
         max_length=200,
         blank=True,
-        default="Hello, I'm new here!"
+        default="Hello, I'm new here!",
+        validators=[validate_motto]
     )
 
     last_activity = models.DateTimeField(auto_now=True)
