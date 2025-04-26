@@ -2,6 +2,7 @@ import { main } from "./index.js";
 import {getUserData} from './app.js'
 import {clearPopovers} from './utils.js'
 import {showPopover} from './utils.js'
+import {setElemHoverColors} from './utils.js'
 
 "use strict";
 
@@ -22,6 +23,9 @@ async function	renderPage()
 
 		let authHtml = await response.text();
 		mainContainer.innerHTML = authHtml;
+
+		setElemHoverColors(document.getElementById("loginBtn"), "primary", "dark", "primary");
+		setElemHoverColors(document.getElementById("registerUserBtn"), "success", "dark", "success");
 	}
 	catch (error)
 	{

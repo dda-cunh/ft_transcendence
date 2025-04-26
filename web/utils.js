@@ -104,3 +104,17 @@ export function showPopover(msg, targetElem, color = 'primary')
 			} );
 		}, 3000);
 }
+
+export function	setElemHoverColors(elem, fgColor, bgColor, borderColor)
+{
+		elem.addEventListener('mouseenter', () => {
+												elem.style.color = `var(--bs-${fgColor})`;
+												elem.style.backgroundColor = `var(--bs-${bgColor})`;
+												elem.style.borderColor = `var(--bs-${borderColor})`;
+		} );
+		elem.addEventListener('mouseleave', () => {
+												elem.style.color = '';
+												elem.style.backgroundColor = '';
+												elem.style.borderColor = '';
+		} );
+}

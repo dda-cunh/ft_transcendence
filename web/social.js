@@ -5,6 +5,7 @@ import { renderMatchHistory, renderTournamentHistory } from "./profile.js";
 import {updateAccessTkn} from './utils.js'
 import {getOwnUserData} from './utils.js'
 import {showPopover} from './utils.js'
+import {setElemHoverColors} from './utils.js'
 
 "use strict";
 
@@ -77,16 +78,8 @@ function addFriendConfirmedBtn()
 	`;
 
 	let friendConfirmedBtn = document.getElementById("friendConfirmedBtn");
-	friendConfirmedBtn.addEventListener('mouseenter', () => {
-											friendConfirmedBtn.style.color = 'var(--bs-light)';
-											friendConfirmedBtn.style.backgroundColor = 'var(--bs-primary)';
-											friendConfirmedBtn.style.borderColor = 'var(--bs-primary)';
-	});
-	friendConfirmedBtn.addEventListener('mouseleave', () => {
-											friendConfirmedBtn.style.color = ''; // resets to original
-											friendConfirmedBtn.style.backgroundColor = '';
-											friendConfirmedBtn.style.borderColor = ''; // resets to original
-	});
+	setElemHoverColors(friendConfirmedBtn, "light", "primary", "primary");
+
 	friendConfirmedBtn.style.cursor = 'default';
 }
 
@@ -161,16 +154,8 @@ async function	renderPlayerCard(userID)
 												showPopover("Friend request accepted", controlsCol, 'success');
 											} );
 
-		acceptBtn.addEventListener('mouseenter', () => {
-												acceptBtn.style.color = 'var(--bs-success)';
-												acceptBtn.style.backgroundColor = 'transparent';
-												acceptBtn.style.borderColor = 'var(--bs-success)';
-		});
-		acceptBtn.addEventListener('mouseleave', () => {
-												acceptBtn.style.color = ''; // resets to original
-												acceptBtn.style.backgroundColor = 'transparent';
-												acceptBtn.style.borderColor = ''; // resets to original
-		});
+		setElemHoverColors(acceptBtn, "success", "dark", "success");
+
 
 
 		denyBtn.addEventListener("click", (event) => { 
@@ -179,17 +164,7 @@ async function	renderPlayerCard(userID)
 												showPopover("Friend request rejected", controlsCol);
 											} );
 
-		denyBtn.addEventListener('mouseenter', () => {
-												denyBtn.style.color = 'var(--bs-danger)';
-												denyBtn.style.backgroundColor = 'transparent';
-												denyBtn.style.borderColor = 'var(--bs-danger)';
-		});
-		denyBtn.addEventListener('mouseleave', () => {
-												denyBtn.style.color = ''; // resets to original
-												denyBtn.style.backgroundColor = 'transparent';
-												denyBtn.style.borderColor = ''; // resets to original
-		});
-
+		setElemHoverColors(denyBtn, "danger", "dark", "danger");
 
 	}
 
@@ -240,17 +215,7 @@ async function	renderPlayerCard(userID)
 
 		let friendRequestBtn = document.getElementById("friendRequestBtn");
 		
-		friendRequestBtn.addEventListener('mouseenter', () => {
-		    friendRequestBtn.style.color = 'var(--bs-primary)';
-		    friendRequestBtn.style.backgroundColor = 'transparent';
-		    friendRequestBtn.style.borderColor = 'var(--bs-primary)';
-		  });
-
-		  friendRequestBtn.addEventListener('mouseleave', () => {
-		    friendRequestBtn.style.color = ''; // resets to original
-		    friendRequestBtn.style.borderColor = ''; // resets to original
-		  });
-
+		setElemHoverColors(friendRequestBtn, "primary", "dark", "primary")
 
 		friendRequestBtn.onclick = (event) => sendFriendRequest(userID);
 	}
