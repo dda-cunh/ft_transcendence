@@ -87,6 +87,17 @@ export async function connectWebSocket(mode) {
           document.getElementById("p2").innerText = gameConstants.p2_name;
         if (gmode === "local" && ai)
           playerAi = new PongAI(gameConstants);
+        sessionStorage.setItem("gameConstants", JSON.stringify(gameConstants));
+      }
+      else if(sessionStorage.getItem("gameConstants"))
+      {
+        gameConstants = JSON.parse(sessionStorage.getItem("gameConstants"));
+        half_w = gameConstants.canvas_w / 2;
+        half_h = gameConstants.canvas_h / 2;
+        if (document.querySelectorAll("#p1")[0])
+          document.getElementById("p1").innerText = gameConstants.p1_name;
+        if (document.querySelectorAll("#p2")[0])
+          document.getElementById("p2").innerText = gameConstants.p2_name;
       }
     // In socket.onmessage handler:
       if (data && data.gamestate) {
