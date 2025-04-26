@@ -3,8 +3,8 @@
 		<h1 class="display-5 fw-bolder text-center">TRANSCENDENCE</h1>
 	</div>
 </div>
-<div class="row">
-	<div class="col mt-5 pt-5">
+<div class="row justify-content-center">
+	<div id="authContainer" class="col-12 col-lg-10 mt-5 border border-secondary rounded">
 		<div class="card bg-dark text-center">
 			<div class="card-header mx-auto">
 				<ul class="nav nav-tabs card-header-tabs">
@@ -85,5 +85,10 @@
 	#registerForm .form-control::placeholder {
 		color: white;
 		opacity: 0.75;		
+	}
+	#authContainer:hover {
+		color: var(--bs-light);
+		background-color: transparent;
+		border-color: var(--bs-light) !important;
 	}
 </style>
