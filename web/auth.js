@@ -2,9 +2,6 @@ import { main } from "./index.js";
 import {getUserData} from './app.js'
 import {clearPopovers} from './utils.js'
 import {showPopover} from './utils.js'
-import {setElemHoverColors} from './utils.js'
-import {bindElemHover} from './utils.js'
-
 
 "use strict";
 
@@ -25,19 +22,6 @@ async function	renderPage()
 
 		let authHtml = await response.text();
 		mainContainer.innerHTML = authHtml;
-
-
-
-/*
-		document.querySelectorAll("loginUserFieldIcon").forEach((icon) => {
-		})
-			bindElemHover(	document.getElementById("authContainer"),
-							icon,
-							"light",
-							"dark",
-							"light"
-			);			
-*/
 	}
 	catch (error)
 	{
