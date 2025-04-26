@@ -19,6 +19,8 @@ async def local_monitor_room(self):
 	'ball_rad': int(BALL_SIZE * 0.5),
 	'p1_name': userName,
 	'p2_name': opponentName,
+	'paddle_speed': PADDLE_SPEED,
+	'framerate': TICKS_PER_SECOND,
 	}
 	state = GameState(
 		p1_pos   = Point2D(P1_START_X, P1_START_Y),

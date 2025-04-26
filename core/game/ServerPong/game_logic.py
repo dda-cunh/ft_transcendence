@@ -91,8 +91,10 @@ def get_next_frame(old: GameState,
 
     # serve if stationary
     if new.ball_vec.x == 0 and new.ball_vec.y == 0:
-        angle = random.uniform(-1, 1)
-        new.ball_vec = Vec2D(math.cos(angle), math.sin(angle))
+        max_dev = math.pi / 4
+        angle = random.uniform(-max_dev, max_dev)
+        direction = random.choice([-1, 1])
+        new.ball_vec = Vec2D(direction * math.cos(angle), math.sin(angle))
 
     pixels_per_tick = BASE_SPEED_PPS / TICKS_PER_SECOND
     new.ball_vec.normalize().scale(pixels_per_tick)
