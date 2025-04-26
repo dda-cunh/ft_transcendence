@@ -38,7 +38,7 @@ function adaptMode(mode) {
 export async function connectWebSocket(mode) {
   // mode depends on the clicked button; send 'local', 'remote' or 'tournament'
   gmode = adaptMode(mode);
-  if (mode === "Local Multiplayer")
+  if (mode === "Single Player")
     ai = true;
   mode = gmode;
   if (socket) socket.close();
