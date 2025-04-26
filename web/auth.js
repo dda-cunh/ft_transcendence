@@ -2,6 +2,7 @@ import { main } from "./index.js";
 import {getUserData} from './app.js'
 import {clearPopovers} from './utils.js'
 import {showPopover} from './utils.js'
+import {setElemHoverColors} from './utils.js'
 
 "use strict";
 
@@ -11,6 +12,8 @@ async function	renderPage()
 {
 	let mainContainer = document.getElementById("mainContainer");
 
+	document.getElementById("appContainer").innerHTML = "";
+    document.getElementById("viewRow").innerHTML = "";
 	try
 	{
 		let response = await fetch("views/auth.html");
@@ -20,6 +23,9 @@ async function	renderPage()
 
 		let authHtml = await response.text();
 		mainContainer.innerHTML = authHtml;
+
+		setElemHoverColors(document.getElementById("loginBtn"), "primary", "dark", "primary");
+		setElemHoverColors(document.getElementById("registerUserBtn"), "success", "dark", "success");
 	}
 	catch (error)
 	{
@@ -109,14 +115,14 @@ async function	loginUser(event)
 {
 	event.preventDefault();
 
-	let	errField;
-
 	let creds = {
 		username: document.getElementById("loginUserField").value,
 		password: document.getElementById("loginPasswordField").value,
 		otp_token: document.getElementById("login2FAcode").value,
 	};
 
+	let	errField;
+	let color = "danger";
 	try
 	{
 		let responseData = await doAuth(creds, "auth/");
@@ -125,16 +131,16 @@ async function	loginUser(event)
 		if (!responseData.ok)
 		{
 			let errKey = Object.keys(responseData)[0];
-			if (errKey === "otp_token") {
-				document.getElementById("login2FA").classList.remove("d-none");
-				// // Optionally show the error message under the OTP field:
-				const otpField = document.getElementById("login2FAcode");
-				otpField.classList.add("is-invalid");
-				otpField.insertAdjacentHTML(
-				  "afterend",
-				  `<div class="invalid-feedback">${responseData[errKey]}</div>`
-				);
-				return;
+			if (errKey === "otp_token") 
+			{
+				errField = "login2FAcode";
+				if (document.getElementById("login2FA").classList.contains("d-none") )
+				{
+					document.getElementById("login2FA").classList.remove("d-none");
+					color = "primary";
+					throw new Error("Insert 2FA code");
+				}					
+				throw new Error(responseData[errKey]);
 			}
 			switch (errKey)
 			{
@@ -166,12 +172,13 @@ async function	loginUser(event)
 	catch(error)
 	{
 		clearPopovers();
-		if (errField === undefined)
+		if (!errField)
 			errField = "loginBtn"
 
 		let	errElem = document.getElementById(errField);
-		errElem.classList.add("is-invalid");
-		showPopover(error.toString().slice(7), errElem.parentElement, 'danger');
+		if (color === "danger")
+			errElem.classList.add("is-invalid");
+		showPopover(error.toString().slice(7), errElem.parentElement, color);
 		event.stopPropagation();
 	}
 }
@@ -195,6 +202,8 @@ export async function	toggle2FA()
 	}
 }
 
+//	MUST GIVE OPTION TO DISABLE 2FA
+//	ALSO, MAYBE REQUIRE PASSWORD...
 export async function	enable2FA()
 {
 	try
