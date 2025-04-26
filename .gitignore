@@ -2,5 +2,8 @@
 venv/
 __pycache__
 .DS_Store
-media/
+core/management/media/*
+!core/management/media/avatars
+core/management/media/avatars/*
+!core/management/media/avatars/default-avatar.png
 *sqlite3
