@@ -6,6 +6,7 @@ import {clearPopovers} from './utils.js'
 import {showPopover} from './utils.js'
 import {getOwnUserData} from './utils.js'
 import {setElemHoverColors} from './utils.js'
+import {toggle2FA, enable2FA} from './auth.js'
 
 
 "use strict";
@@ -244,6 +245,8 @@ function	setupEventHandlers()
 {
 	document.getElementById("changeUsernameForm").onsubmit = (event) => { event.preventDefault(), chgUserName(event) };
 	document.getElementById("changeMottoForm").onsubmit = (event) => { event.preventDefault(), chgMotto(event) };
+	document.getElementById("change2FAHeader").onclick=()=>toggle2FA();
+	document.getElementById("toggle2FABtn").onclick=()=>enable2FA();
 	document.getElementById("changePfpForm").onsubmit = (event) => { event.preventDefault(), chgPfp(event) };
 	document.getElementById("chgPasswdForm").onsubmit = (event) => { event.preventDefault(), chgPassword(event) };
 }

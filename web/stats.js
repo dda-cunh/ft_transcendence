@@ -240,14 +240,14 @@ export async function renderToggableGraph(data, userID, elem)
         const formattedDate = date.toLocaleString();
         let row = `
         <tr>
-            <td class="col"><input onchange="adjust(0)" class="allRows" type="checkbox" checked name="graph"></td>
-            <td onmouseenter="showOpts(this)" onmouseleave="hideOpts(this)" class="col">
+            <td class="col"><input class="allRows" type="checkbox" checked name="graph"></td>
+            <td class="allToggles" class="col">
                 <span class="allOpponents pe-none">${opponent.username}</span>
                 <span class="position-relative graph-select d-none">
                     <span class="position-absolute">
                         <div class="d-flex flex-column">
-                            <div onclick="toggleGraph(this, 1, true)" class="p-0 m-0 graph-opts pointer w-100 h-100 rounded-circle">=</div>
-                            <div onclick="toggleGraph(this, 1, false)" class="p-0 m-0 graph-opts pointer w-100 h-100 rounded-circle">≠</div>
+                            <div onclick="toggleGraph(this, 1, true)" class="p-0 m-0 graph-opts pointer w-100 h-100 rounded-circle eq-1">=</div>
+                            <div onclick="toggleGraph(this, 1, false)" class="p-0 m-0 graph-opts pointer w-100 h-100 rounded-circle dif-1">≠</div>
                         </div>
                     </span>
                 </span>
@@ -264,13 +264,13 @@ export async function renderToggableGraph(data, userID, elem)
                     <span id="opponentpoints">${p2_score}</span>
                 </div>
             </td>
-            <td onmouseenter="showOpts(this)" onmouseleave="hideOpts(this)" class="col">
+            <td class="allToggles" class="col">
                 <span class="allWinners pe-none">${winner.username}</span>
                 <span class="position-relative graph-select d-none">
                     <span class="position-absolute">
                         <div class="d-flex flex-column">
-                            <div onclick="toggleGraph(this, 3, true)" class="p-0 m-0 graph-opts pointer w-100 h-100 rounded-circle">=</div>
-                            <div onclick="toggleGraph(this, 3, false)" class="p-0 m-0 graph-opts pointer w-100 h-100 rounded-circle">≠</div>
+                            <div onclick="toggleGraph(this, 3, true)" class="p-0 m-0 graph-opts pointer w-100 h-100 rounded-circle eq-3">=</div>
+                            <div onclick="toggleGraph(this, 3, false)" class="p-0 m-0 graph-opts pointer w-100 h-100 rounded-circle dif-3">≠</div>
                         </div>
                     </span>
                 </span>
@@ -292,6 +292,16 @@ export async function renderToggableGraph(data, userID, elem)
     adjust(0);
 }
 
+function	setupEventHandlers()
+{
+	document.querySelectorAll(".allRows").forEach((elem) => { elem.onclick=function(){adjust(0) } });
+	document.querySelectorAll(".allToggles").forEach((elem) => {elem.onmouseenter = function(){ showOpts(this) }}); 
+	document.querySelectorAll(".allToggles").forEach((elem) => {elem.onmouseleave = function(){ hideOpts(this) }});
+    document.querySelectorAll(".eq-1").forEach((elem) => { elem.onclick=function(){toggleGraph(this, 1, true) }});
+	document.querySelectorAll(".dif-1").forEach((elem) => { elem.onclick=function(){toggleGraph(this, 1, false); }});
+    document.querySelectorAll(".eq-3").forEach((elem) => { elem.onclick=function(){toggleGraph(this, 3, true) }});
+	document.querySelectorAll(".dif-3").forEach((elem) => { elem.onclick=function(){toggleGraph(this, 3, false); }});
+}
 
 export async function renderStats()
 {
@@ -308,6 +318,7 @@ export async function renderStats()
 
         drawAxes();
         await renderMatchHistory(null, true)
+        setupEventHandlers();
 	}
 	catch (error)
 	{
