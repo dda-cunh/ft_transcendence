@@ -26,14 +26,7 @@ async function	renderPage()
 		let authHtml = await response.text();
 		mainContainer.innerHTML = authHtml;
 
-/*
-		bindElemHover(	document.getElementById("authContainer"),
-						document.getElementById("loginUserFieldIcon"),
-						"light",
-						"dark",
-						"light"
-		);			
-*/
+
 
 /*
 		document.querySelectorAll("loginUserFieldIcon").forEach((icon) => {
