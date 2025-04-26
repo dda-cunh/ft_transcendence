@@ -234,8 +234,6 @@ export async function	enable2FA()
 	{
 		if (document.querySelector("#twofa-text"))
 			document.getElementById("twofa-text").innerHTML = error;
-
-		console.log(error);
 	}
 }
 
@@ -258,7 +256,6 @@ export async function disable2FA() {
 	} catch (error) {
 	if (document.querySelector("#twofa-text"))
 		document.getElementById("twofa-text").innerHTML = error;
-	console.log(error);
 	}
 }
 
@@ -278,22 +275,17 @@ export async function	verify2FA(event)
 			body: JSON.stringify({"qrcode": resp}),
 		} );
 
+		let responseData = await response.json();
 		if (!response.ok) {
-			let errorData = await response.json();
-			let errorMsg = errorData.message || "Failed to verify 2FA code";
+			let errorMsg = responseData.message || "Failed to verify 2FA code";
 			throw new Error(errorMsg);
 		}
-
-		let responseData = await response.json();
-		console.log(responseData)
 		main();
 	}
 	catch (error)
 	{
 		if (document.querySelector("#twofa-text"))
 			document.getElementById("twofa-text").innerHTML = error;
-
-		console.log(error);
 	}
 }
 

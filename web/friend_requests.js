@@ -99,7 +99,6 @@ async function	renderList()
 export async function	acceptFriendRequest(event)
 {
 	const	id = event.target.dataset.id;
-	console.log(event);
 	updateAccessTkn();
 
 	try
@@ -116,9 +115,7 @@ export async function	acceptFriendRequest(event)
 
 	}
 	catch (error)
-	{
-		console.log(error);
-	}
+	{}
 }
 
 export async function	denyFriendRequest(event)
@@ -141,9 +138,7 @@ export async function	denyFriendRequest(event)
 
 	}
 	catch (error)
-	{
-		console.log(error);
-	}
+	{}
 }
 
 function	setupEventHandlers()
