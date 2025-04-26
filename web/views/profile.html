@@ -1,7 +1,7 @@
-<div class="col-12 col-lg-4 my-2 border rounded">
-	<h1 class="display-3 text-center mt-4 pe-none" aria-disabled="true">
+<div id="friendsListContainer" class="col-12 col-lg-4 my-2 mx-lg-1 border border-secondary border-hover rounded">
+	<a class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover"><h1 class="display-3 text-center mt-4 pe-none" aria-disabled="true">
 		FRIENDS LIST
-	</h1>
+	</h1></a>
 	<div class="position-relative my-4" style="height: 250px; overflow-x: auto;">
 		<table class="table table-responsive table-borderless table-hover table-dark fw-bolder align-middle">
 			<tbody id="friendsList">
@@ -10,13 +10,13 @@
 		</table>
 	</div>
 </div>
-<div class="col-12 col-lg-6 my-2 border rounded">
-	<h1 class="display-3 text-center mt-4 pe-none" aria-disabled="true">MATCH HISTORY</h1>
+<div class="col-12 col-lg-6 my-2 mx-lg-1 border border-secondary border-hover rounded">
+	<a class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover"><h1 class="display-3 text-center mt-4 pe-none" aria-disabled="true">MATCH HISTORY</h1></a>
 	<div class="row">
 		<div class="col-12 d-grid border-top">
 			<!--MATCH STATS (TOTAL GAMES PLAYED/WINS/LOSSES)-->
 			<div class="row d-flex my-2 py-2 align-content-center">
-				<div class="col-3 col-lg-3 text-wrap align-self-center text-end pe-none" aria-disabled="true">
+				<div class="col-3 col-lg-3 text-wrap align-self-center text-end pe-none">
 					<small>MATCHES PLAYED</small>
 				</div>
 				<div class="col-1 col-lg-1 align-self-center text-start pe-none" aria-disabled="true">
@@ -63,7 +63,7 @@
 			</div>
 		</div>
 		<!--MATCH HISTORY-->
-		<div class="col-12 border-top border-start">
+		<div class="col-12">
 			<div class="card bg-dark text-center">
 				<div class="card-header mx-auto">
 					<ul class="nav nav-tabs card-header-tabs">
@@ -115,3 +115,10 @@
 		</div>
 	</div>
 </div>
+<style>
+	.border-hover:hover {
+		color: var(--bs-light);
+		background-color: transparent;
+		border-color: var(--bs-light) !important;
+	}
+</style>

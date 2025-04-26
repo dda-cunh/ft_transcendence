@@ -1,7 +1,7 @@
-<div class="col-12 col-lg-5 mx-lg-1 my-2 border">
+<div id="menuContainer" class="col-12 col-lg-5 mx-lg-1 my-2 border border-secondary rounded">
 	<div class="row">
 		<div class="col-12">
-			<h1 class="display-3 mt-4 pe-none">PLAY PONG</h1>
+			<a class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover"><h1 class="display-3 mt-4 pe-none ">PLAY PONG</h1></a>
 		</div>
 	</div>
 	<div class="row py-3 my-5 justify-content-center">
@@ -11,47 +11,47 @@
 		</div>
 	</div>
 </div>
-<div class="col-12 col-lg-5 mx-lg-1 my-2 px-5 border">
-	<h1 class="display-3 mt-4 pe-none">SETTINGS</h1>
+<div id="settingsContainer" class="col-12 col-lg-5 mx-lg-1 my-2 px-5 border border-secondary rounded">
+	<a class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover"><h1 class="display-3 mt-4 pe-none">SETTINGS</h1></a>
 	<div class="row my-1 justify-content-center">
 		<div class="col col-lg-10 mt-4">
-			<h3 class="display-6 pe-none">GAMEPLAY</h3>
+			<a class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover"><h3 class="display-6 pe-none">GAMEPLAY</h3></a>
 			<div class="input-group py-1">
-				<label class="fw-bold input-group-text bg-dark text-light w-50 text-wrap">Match Type</label>
-				<select id="matchType" class="form-select bg-dark text-light text-center cursor-pointer" style="cursor: pointer;">
+				<label class="fw-bold input-group-text bg-dark text-light w-50 justify-content-center text-wrap"><a class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">Match Type</a></label>
+				<select id="matchType" class="form-select bg-dark text-light text-center cursor-pointer border-secondary" style="cursor: pointer;">
 					<option value="Single Player">Single Player</option>
 					<option value="Local Multiplayer">Local Multiplayer</option>
 					<option value="Online Multiplayer">Online Multiplayer</option>
 				</select>
 			</div>
 			<div class="input-group py-1">
-				<label class="fw-bold input-group-text bg-dark text-light w-50 text-wrap">Tournament Alias</label>
-				<input id="tournamentAlias" class="text-center w-50 rounded-right form-control bg-dark text-light fw-bold hover-light" type="text" value="">
+				<label class="fw-bold input-group-text bg-dark text-light w-50 justify-content-center text-wrap"><a class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">Tournament Alias</a></label>
+				<input id="tournamentAlias" class="text-center w-50 rounded-right form-control bg-dark text-light border-secondary" type="text" value="">
 			</div>
 		</div>
 	</div>
 	<div class="row mt-3 mb-4 justify-content-center">
 		<div class="col col-lg-10">
-			<h3 class="display-6 pe-none">VISUALS</h3>
+			<a class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover"><h3 class="display-6 pe-none">VISUALS</h3></a>
 			<div class="input-group py-1">
-				<label class="fw-bold input-group-text bg-dark text-light w-50 text-wrap">Paddle Color</label>
-				<select id="paddleColor" class="form-select bg-dark text-light text-center" style="cursor: pointer;">
+				<label class="fw-bold input-group-text bg-dark text-light justify-content-center w-50 text-wrap"><a class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">Paddle Color</a></label>
+				<select id="paddleColor" class="form-select bg-dark text-light text-center border-secondary" style="cursor: pointer;">
 					<option>White</option>
 					<option>Yellow</option>
 					<option>Red</option>
 				</select>
 			</div>
 			<div class="input-group py-1">
-				<label class="fw-bold input-group-text bg-dark text-light w-50 text-wrap">Ball Color</label>
-				<select id="ballColor" class="form-select bg-dark text-light text-center" style="cursor: pointer;">
+				<label class="fw-bold input-group-text bg-dark text-light w-50 justify-content-center text-wrap"><a class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">Ball Color</a></label>
+				<select id="ballColor" class="form-select bg-dark text-light text-center border-secondary" style="cursor: pointer;">
 					<option>White</option>
 					<option>Yellow</option>
 					<option>Red</option>
 				</select>
 			</div>
 			<div class="input-group py-1 pb-2">
-				<label class="fw-bold input-group-text bg-dark text-light w-50 text-wrap">Background Color</label>
-				<select id="backgroundColor" class="form-select bg-dark text-light text-center" style="cursor: pointer;">
+				<label class="fw-bold input-group-text bg-dark text-light w-50 justify-content-center text-wrap"><a class="link-light link-underline link-underline-opacity-0 link-opacity-75-hover">Background Color</a></label>
+				<select id="backgroundColor" class="form-select bg-dark text-light text-center border-secondary" style="cursor: pointer;">
 					<option>Black</option>
 					<option>Blue</option>
 					<option>Purple</option>
@@ -60,3 +60,31 @@
 		</div>
 	</div>
 </div>
+<style>
+	#menuContainer:hover {
+		color: var(--bs-light);
+		background-color: transparent;
+		border-color: var(--bs-light) !important;
+	}
+	#settingsContainer:hover {
+		color: var(--bs-light);
+		background-color: transparent;
+		border-color: var(--bs-light) !important;		
+	}
+
+	.form-control:hover {
+		color: var(--bs-light);
+		background-color: transparent;
+		border-color: var(--bs-light) !important;
+	}
+	.form-select:hover {
+		color: var(--bs-light);
+		background-color: transparent;
+		border-color: var(--bs-light) !important;
+	}
+
+	#tournamentAlias::placeholder {
+		color: white;
+		opacity: 0.75;
+	}
+</style>

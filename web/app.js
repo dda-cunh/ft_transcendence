@@ -79,7 +79,7 @@ async function renderPlayerCard()
 			&& sessionStorage.getItem("currentView").startsWith("user#")))
 			return ;
 
-		document.getElementById("userPfp").parentElement.classList.remove("pe-none");
+		document.getElementById("userPfp").parentElement.style.setProperty("cursor","pointer");
 		document.getElementById("userNameDisplay").classList.remove("pe-none");
 
 		document.getElementById("onlineStatusCol").innerHTML = "";
@@ -95,6 +95,7 @@ async function renderPlayerCard()
 				}
 			</style>
 		`;
+
 
 		let userData = await getOwnUserData();
 
@@ -270,11 +271,7 @@ function	setupEventHandlers(elems)
 export async function	App()
 {
 	if (sessionStorage.getItem("currentView") !== "game")
-	{
-		console.log(sessionStorage.getItem("currentView"));
 		await renderPage();
-		//setupEventHandlers();
-	}
 
 	changeView();
 }

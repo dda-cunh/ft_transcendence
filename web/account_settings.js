@@ -253,9 +253,9 @@ export function	renderAcctSettings()
 {
 	setupEventHandlers();
 
-	setElemHoverColors(document.getElementById("chgUsernameBtn"), "primary", "dark", "primary");
-	setElemHoverColors(document.getElementById("chgMottoBtn"), "primary", "dark", "primary");
-	setElemHoverColors(document.getElementById("toggle2FABtn"), "primary", "dark", "primary");
-	setElemHoverColors(document.getElementById("submitPfpBtn"), "primary", "dark", "primary");
-	setElemHoverColors(document.getElementById("chgPasswdBtn"), "primary", "dark", "primary");
+	setElemHoverColors(document.getElementById("chgUsernameBtn"), "light", "dark", "light");
+	setElemHoverColors(document.getElementById("chgMottoBtn"), "light", "dark", "light");
+	setElemHoverColors(document.getElementById("toggle2FABtn"), "light", "dark", "light");
+	setElemHoverColors(document.getElementById("submitPfpBtn"), "light", "dark", "light");
+	setElemHoverColors(document.getElementById("chgPasswdBtn"), "light", "dark", "light");
 }

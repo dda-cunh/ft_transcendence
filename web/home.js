@@ -14,7 +14,8 @@ function	selectSettings()
 	document.querySelector("#backgroundColor").value = sessionStorage.getItem("backgroundColor");
 	if (document.querySelector("#userNameDisplay") && document.querySelector("#userNameDisplay").innerText !== "")
 		sessionStorage.setItem("alias", document.getElementById("userNameDisplay").innerText);
-	document.querySelector("#tournamentAlias").value = sessionStorage.getItem("alias");
+	document.querySelector("#tournamentAlias").setAttribute("placeholder", sessionStorage.getItem("alias") );
+//	value = sessionStorage.getItem("alias");
 	document.querySelector("#tournamentAlias").onchange = () => sessionStorage.setItem("alias", document.querySelector("#tournamentAlias").value)
 }
 
@@ -37,11 +38,6 @@ function	setupEventHandlers()
 
 	document.getElementById("btnFriendlyMatch").onclick = () => { checkAlias(), sessionStorage.setItem("currentView", "game"), sessionStorage.setItem("gameMode", "friendlyMatch"), main() };
 	document.getElementById("btnTournament").onclick = () => { checkAlias(), sessionStorage.setItem("currentView", "game"), sessionStorage.setItem("gameMode", "tournament"), main() };
-
-/*
-	document.getElementById("btnFriendlyMatch").onclick = () => { checkAlias(), renderPongGame(); connectWebSocket(sessionStorage.getItem("matchType")) };
-	document.getElementById("btnTournament").onclick = () => { checkAlias(), renderPongGame(); connectWebSocket('tournament')};
-*/
 }
 
 

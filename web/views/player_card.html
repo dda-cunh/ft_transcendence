@@ -2,10 +2,10 @@
 	<div id="pfpContainer" class="col-12 col-lg-2 my-3 mt-lg-0">
 		<!--PROFILE PIC-->
 
-		<a href="javascript:void(0)"><img id="userPfp" style="object-fit: cover; width: 169px; height: 169px" class="img-fluid rounded-circle" alt="User Profile Picture"></a>
+		<a href="javascript:void(0)"><img id="userPfp" style="object-fit: cover; width: 169px; height: 169px" class="img-fluid rounded-circle border border-dark" alt="User Profile Picture"></a>
 
 	</div>
-	<div class="col-12 col-lg-8 d-grid border rounded text-wrap">
+	<div id="playerCard" class="col-12 col-lg-8 d-grid border border-secondary rounded text-wrap">
 
 		<div class="row h-auto">
 			<div id="onlineStatusCol" class="col d-flex justify-content-start align-items-start"></div>
@@ -20,8 +20,20 @@
 		<div class="row d-flex">
 			<div class="col w-75">
 				<!--MOTTO-->
-				<p id="mottoDisplay" class="fst-italic pe-none text-break" ></p>
+				<p id="mottoDisplay" class="fst-italic pe-none text-light text-break" ></p>
 			</div>
 		</div>
 	</div>
 </div>
+<style>
+	#playerCard:hover {
+		color: var(--bs-light);
+		background-color: transparent;
+		border-color: var(--bs-light) !important;
+	}
+	#userPfp:hover {
+		color: var(--bs-light);
+		background-color: transparent;
+		border-color: var(--bs-light) !important;
+	}
+</style>
