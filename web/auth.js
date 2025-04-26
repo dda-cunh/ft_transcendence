@@ -111,14 +111,14 @@ async function	loginUser(event)
 {
 	event.preventDefault();
 
-	let	errField;
-
 	let creds = {
 		username: document.getElementById("loginUserField").value,
 		password: document.getElementById("loginPasswordField").value,
 		otp_token: document.getElementById("login2FAcode").value,
 	};
 
+	let	errField;
+	let color = "danger";
 	try
 	{
 		let responseData = await doAuth(creds, "auth/");
@@ -127,16 +127,16 @@ async function	loginUser(event)
 		if (!responseData.ok)
 		{
 			let errKey = Object.keys(responseData)[0];
-			if (errKey === "otp_token") {
-				document.getElementById("login2FA").classList.remove("d-none");
-				// // Optionally show the error message under the OTP field:
-				const otpField = document.getElementById("login2FAcode");
-				otpField.classList.add("is-invalid");
-				otpField.insertAdjacentHTML(
-				  "afterend",
-				  `<div class="invalid-feedback">${responseData[errKey]}</div>`
-				);
-				return;
+			if (errKey === "otp_token") 
+			{
+				errField = "login2FAcode";
+				if (document.getElementById("login2FA").classList.contains("d-none") )
+				{
+					document.getElementById("login2FA").classList.remove("d-none");
+					color = "primary";
+					throw new Error("Insert 2FA code");
+				}					
+				throw new Error(responseData[errKey]);
 			}
 			switch (errKey)
 			{
@@ -168,12 +168,13 @@ async function	loginUser(event)
 	catch(error)
 	{
 		clearPopovers();
-		if (errField === undefined)
+		if (!errField)
 			errField = "loginBtn"
 
 		let	errElem = document.getElementById(errField);
-		errElem.classList.add("is-invalid");
-		showPopover(error.toString().slice(7), errElem.parentElement, 'danger');
+		if (color === "danger")
+			errElem.classList.add("is-invalid");
+		showPopover(error.toString().slice(7), errElem.parentElement, color);
 		event.stopPropagation();
 	}
 }

@@ -282,6 +282,7 @@ export async function	App()
 {
 	if (sessionStorage.getItem("currentView") !== "game")
 	{
+		console.log(sessionStorage.getItem("currentView"));
 		await renderPage();
 		//setupEventHandlers();
 	}
