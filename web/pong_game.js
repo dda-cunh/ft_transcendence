@@ -61,5 +61,5 @@ export function renderPongGame(gameMode)
 
     let mode = gameMode === "tournament" ? "tournament" : sessionStorage.getItem("matchType");
     console.log(mode)
-//    connectWebSocket(mode);
+    connectWebSocket(mode);
 }
