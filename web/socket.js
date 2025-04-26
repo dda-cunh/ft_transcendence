@@ -128,10 +128,11 @@ function drawFrame() {
   ctx.fillStyle = (sessionStorage.getItem("backgroundColor") ? sessionStorage.getItem("backgroundColor") : "black");
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  
+  ctx.fillStyle = "white";
+  ctx.fillRect( (canvas.width / 2) - ( (canvas.width / 100) / 2), 0, canvas.width / 100, canvas.height);
+
   ctx.fillStyle = (sessionStorage.getItem("paddleColor") ? sessionStorage.getItem("paddleColor") : "white");
   
-  ctx.fillRect( (canvas.width / 2) - ( (canvas.width / 100) / 2), 0, canvas.width / 100, canvas.height);
   ctx.fillRect(0, gameState.p1_pos_y + half_h - gameConstants.paddle_h / 2, gameConstants.paddle_w, gameConstants.paddle_h);
   ctx.fillRect(gameConstants.canvas_w - gameConstants.paddle_w, gameState.p2_pos_y + half_h - gameConstants.paddle_h / 2, gameConstants.paddle_w, gameConstants.paddle_h);
   
