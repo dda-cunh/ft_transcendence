@@ -26,7 +26,7 @@ USE_X_FORWARDED_HOST = True   # 🔄 Trust X-Forwarded-Host header
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ['DEBUG']
+DEBUG = False
 
 ALLOWED_HOSTS = [os.environ['DOMAIN__NAME'],'auth']
 

@@ -71,6 +71,7 @@ services:
     volumes:
       - ./core/management/:/service
       - ./core/auth/user/:/service/user
+      - ./core/management/media/:/service/media  
     <<: *common
 
   game:
@@ -86,7 +87,9 @@ services:
 
   nginx:
     container_name: nginx
-    build: ./core/nginx     
+    build: ./core/nginx
+    volumes:
+      - ./core/management/media/:/service/media  
     depends_on:
       - game
     networks:
