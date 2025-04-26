@@ -85,7 +85,7 @@ export async function connectWebSocket(mode) {
           document.getElementById("p1").innerText = gameConstants.p1_name;
         if (document.querySelectorAll("#p2")[0])
           document.getElementById("p2").innerText = gameConstants.p2_name;
-        if (gmode === "local" && ai && !playerAi)
+        if (gmode === "local" && ai)
           playerAi = new PongAI(gameConstants);
       }
     // In socket.onmessage handler:
