@@ -44,6 +44,7 @@ function    renderPage()
 
 export function renderPongGame(gameMode)
 {
+    document.getElementById("appContainer").innerHTML = "";
     document.getElementById("viewRow").innerHTML = "";
     renderPage();
 

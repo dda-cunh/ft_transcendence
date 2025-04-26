@@ -11,6 +11,8 @@ async function	renderPage()
 {
 	let mainContainer = document.getElementById("mainContainer");
 
+	document.getElementById("appContainer").innerHTML = "";
+    document.getElementById("viewRow").innerHTML = "";
 	try
 	{
 		let response = await fetch("views/auth.html");
