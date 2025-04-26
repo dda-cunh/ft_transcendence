@@ -102,7 +102,7 @@ export async function connectWebSocket(mode) {
     // In socket.onmessage handler:
       if (data && data.gamestate) {
         gameState = data.gamestate;
-        if (playerAi) playerAi.update(gameState); // 🟢 Add this line
+        if (playerAi) playerAi.update(gameState);
         drawFrame();
       }
       handleHistoryPopState();
@@ -112,15 +112,29 @@ export async function connectWebSocket(mode) {
   socket.onclose = function(event) {
     console.log('WebSocket connection closed');
     unloadControls();
-    setTimeout(() => {
-    if (!gameState && sessionStorage.getItem("currentView") && sessionStorage.getItem("currentView") === "game")
-      {
-        sessionStorage.setItem("currentView", "home");
-        main();
-      }
-    }, 3000);
     gameState = null;
     playerAi = null;
+    ai = false;
+    if (document.querySelectorAll("#mainContainer")[0]) {
+      let btn = document.createElement("button");
+      btn.classList.add("btn");
+      btn.classList.add("btn-primary");
+      btn.classList.add("w-100");
+      btn.innerHTML = "Back";
+      btn.addEventListener("click", () => {
+        sessionStorage.setItem("currentView", "home");
+        main();
+      });
+      document.getElementById("mainContainer").append(btn);
+    }
+    keyState = {
+      w: false,
+      s: false,
+      ArrowUp: false,
+      ArrowDown: false,
+      move: "IDLE",
+      moveLocal: "IDLE", // p2 in local mode
+    };
   };
 
   socket.onerror = function(event) {
