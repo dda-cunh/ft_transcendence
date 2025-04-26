@@ -58,5 +58,6 @@ clean:
 fclean:
 			${COMPOSE} down --rmi all --volumes --remove-orphans
 			${COMPOSE} rm -f -s -v
+			@find ./core/management/media/avatars -mindepth 1 -not -name "default-avatar.png" -exec rm -rf {} +
 			docker system prune -fa
 			sudo rm -rf ${PERSIST_DIR}
