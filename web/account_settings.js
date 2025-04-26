@@ -5,6 +5,8 @@ import {updateAccessTkn} from './utils.js'
 import {clearPopovers} from './utils.js'
 import {showPopover} from './utils.js'
 import {getOwnUserData} from './utils.js'
+import {setElemHoverColors} from './utils.js'
+
 
 "use strict";
 
@@ -250,4 +252,10 @@ function	setupEventHandlers()
 export function	renderAcctSettings()
 {
 	setupEventHandlers();
+
+	setElemHoverColors(document.getElementById("chgUsernameBtn"), "primary", "dark", "primary");
+	setElemHoverColors(document.getElementById("chgMottoBtn"), "primary", "dark", "primary");
+	setElemHoverColors(document.getElementById("toggle2FABtn"), "primary", "dark", "primary");
+	setElemHoverColors(document.getElementById("submitPfpBtn"), "primary", "dark", "primary");
+	setElemHoverColors(document.getElementById("chgPasswdBtn"), "primary", "dark", "primary");
 }
