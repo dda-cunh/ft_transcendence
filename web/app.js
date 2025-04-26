@@ -79,6 +79,8 @@ async function renderPlayerCard()
 
 		document.getElementById("userPfp").parentElement.classList.remove("pe-none");
 		document.getElementById("userNameDisplay").classList.remove("pe-none");
+
+		document.getElementById("onlineStatusCol").innerHTML = "";
 		document.getElementById("playerCardControlsCol").innerHTML = `
 			<button id="acctSettingsBtn" type="button" class="btn btn-sm btn-outline-secondary mt-2">
 				<i class="bi-gear-fill"></i>
