@@ -5,6 +5,7 @@ from collections import defaultdict
 from ServerPong.redis_utils import *
 from ServerPong.game_logic import *
 from ServerPong.game_utils import *
+from ServerPong.game_utils import Match, match_manager
 
 room_tasks = {}
 
@@ -81,6 +82,7 @@ async def monitor_room(room_name, channel_layer):
 	users = json.loads(users_raw)
 	userName = r.get(f"name_{users[0]}")
 	opponentName = r.get(f"name_{users[-1]}")
+
 	initial = {
 		'canvas_w': CANVAS_W,
 		'canvas_h': CANVAS_H,
@@ -90,23 +92,6 @@ async def monitor_room(room_name, channel_layer):
 		'p1_name': userName,
 		'p2_name': opponentName,
 	}
-	await channel_layer.group_send(
-		room_name,
-		{
-			'type': 'room_message',
-			'message': f'Match: {userName} vs {opponentName}!',
-			'close': False,
-			'initial': False,
-			'gamestate': False,
-		}
-	)
-	mode = get_user_mode(users[0])
-	r.set(f"keystate_{users[0]}", "IDLE")
-	r.set(f"keystate_{users[-1]}", "IDLE")
-	still_active = [u for u in users if r.exists(f"user_room_{u}")]
-
-
-	await asyncio.sleep(1)
 	state = GameState(
 		p1_pos   = Point2D(P1_START_X, P1_START_Y),
 		p2_pos   = Point2D(P2_START_X, P2_START_Y),
@@ -115,34 +100,24 @@ async def monitor_room(room_name, channel_layer):
 		ball_pos = Point2D(0, 0),
 		ball_vec = Vec2D(0, 0),
 	)
-
 	await channel_layer.group_send(
 		room_name,
 		{
 			'type': 'room_message',
-			'message': False,
+			'message': f'Match: {userName} vs {opponentName}!',
 			'gamestate': state.to_dict(),
 			'close': False,
 			'initial': initial,
 		}
 	)
 
-	r.hset(f"gamestate_{room_name}", mapping=state.to_redis())
+	match_manager.create_match(users[0], users[1], state, room_name)
+	match = match_manager.get_match(room_name)
+	
 	winner = None
 	while True:
-		# Insert gameloop logic here:
-		raw_state = r.hgetall(f"gamestate_{room_name}")
-		old_state = from_redis(raw_state)
+		state = get_next_frame(match.state, match.player_act)
 
-		# Get the current gamestate from redis
-		actions = PlayersActions(
-			p1_key_scale = KeyState[r.get(f"keystate_{users[0]}")],
-			p2_key_scale = KeyState[r.get(f"keystate_{users[-1]}")],
-		)
-		# call get_next_frame with gamestate and redis keystates
-		state = get_next_frame(old_state, actions)
-
-		# send the gamestate to the players
 		await channel_layer.group_send(
 			room_name,
 			{
@@ -153,15 +128,13 @@ async def monitor_room(room_name, channel_layer):
 				'initial': False,
 			}
 		)
-		# save the new gamestate to redis
-		r.hset(f"gamestate_{room_name}", mapping=state.to_redis())
-
+		match.state = state
 		# delay loop by FRAME_RATE
 		await asyncio.sleep(1.0/TICKS_PER_SECOND)
 
 		# Check if the game is still active by way of scores
-		if state.p1_score >= SCORE_TO_WIN or state.p2_score >= SCORE_TO_WIN:
-			if state.p1_score >= SCORE_TO_WIN:
+		if match.state.p1_score >= SCORE_TO_WIN or match.state.p2_score >= SCORE_TO_WIN:
+			if match.state.p1_score >= SCORE_TO_WIN:
 				winner = "p1"
 			else:
 				winner = "p2"
@@ -189,12 +162,7 @@ async def monitor_room(room_name, channel_layer):
 			)
 			break
 
-	r.delete(f"gamestate_{room_name}")
-	if r.exists(f"keystate_{users[0]}"):
-		r.delete(f"keystate_{users[0]}")
-	if r.exists(f"keystate_{users[-1]}"):
-		r.delete(f"keystate_{users[-1]}")
-
+	match_manager.remove_match(match.room_name)
 	winningplayer = None
 	losingplayer = None
 	if winner == "p1":
@@ -216,7 +184,8 @@ async def monitor_room(room_name, channel_layer):
 	}
 	
 	match_info = await save_match_history(save_match)
-	
+
+	mode = get_user_mode(users[0])
 	if mode == TOURN_MODE:
 		r.set(f"match_id_{room_name}", match_info['id'])
 
