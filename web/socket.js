@@ -53,7 +53,6 @@ export async function connectWebSocket(mode) {
   socket = new WebSocket(wsUrl);
   
   socket.onopen = function(event) {
-    console.log('WebSocket connection established');
     document.cookie = "access=; path=/; Secure; SameSite=None; expires=Thu, 01 Jan 1970 00:00:00 GMT";
    
     if (mode !== "local") socket.send(JSON.stringify({ tname: sessionStorage.getItem("alias") }));
@@ -110,7 +109,6 @@ export async function connectWebSocket(mode) {
   };
 
   socket.onclose = function(event) {
-    console.log('WebSocket connection closed');
     unloadControls();
     gameState = null;
     playerAi = null;
@@ -138,7 +136,6 @@ export async function connectWebSocket(mode) {
   };
 
   socket.onerror = function(event) {
-    console.log('WebSocket error:', event);
     document.cookie = "access=; path=/; Secure; SameSite=None; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     gameState = null;
     unloadControls();

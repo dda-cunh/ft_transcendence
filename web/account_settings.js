@@ -111,9 +111,7 @@ async function	getNewPfpPath()
 		return (`management/media/${userData.avatar}`)
 	}
 	catch(error)
-	{
-		console.log(error);
-	}
+	{}
 }
 
 async function	chgPfp(event)

@@ -112,9 +112,7 @@ async function renderPlayerCard()
 		setupEventHandlers("playerCard");
 	}
 	catch (error)
-	{
-		console.log(error);
-	}
+	{}
 }
 
 async function	renderView()
@@ -133,9 +131,7 @@ async function	renderView()
 		viewRow.innerHTML = viewHtml;
 	}
 	catch(error)
-	{
-		console.log(error);
-	}
+	{}
 }
 
 

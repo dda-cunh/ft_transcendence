@@ -122,7 +122,6 @@ async function	renderPlayerCard(userID)
 		}
 		catch (error)
 		{
-			console.log(error);
 			return (false);
 		}
 	}
@@ -149,7 +148,6 @@ async function	renderPlayerCard(userID)
 
 
 		acceptBtn.addEventListener("click", (event) => { 
-												console.log(event.target.dataset);
 												acceptFriendRequest(event);
 												addFriendConfirmedBtn();
 												renderPlayerProfile(userData.id);
@@ -199,8 +197,6 @@ async function	renderPlayerCard(userID)
 		}
 		catch (error)
 		{
-			console.log(error);
-			
 			return (false);	
 		}
 	}
@@ -340,8 +336,6 @@ async function	renderPlayerProfile(userID)
 						<td class="text-danger">${error}</td>
 					</tr>
 				`;
-			else
-				console.log(error);
 		}
 	}
 

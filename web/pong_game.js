@@ -60,6 +60,5 @@ export function renderPongGame(gameMode)
     fixDPI(canvas);
 
     let mode = gameMode === "tournament" ? "tournament" : sessionStorage.getItem("matchType");
-    console.log(mode)
     connectWebSocket(mode);
 }

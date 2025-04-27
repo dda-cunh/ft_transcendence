@@ -122,30 +122,30 @@ def get_next_frame(old: GameState,
 
     return new
 
-def do_test(max_frames=10_000):
-    """
-    Simple random-play harness—but using our CENTERED coordinate system.
-    """
-    p1_start  = Point2D(P1_START_X, P1_START_Y)
-    p2_start  = Point2D(P2_START_X, P2_START_Y)
-    ball_start= Point2D(0, 0)
+# def do_test(max_frames=10_000):
+#     """
+#     Simple random-play harness—but using our CENTERED coordinate system.
+#     """
+#     p1_start  = Point2D(P1_START_X, P1_START_Y)
+#     p2_start  = Point2D(P2_START_X, P2_START_Y)
+#     ball_start= Point2D(0, 0)
 
-    for frame in range(max_frames):
-        actions = PlayersActions(
-            random.choice(list(KeyState)),
-            random.choice(list(KeyState)),
-        )
+#     for frame in range(max_frames):
+#         actions = PlayersActions(
+#             random.choice(list(KeyState)),
+#             random.choice(list(KeyState)),
+#         )
 
-        state = get_next_frame(state, actions)
+#         state = get_next_frame(state, actions)
 
-        print(
-            f"[{frame:04d}]  "
-            f"P1@({state.p1_pos.x:.1f},{state.p1_pos.y:.1f})  "
-            f"P2@({state.p2_pos.x:.1f},{state.p2_pos.y:.1f})  "
-            f"BALL@({state.ball_pos.x:.1f},{state.ball_pos.y:.1f})  "
-            f"Score={state.p1_score}-{state.p2_score}"
-        )
+#         print(
+#             f"[{frame:04d}]  "
+#             f"P1@({state.p1_pos.x:.1f},{state.p1_pos.y:.1f})  "
+#             f"P2@({state.p2_pos.x:.1f},{state.p2_pos.y:.1f})  "
+#             f"BALL@({state.ball_pos.x:.1f},{state.ball_pos.y:.1f})  "
+#             f"Score={state.p1_score}-{state.p2_score}"
+#         )
 
-        if state.p1_score >= SCORE_TO_WIN or state.p2_score >= SCORE_TO_WIN:
-            print("🏁 Game Over!")
-            break
+#         if state.p1_score >= SCORE_TO_WIN or state.p2_score >= SCORE_TO_WIN:
+#             print("🏁 Game Over!")
+#             break
