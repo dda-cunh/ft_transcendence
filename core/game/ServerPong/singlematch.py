@@ -25,6 +25,7 @@ class LocalPongConsumer(AsyncWebsocketConsumer):
 			await self.close()
 			return
 
+		self.room_name = f'local_{self.user_id}'
 		await self.send(json.dumps({'message': "Welcome to local room!"}))
 		self.task = asyncio.create_task(local_monitor_room(self))
 
@@ -35,10 +36,12 @@ class LocalPongConsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
-		if data.get('keystate_p1'):
-			r.set(f"keystate_p1_{self.user_id}", data['keystate_p1'])
-		if data.get('keystate_p2'):
-			r.set(f"keystate_p2_{self.user_id}", data['keystate_p2'])
+		match = match_manager.get_match(self.room_name)
+		if (match):
+			if data.get('keystate_p1'):
+				match.player_act.p1_key_scale = KeyState[data['keystate_p1']]
+			if data.get('keystate_p2'):
+				match.player_act.p2_key_scale = KeyState[data['keystate_p2']]
 
 
 
@@ -59,6 +62,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 
 		user_room = get_room_by_user(self.user_id)
 		if user_room:
+			self.room_name = user_room
 			await self.channel_layer.group_add(
 				user_room,
 				self.channel_name,
@@ -74,7 +78,7 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 				}
 			)
 			cancel_expiry(self.user_id)
-			start_monitor(user_room, self.channel_layer)
+			# start_monitor(user_room, self.channel_layer)
 			return
 		elif r.exists(f"user_room_{self.user_id}"):
 			r.delete(f"user_room_{self.user_id}")
@@ -140,6 +144,8 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 		data = json.loads(text_data)
 		if data.get('tname') and not r.exists(f"name_{self.user_id}"):
 			r.set(f"name_{self.user_id}", data['tname'])
+		if not self.room_name:
+			self.room_name = get_room_by_user(self.user_id)
 		match = match_manager.get_match(self.room_name)
 		if (match):
 			if data.get('keystate'):

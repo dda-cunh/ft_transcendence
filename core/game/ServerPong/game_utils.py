@@ -142,7 +142,9 @@ class	Match:
 			'room_name': self.room_name,
 			'p1_id': self.p1_id,
 			'p2_id': self.p2_id,
-			'state': self.state.to_dict()
+			'state': self.state.to_dict(),
+			'p1_key_scale': self.player_act.p1_key_scale.name,
+			'p2_key_scale': self.player_act.p2_key_scale.name
 		}
 
 	def load_snapshot(self):

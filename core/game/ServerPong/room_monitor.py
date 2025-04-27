@@ -10,6 +10,8 @@ from ServerPong.game_utils import Match, match_manager
 room_tasks = {}
 
 async def local_monitor_room(self):
+	if (match_manager.get_match(self.room_name)):
+		match_manager.remove_match(self.room_name)
 	userName = "p1"
 	opponentName = "p2"
 	initial = {
@@ -31,37 +33,27 @@ async def local_monitor_room(self):
 		ball_pos = Point2D(0, 0),
 		ball_vec = Vec2D(0, 0),
 	)
-	r.set(f"keystate_p1_{self.user_id}", "IDLE")
-	r.set(f"keystate_p2_{self.user_id}", "IDLE")
-	r.hset(f"gamestate_{self.user_id}", mapping=state.to_redis())
+
+	match_manager.create_match(self.user_id, self.user_id, state, self.room_name)
+	match = match_manager.get_match(self.room_name)
+	
 	await self.send(text_data=json.dumps({
 		'initial': initial,
 		'gamestate': state.to_dict()
 	}))
 
 	while True:
-		raw_state = r.hgetall(f"gamestate_{self.user_id}")
-		old_state = from_redis(raw_state)
+		state = get_next_frame(match.state, match.player_act)
 
-		actions = PlayersActions(
-			p1_key_scale = KeyState[r.get(f"keystate_p1_{self.user_id}")],
-			p2_key_scale = KeyState[r.get(f"keystate_p2_{self.user_id}")],
-		)
-		
-		state = get_next_frame(old_state, actions)
 		await self.send(text_data=json.dumps({
 			'gamestate': state.to_dict()
 		}))
 		
-		r.hset(f"gamestate_{self.user_id}", mapping=state.to_redis())
+		match.state = state
 		await asyncio.sleep(1.0/TICKS_PER_SECOND)
 		if state.p1_score >= SCORE_TO_WIN or state.p2_score >= SCORE_TO_WIN:
 			break
-	r.delete(f"gamestate_{self.user_id}")
-	if r.exists(f"keystate_p1_{self.user_id}"):
-		r.delete(f"keystate_p1_{self.user_id}")
-	if r.exists(f"keystate_p2_{self.user_id}"):
-		r.delete(f"keystate_p2_{self.user_id}")
+	match_manager.remove_match(self.room_name)
 	await self.send(text_data=json.dumps({
 		'message': 'Game ended.',
 	}))
