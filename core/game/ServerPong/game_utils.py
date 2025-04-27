@@ -1,5 +1,6 @@
 import uuid
 import math
+from ServerPong.redis_utils import r
 from dataclasses import dataclass
 from enum import Enum
 
@@ -31,6 +32,9 @@ P1_START_X = LEFT_BOUND  + PADDLE_WIDTH/2
 P1_START_Y = 0
 P2_START_X = RIGHT_BOUND - PADDLE_WIDTH/2
 P2_START_Y = 0
+
+
+MATCH_PREFIX = "match_"
 
 @dataclass
 class Point2D:
@@ -117,3 +121,59 @@ class KeyState(Enum):
 class PlayersActions:
 	p1_key_scale: KeyState
 	p2_key_scale: KeyState
+
+class	Match:
+	def	__init__(self, p1_id: uuid, p2_id: uuid, state: GameState, room_name: str):
+		self.room_name: str = room_name
+		self.p1_id: uuid = p1_id
+		self.p2_id: uuid = p2_id
+		self.state: GameState = state
+		self.player_act: PlayersActions = PlayersActions(KeyState.IDLE, KeyState.IDLE)
+
+		# self.snapshot()
+		return
+
+	# def	snapshot(self):
+	# 	r.hset(f"{MATCH_PREFIX}{self.room_name}", mapping=self.to_redis())
+	# 	return
+
+	def	to_redis(self):
+		return {
+			'room_name': self.room_name,
+			'p1_id': self.p1_id,
+			'p2_id': self.p2_id,
+			'state': self.state.to_dict(),
+			'p1_key_scale': self.player_act.p1_key_scale.name,
+			'p2_key_scale': self.player_act.p2_key_scale.name
+		}
+
+	def load_snapshot(self):
+		return Match((self.from_redis(r.hgetall(f"{MATCH_PREFIX}{self.room_name}"))))
+
+	@staticmethod
+	def match_from_redis(data):
+		return Match(
+			room_name = data['room_name'],
+			p1_id = data['p1_id'],
+			p2_id = data['p2_id'],
+			state = from_redis(data['state'])
+		)
+
+class	MatchManager:
+	def	__init__(self):
+		self.matches = {}
+		return
+
+	def	create_match(self, p1_id: uuid, p2_id: uuid, state: GameState, room_name: str):
+		self.matches[room_name] = Match(p1_id, p2_id, state, room_name)
+		return
+
+	def	get_match(self, room_name: str)-> Match: 
+		return (self.matches.get(room_name))
+
+	def	remove_match(self, room_name: str):
+		if (room_name in self.matches):
+			del self.matches[room_name]
+		return
+
+match_manager = MatchManager()

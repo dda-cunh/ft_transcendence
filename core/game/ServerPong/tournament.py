@@ -11,6 +11,7 @@ from ServerPong.constants import REDIS_URL, TIMEOUT
 from ServerPong.redis_utils import *
 from ServerPong.utils import asyncGet, AsyncGetData, validate_user_token, validate_mode
 from ServerPong.room_monitor import start_monitor
+from ServerPong.game_utils import match_manager, KeyState
 
 class TournamentConsumer(AsyncWebsocketConsumer):
 
@@ -28,10 +29,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		self.lobby_name = None
 
 		user_lobby = get_lobby_by_user(self.user_id)
+		self.room_name = get_room_by_user(self.user_id)
 		if user_lobby:
 			warnChannel = user_lobby
-			if get_room_by_user(self.user_id):
-				warnChannel = get_room_by_user(self.user_id)
+			if self.room_name:
+				warnChannel = self.room_name
 			await self.channel_layer.group_add(
 				warnChannel,
 				self.channel_name,
@@ -122,8 +124,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		data = json.loads(text_data)
 		if data.get('tname') and not r.exists(f"name_{self.user_id}"):
 			r.set(f"name_{self.user_id}", data['tname'])
-		if data.get('keystate'):
-			r.set(f"keystate_{self.user_id}", data['keystate'])
+		self.room_name = get_room_by_user(self.user_id)
+		if not self.room_name:
+			return
+		match = match_manager.get_match(self.room_name)
+		if (match):
+			if data.get('keystate'):
+				if (self.user_id == match.p1_id):
+					match.player_act.p1_key_scale = KeyState[data['keystate']]
+				else:
+					match.player_act.p2_key_scale = KeyState[data['keystate']]
 
 
 	async def room_message(self, event):
