@@ -1,6 +1,7 @@
 import redis
 import json
 import asyncio
+import re
 
 from urllib.parse import parse_qs
 from django.contrib.auth import get_user_model
@@ -142,8 +143,18 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
-		if data.get('tname') and not r.exists(f"name_{self.user_id}"):
-			r.set(f"name_{self.user_id}", data['tname'])
+		tname = data.get('tname')
+		if tname and not r.exists(f"name_{self.user_id}"):
+			tname = tname.strip()
+			if not (1 <= len(tname) <= 10) or not re.match(r'^[A-Za-z0-9_ ]+$', tname):
+				await self.send(json.dumps({
+					"error": "Alias must be 1–10 characters, letters/digits/underscore/space only."
+				}))
+				return
+			# save the validated, trimmed alias
+			r.set(f"name_{self.user_id}", tname)
+		# if data.get('tname') and not r.exists(f"name_{self.user_id}"):
+		# 	r.set(f"name_{self.user_id}", data['tname'])
 		if not self.room_name:
 			self.room_name = get_room_by_user(self.user_id)
 		match = match_manager.get_match(self.room_name)

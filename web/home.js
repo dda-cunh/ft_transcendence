@@ -21,6 +21,8 @@ function	selectSettings()
 
 function aliasIsValid(alias)
 {
+	if (alias.length < 1 || alias.length > 10)
+		return false;
 	const regex = /^[a-zA-Z0-9_ ]+$/;
 
 	if (!regex.test(alias))
