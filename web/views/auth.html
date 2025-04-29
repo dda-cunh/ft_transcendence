@@ -78,14 +78,16 @@
 	</div>
 </div>
 <style>
-	#loginForm .form-control:hover::placeholder {
+	.form-control::placeholder {
+		color: var(--bs-secondary);
+		opacity: 0.75;
+	}
+
+	.form-control:hover::placeholder {
 		color: white;
 		opacity: 0.75;
 	}
-	#registerForm .form-control:hover::placeholder {
-		color: white;
-		opacity: 0.75;		
-	}
+
 	#authContainer:hover {
 		color: var(--bs-light);
 		background-color: transparent;
