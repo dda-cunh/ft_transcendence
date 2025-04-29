@@ -77,6 +77,7 @@ export async function connectWebSocket(mode) {
       document.getElementById("p1").innerText = gameConstants.p1_name;
       document.getElementById("p2").innerText = gameConstants.p2_name;
     }
+    startRenderLoop();
   };
 
   socket.onmessage = function(event) {
@@ -103,7 +104,6 @@ export async function connectWebSocket(mode) {
       gameState = data.gamestate;
       if (playerAi)
         playerAi.update(gameState);
-      drawFrame();
     }
     // handleHistoryPopState();
   };
@@ -147,7 +147,7 @@ function drawFrame() {
   const canvas = document.getElementById('game-canvas');
   if (!canvas || !gameState || !gameConstants)
     return;
-  const ctx = canvas.getContext('2d');
+  const ctx =  canvas.getContext('2d');
   ctx.fillStyle = (sessionStorage.getItem("backgroundColor") ? sessionStorage.getItem("backgroundColor") : "black");
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -230,4 +230,12 @@ function loadControls() {
 function unloadControls() {
   document.removeEventListener('keydown', handleKeyDown);
   document.removeEventListener('keyup', handleKeyUp);
+}
+
+function startRenderLoop() {
+  function renderLoop() {
+    drawFrame();
+    requestAnimationFrame(renderLoop);
+  }
+  requestAnimationFrame(renderLoop);
 }
