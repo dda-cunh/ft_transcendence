@@ -201,8 +201,7 @@ async def generate_round(channel, lobby_name):
 		for p in players:
 			if r.exists(f"user_channel_{p}"):
 				user_channel = r.get(f"user_channel_{p}")
-				if not r.exists(f"expire_{p}"):
-					await channel.group_add(lobby_name, user_channel)
+				await channel.group_add(lobby_name, user_channel)
 			else:
 				r.srem(lobby_name, p)
 
