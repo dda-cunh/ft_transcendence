@@ -1,6 +1,6 @@
 import { main } from "./index.js";
 import { updateAccessTkn } from "./utils.js";
-import {handleHistoryPopState} from './app.js'
+// import {handleHistoryPopState} from './app.js'
 import PongAI from "./pongAI.js";
 
 export let gameConstants = {};
@@ -41,7 +41,8 @@ export async function connectWebSocket(mode) {
   if (mode === "Single Player")
     ai = true;
   mode = gmode;
-  if (socket) socket.close();
+  if (socket)
+    socket.close();
   if (playerAi) {
     playerAi.destroy();
     playerAi = null;
@@ -63,49 +64,48 @@ export async function connectWebSocket(mode) {
       div.classList.add("w-100");
       div.classList.add("text-center");
       div.classList.add("msg-container");
+      div.id = "msg-container";
       document.getElementById("mainContainer").append(div);
+    }
+    if (!document.getElementById("p1") || !document.getElementById("p2"))
+      return ;
+    if(sessionStorage.getItem("gameConstants"))
+    {
+      gameConstants = JSON.parse(sessionStorage.getItem("gameConstants"));
+      half_w = gameConstants.canvas_w / 2;
+      half_h = gameConstants.canvas_h / 2;
+      document.getElementById("p1").innerText = gameConstants.p1_name;
+      document.getElementById("p2").innerText = gameConstants.p2_name;
     }
   };
 
   socket.onmessage = function(event) {
     const data = JSON.parse(event.data);
   
-    window.requestIdleCallback( () => {
-      if (data && data.message) {
-        if (document.querySelectorAll(".msg-container")[0])
-          document.querySelectorAll(".msg-container")[0].innerText = data.message;
-      }
-      if (data && data.initial) {
-        gameConstants = data.initial;
-        half_w = gameConstants.canvas_w / 2;
-        half_h = gameConstants.canvas_h / 2;
+    if (!data) 
+      return;
+    if (data.message)
+        document.getElementById("msg-container").innerText = data.message;
+    if (data.initial)
+    {
+      gameConstants = data.initial;
+      half_w = gameConstants.canvas_w / 2;
+      half_h = gameConstants.canvas_h / 2;
 
-        if (document.querySelectorAll("#p1")[0])
-          document.getElementById("p1").innerText = gameConstants.p1_name;
-        if (document.querySelectorAll("#p2")[0])
-          document.getElementById("p2").innerText = gameConstants.p2_name;
-        if (gmode === "local" && ai)
-          playerAi = new PongAI(gameConstants);
-        sessionStorage.setItem("gameConstants", JSON.stringify(gameConstants));
-      }
-      else if(sessionStorage.getItem("gameConstants"))
-      {
-        gameConstants = JSON.parse(sessionStorage.getItem("gameConstants"));
-        half_w = gameConstants.canvas_w / 2;
-        half_h = gameConstants.canvas_h / 2;
-        if (document.querySelectorAll("#p1")[0])
-          document.getElementById("p1").innerText = gameConstants.p1_name;
-        if (document.querySelectorAll("#p2")[0])
-          document.getElementById("p2").innerText = gameConstants.p2_name;
-      }
-    // In socket.onmessage handler:
-      if (data && data.gamestate) {
-        gameState = data.gamestate;
-        if (playerAi) playerAi.update(gameState);
-        drawFrame();
-      }
-      handleHistoryPopState();
-    } );
+      document.getElementById("p1").innerText = gameConstants.p1_name;
+      document.getElementById("p2").innerText = gameConstants.p2_name;
+      if (gmode === "local" && ai)
+        playerAi = new PongAI(gameConstants);
+      sessionStorage.setItem("gameConstants", JSON.stringify(gameConstants));
+    }
+    if (data.gamestate)
+    {
+      gameState = data.gamestate;
+      if (playerAi)
+        playerAi.update(gameState);
+      drawFrame();
+    }
+    // handleHistoryPopState();
   };
 
   socket.onclose = function(event) {
@@ -144,8 +144,9 @@ export async function connectWebSocket(mode) {
 
 
 function drawFrame() {
-  const canvas = document.querySelectorAll('canvas')[0];
-  if (!canvas || !gameState || !gameConstants) return;
+  const canvas = document.getElementById('game-canvas');
+  if (!canvas || !gameState || !gameConstants)
+    return;
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = (sessionStorage.getItem("backgroundColor") ? sessionStorage.getItem("backgroundColor") : "black");
   ctx.fillRect(0, 0, canvas.width, canvas.height);

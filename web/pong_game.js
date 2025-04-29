@@ -35,7 +35,7 @@ function    renderPage()
                 </div>
             </div>
             <div class="row">
-                <canvas style="background: black;">Game Canvas</canvas><!--BACKGROUND COLOR MUST BE SET WITH GAME SETTINGS-->
+                <canvas id="game-canvas" style="background: black;">Game Canvas</canvas><!--BACKGROUND COLOR MUST BE SET WITH GAME SETTINGS-->
             </div>
         </div>
         <style>
