@@ -151,6 +151,8 @@ async function	renderPlayerCard(userID)
 												acceptFriendRequest(event);
 												addFriendConfirmedBtn();
 												renderPlayerProfile(userData.id);
+												renderMatchHistory(userData.id, null);
+												renderTournamentHistory(userData.id);
 												showPopover("Friend request accepted", controlsCol, 'success');
 											} );
 
