@@ -12,7 +12,7 @@ def validate_username(value):
         raise ValidationError('Username must only contain letters, numbers, and underscores.')
 
 def validate_motto(value):
-    if not re.match('^[a-zA-Z0-9_]+$', value):  
+    if not re.match('^[a-zA-Z0-9_ ]+$', value):  
         raise ValidationError('Motto must only contain letters, numbers, and underscores.')
 
 class UserManager(BaseUserManager):
