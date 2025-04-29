@@ -8,8 +8,8 @@ import re
 
 
 def validate_username(value):
-    if not re.match('^[a-zA-Z0-9_]{1,12}$', value):  
-        raise ValidationError('Username must only contain letters, numbers, underscores and limited to 12 chars.')
+    if not re.match('^[a-zA-Z0-9_]{1,15}$', value):  
+        raise ValidationError('Username must only contain letters, numbers, underscores')
 
 def validate_motto(value):
     if not re.match('^[a-zA-Z0-9_ ]{1,120}$', value):  
