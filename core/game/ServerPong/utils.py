@@ -48,3 +48,11 @@ async def validate_mode(user_id, mode, resp) -> Tuple[Optional[str]]:
 	elif get_user_mode(user_id) == mode and is_user_in_queue(user_id, mode):
 		return json.dumps({'message': "already in queue"})
 	return None
+
+def	validate_tname(tname: str)-> bool:
+	from user.models import validate_username
+	try:
+		validate_username(tname)
+	except:
+		return (False)
+	return (True)

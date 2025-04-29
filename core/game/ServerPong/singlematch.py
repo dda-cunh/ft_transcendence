@@ -12,7 +12,7 @@ from ServerPong.constants import REDIS_URL, TIMEOUT
 from ServerPong.redis_utils import *
 from ServerPong.utils import asyncGet, AsyncGetData, validate_user_token, validate_mode
 from ServerPong.room_monitor import local_monitor_room, start_monitor
-
+from ServerPong.utils import validate_tname
 
 class LocalPongConsumer(AsyncWebsocketConsumer):
 
@@ -143,7 +143,12 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 	async def receive(self, text_data):
 		data = json.loads(text_data)
 		if data.get('tname') and not r.exists(f"name_{self.user_id}"):
-			r.set(f"name_{self.user_id}", data['tname'])
+			if (validate_tname(data['tname'])):
+				r.set(f"name_{self.user_id}", data['tname'])
+			else:
+				await self.send(text_data=json.dumps({"message": "Alias is invalid :(... Naughty"}))
+				r.set(f"name_{self.user_id}", "Bad Boy")
+
 		if not self.room_name:
 			self.room_name = get_room_by_user(self.user_id)
 		match = match_manager.get_match(self.room_name)

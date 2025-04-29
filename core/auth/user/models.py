@@ -8,12 +8,12 @@ import re
 
 
 def validate_username(value):
-    if not re.match('^[a-zA-Z0-9_]+$', value):  
-        raise ValidationError('Username must only contain letters, numbers, and underscores.')
+    if not re.match('^[a-zA-Z0-9_]{1,12}$', value):  
+        raise ValidationError('Username must only contain letters, numbers, underscores and limited to 12 chars.')
 
 def validate_motto(value):
-    if not re.match('^[a-zA-Z0-9_ ]+$', value):  
-        raise ValidationError('Motto must only contain letters, numbers, and underscores.')
+    if not re.match('^[a-zA-Z0-9_ ]{1,120}$', value):  
+        raise ValidationError('Motto must only contain letters, numbers, underscores and limited to 120 chars.')
 
 class UserManager(BaseUserManager):
     def create_user(self, username, password, **extra_fields):
