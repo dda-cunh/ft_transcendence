@@ -58,17 +58,14 @@ class RemotePongConsumer(AsyncWebsocketConsumer):
 			await self.close()
 			return
 		
-		self.room_name = None
-
-		user_room = get_room_by_user(self.user_id)
-		if user_room:
-			self.room_name = user_room
+		self.room_name = get_room_by_user(self.user_id)
+		if self.room_name:
 			await self.channel_layer.group_add(
-				user_room,
+				self.room_name,
 				self.channel_name,
 			)
 			await self.channel_layer.group_send(
-				user_room,
+				self.room_name,
 				{
 					'type': 'room_message',
 					'message': 'Reconnected to peer!',
