@@ -46,6 +46,7 @@ class LocalPongConsumer(AsyncWebsocketConsumer):
 
 
 class RemotePongConsumer(AsyncWebsocketConsumer):
+	room_name:	str
 
 	async def connect(self):
 		await self.accept()
