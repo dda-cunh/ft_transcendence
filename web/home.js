@@ -19,15 +19,6 @@ function	selectSettings()
 	document.querySelector("#tournamentAlias").onchange = () => sessionStorage.setItem("alias", document.querySelector("#tournamentAlias").value)
 }
 
-function aliasIsValid(alias)
-{
-	const regex = /^[a-zA-Z0-9_ ]+$/;
-
-	if (!regex.test(alias))
-		return (false);
-	return (true);
-}
-
 function checkAlias()
 {
 	if (!sessionStorage.getItem("alias"))
@@ -37,8 +28,6 @@ function checkAlias()
 		else
 			sessionStorage.setItem("alias", "incognito");
 	}
-	else if (!aliasIsValid(sessionStorage.getItem("alias")))
-		sessionStorage.setItem("alias", document.getElementById("userNameDisplay").innerText);
 }
 
 function	setupEventHandlers()
