@@ -4,18 +4,36 @@ export default class PongAI {
     this.ballPhysics = new BallPhysics(gameConstants);
     this.currentDirection = null;
     this.isActive = true;
-    this.accuracy = 0.85;
+    this.accuracy = 1;
     this.aiDelay = 1000;
     this.lastKnownBall = null;
     this.predictedSpeed = null;
     this.lastProcessedTime = 0;
+    this.trackedScore = "0 - 0";
+    this.lastRead = 0;
   }
 
   update(gameState) {
     if (!this.isActive) return;
 
+    if (!this.lastKnownBall)
+    {
+      this.lastKnownBall = {x: 0, y: 0, timestamp : Date.now()};
+      return
+    }
+
     const currentTime = Date.now();
-    if (currentTime - this.lastProcessedTime < this.aiDelay) return;
+    if (currentTime - this.lastProcessedTime < this.aiDelay){
+      this.lastRead = currentTime;
+      return;
+    }
+
+    let currentScore = gameState.p1_score + " - " + gameState.p2_score;
+    if (this.trackedScore != currentScore) {
+      this.lastKnownBall = {x: 0, y: 0, timestamp : this.lastRead};
+      this.trackedScore = currentScore;
+    }
+
     this.lastProcessedTime = currentTime;
     const observedBall = {
       x: gameState.ball.x,
